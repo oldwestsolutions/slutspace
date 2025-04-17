@@ -26,7 +26,13 @@ import {
   MoonIcon as MoonSolidIcon,
   TrophyIcon as TrophySolidIcon,
   ArrowsPointingOutIcon,
-  ArrowsPointingInIcon
+  ArrowsPointingInIcon,
+  MusicalNoteIcon,
+  PaintBrushIcon,
+  CakeIcon,
+  ComputerDesktopIcon,
+  SwatchIcon,
+  MapIcon
 } from '@heroicons/react/24/solid'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
@@ -60,6 +66,14 @@ export default function LivePage() {
     { id: 10, name: 'Dragon', price: 75, icon: BoltSolidIcon, category: 'premium', color: 'text-green-500' },
     { id: 11, name: 'Galaxy', price: 200, icon: MoonSolidIcon, category: 'exclusive', color: 'text-violet-500' },
     { id: 12, name: 'Golden Crown', price: 500, icon: TrophySolidIcon, category: 'exclusive', color: 'text-amber-400' },
+    { id: 13, name: 'Music Note', price: 15, icon: MusicalNoteIcon, category: 'premium', color: 'text-blue-400' },
+    { id: 14, name: 'Paint Brush', price: 25, icon: PaintBrushIcon, category: 'premium', color: 'text-pink-400' },
+    { id: 15, name: 'Cake', price: 40, icon: CakeIcon, category: 'premium', color: 'text-rose-400' },
+    { id: 16, name: 'Trophy', price: 150, icon: TrophyIcon, category: 'exclusive', color: 'text-yellow-300' },
+    { id: 17, name: 'Computer', price: 80, icon: ComputerDesktopIcon, category: 'premium', color: 'text-blue-300' },
+    { id: 18, name: 'Palette', price: 35, icon: SwatchIcon, category: 'premium', color: 'text-purple-400' },
+    { id: 19, name: 'Map', price: 60, icon: MapIcon, category: 'premium', color: 'text-green-400' },
+    { id: 20, name: 'Smile', price: 5, icon: FaceSmileIcon, category: 'basic', color: 'text-yellow-500' }
   ])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const searchParams = useSearchParams()
@@ -96,7 +110,9 @@ export default function LivePage() {
   }
 
   const handleLeaveStream = () => {
-    router.push('/')
+    if (window.confirm('Are you sure you want to leave the stream?')) {
+      router.back()
+    }
   }
 
   const filteredGifts = selectedCategory === 'all' 

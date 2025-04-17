@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { 
   HomeIcon, 
@@ -27,9 +28,23 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('home')
   const [searchQuery, setSearchQuery] = useState('')
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const isAuthenticated = localStorage.getItem('isAuthenticated')
+    if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [router])
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated')
+    router.push('/login')
+  }
 
   // Sample data for live streams
   const liveStreams = [

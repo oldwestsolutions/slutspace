@@ -1,31 +1,30 @@
-# Invitation - Live Streaming Platform
+# Instagram-like Social Platform with Live Streaming
 
-A modern live streaming platform built with Next.js, featuring real-time streaming, chat, gifting, and social features.
+A modern social media platform inspired by Instagram, featuring live streaming capabilities, stories, and a dark theme.
 
 ## Features
 
-- 🎥 Live streaming with quality controls
-- 💬 Real-time chat with typing indicators
-- 🎁 Interactive gifting system
-- 👥 User profiles and following system
-- 🔍 Search functionality
-- 💰 Wallet integration
+- 🎥 Live streaming with chat and gifts
+- 📸 Instagram-like stories
+- 👤 User profiles with editing capabilities
+- ⚙️ Comprehensive settings page
+- 🌙 Dark theme with purple accents
 - 📱 Responsive design
+- 🔒 Authentication system
 
 ## Tech Stack
 
 - Next.js 14
+- React
 - TypeScript
 - Tailwind CSS
 - Heroicons
-- React Hooks
 
 ## Getting Started
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/invitation.git
-cd invitation
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 ```
 
 2. Install dependencies:
@@ -44,22 +43,14 @@ npm run dev
 
 ```
 app/
-├── live/           # Live streaming page
-├── profile/        # User profiles
-├── search/         # Search functionality
-├── messages/       # Chat system
-├── wallet/         # Wallet integration
-└── page.tsx        # Homepage
+├── dashboard/     # Main dashboard with stories and feed
+├── live/          # Live streaming pages
+├── profile/       # User profile pages
+├── settings/      # Account settings
+├── login/         # Authentication
+└── signup/        # User registration
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+MIT 
