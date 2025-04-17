@@ -38,8 +38,9 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
-export default function LivePage() {
+function LivePageContent() {
   const router = useRouter()
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(2500)
@@ -439,5 +440,13 @@ export default function LivePage() {
         }
       `}</style>
     </div>
+  )
+}
+
+export default function LivePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>}>
+      <LivePageContent />
+    </Suspense>
   )
 } 
