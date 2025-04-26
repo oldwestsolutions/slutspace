@@ -105,7 +105,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             >
               <Bars3Icon className="h-6 w-6" />
             </button>
-            <Link href="/" className="ml-2 md:ml-4 text-xl md:text-2xl font-bold text-red-500">
+            <Link href="/" className="hidden md:block ml-2 md:ml-4 text-xl md:text-2xl font-bold text-red-500">
               slutspace
             </Link>
           </div>
@@ -126,6 +126,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           {/* Right section - User controls */}
           <div className="flex items-center space-x-1">
+            {/* Mobile title logo aligned to the right */}
+            <Link href="/" className="md:hidden text-xl font-bold text-red-500">
+              slutspace
+            </Link>
             {/* Only show these buttons on desktop */}
             <button className="hidden md:block p-2 text-gray-400 hover:text-white">
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -210,9 +214,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         `}>
           {/* Header fixed at top */}
           <div className="flex justify-between items-center h-14 px-4 bg-gray-800 border-b border-gray-700 flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-red-500">
-              slutspace
-            </Link>
             <button 
               onClick={() => setIsMobileMenuOpen(false)} 
               className="p-2 text-gray-400 hover:text-white"
@@ -220,6 +221,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
+            <Link href="/" className="text-xl font-bold text-red-500">
+              slutspace
+            </Link>
           </div>
 
           {/* Scrollable content */}

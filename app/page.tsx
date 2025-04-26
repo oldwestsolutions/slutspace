@@ -176,7 +176,7 @@ export default function Home() {
           <h1 className="text-xl font-bold text-white">Recommended</h1>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4">
           {videos.map((video) => (
             <div key={video.id} className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer hover:bg-gray-750">
               <Link href={`/video/${video.id}`}>
@@ -184,31 +184,31 @@ export default function Home() {
                   <img 
                     src={video.thumbnail} 
                     alt={video.title} 
-                    className="w-full h-48 object-cover"
+                    className="w-full aspect-video object-cover"
                   />
-                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
+                  <div className="absolute bottom-1 right-1 bg-black bg-opacity-80 text-white text-xs px-1 py-0.5 rounded text-[10px] md:text-xs md:px-2 md:py-1 md:bottom-2 md:right-2">
                     {video.duration}
                   </div>
                 </div>
               </Link>
-              <div className="p-3 flex">
-                <div className="flex-shrink-0 mr-3">
-                  <Link href={`/profile/${video.channel}`} onClick={(e) => e.stopPropagation()}>
+              <div className="p-2 md:p-3">
+                <Link href={`/video/${video.id}`}>
+                  <h3 className="text-white font-medium line-clamp-1 text-xs md:text-sm">{video.title}</h3>
+                </Link>
+                <div className="flex items-center mt-1">
+                  <Link href={`/profile/${video.channel}`} onClick={(e) => e.stopPropagation()} className="mr-1.5">
                     <img 
                       src={video.channelIcon} 
                       alt={video.channel} 
-                      className="w-9 h-9 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+                      className="w-5 h-5 md:w-7 md:h-7 rounded-full cursor-pointer hover:ring-1 hover:ring-blue-500 transition-all"
                     />
                   </Link>
-                </div>
-                <div>
-                  <Link href={`/video/${video.id}`}>
-                    <h3 className="text-white font-medium line-clamp-2 text-sm">{video.title}</h3>
-                  </Link>
-                  <Link href={`/profile/${video.channel}`} className="hover:text-blue-400 transition-colors">
-                    <p className="text-gray-400 text-xs mt-1">{video.channel}</p>
-                  </Link>
-                  <p className="text-gray-400 text-xs">{video.views} • {video.posted}</p>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/profile/${video.channel}`} className="hover:text-blue-400 transition-colors">
+                      <p className="text-gray-400 text-[10px] md:text-xs truncate">{video.channel}</p>
+                    </Link>
+                    <p className="text-gray-400 text-[8px] md:text-xs truncate">{video.views} • {video.posted}</p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -417,17 +417,6 @@ export default function ProfilePage() {
                     <StarIcon className="h-3.5 w-3.5 mr-1" />
                     <span className="hidden sm:inline">Popular</span>
                   </motion.button>
-                  <motion.button
-                    onClick={() => setPhotoFilter('all')}
-                    className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
-                      photoFilter === 'all' ? 'bg-gray-700 text-white' : 'text-gray-400'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Squares2X2Icon className="h-3.5 w-3.5 mr-1" />
-                    <span className="hidden sm:inline">All</span>
-                  </motion.button>
                 </div>
                 <motion.button
                   onClick={() => setShowAllPhotos(!showAllPhotos)}
