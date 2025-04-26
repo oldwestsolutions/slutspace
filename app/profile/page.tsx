@@ -19,7 +19,11 @@ import {
   CurrencyDollarIcon,
   ArrowTrendingUpIcon,
   ChevronRightIcon,
-  PlusIcon
+  PlusIcon,
+  Square2StackIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
+  Squares2X2Icon
 } from '@heroicons/react/24/outline'
 import { CurrencyDollarIcon as CurrencyDollarIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
@@ -32,6 +36,8 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [showWalletDetails, setShowWalletDetails] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'albums'>('grid')
+  const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null)
   const [user, setUser] = useState({
     username: 'johndoe',
     name: 'John Doe',
@@ -68,27 +74,173 @@ export default function ProfilePage() {
     setIsEditing(false)
   }
 
+  // Sample albums
+  const albums = [
+    { id: 'photos', name: 'Photos', count: 148, cover: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538' },
+    { id: 'selfies', name: 'Selfies', count: 52, cover: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61' },
+    { id: 'travel', name: 'Travel', count: 87, cover: 'https://images.unsplash.com/photo-1503220317375-aaad61436b1b' },
+    { id: 'favorites', name: 'Favorites', count: 35, cover: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f' }
+  ]
+
   // Sample posts
   const posts = [
     {
       id: 1,
       image: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538',
       likes: 1234,
-      comments: 56
+      comments: 56,
+      date: '2023-10-15'
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538',
+      image: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61',
       likes: 856,
-      comments: 23
+      comments: 23,
+      date: '2023-10-10'
     },
     {
       id: 3,
-      image: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538',
+      image: 'https://images.unsplash.com/photo-1503220317375-aaad61436b1b',
       likes: 2345,
-      comments: 89
+      comments: 89,
+      date: '2023-10-08'
+    },
+    {
+      id: 4,
+      image: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f',
+      likes: 543,
+      comments: 32,
+      date: '2023-10-05'
+    },
+    {
+      id: 5,
+      image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857',
+      likes: 876,
+      comments: 45,
+      date: '2023-10-01'
+    },
+    {
+      id: 6,
+      image: 'https://images.unsplash.com/photo-1526800544336-d04f0cbfd700',
+      likes: 987,
+      comments: 67,
+      date: '2023-09-28'
     }
   ]
+
+  // Wallet modal state and handlers
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+
+  const openWalletModal = () => {
+    setIsWalletModalOpen(true);
+  };
+
+  const closeWalletModal = () => {
+    setIsWalletModalOpen(false);
+  };
+
+  const renderContentByTab = () => {
+    if (activeTab === 'posts') {
+      if (viewMode === 'albums' && !selectedAlbum) {
+        return (
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Albums</h3>
+              <button 
+                onClick={() => setViewMode('grid')} 
+                className="text-sm text-blue-400 font-medium"
+              >
+                See All Photos
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {albums.map((album) => (
+                <div 
+                  key={album.id} 
+                  className="relative rounded-xl overflow-hidden cursor-pointer"
+                  onClick={() => setSelectedAlbum(album.id)}
+                >
+                  <img 
+                    src={album.cover} 
+                    alt={album.name} 
+                    className="w-full aspect-square object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                  <div className="absolute bottom-0 left-0 p-3">
+                    <h4 className="text-white font-medium">{album.name}</h4>
+                    <p className="text-gray-300 text-sm">{album.count} photos</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      } else if (viewMode === 'albums' && selectedAlbum) {
+        // Album detail view
+        const album = albums.find(a => a.id === selectedAlbum);
+        return (
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-4">
+              <button 
+                className="flex items-center text-blue-400"
+                onClick={() => setSelectedAlbum(null)}
+              >
+                <ChevronRightIcon className="h-4 w-4 transform rotate-180 mr-1" />
+                <span>Albums</span>
+              </button>
+              <div className="text-white font-medium">{album?.name}</div>
+              <button 
+                onClick={() => setViewMode('grid')} 
+                className="text-sm text-blue-400 font-medium"
+              >
+                See All
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-1">
+              {posts.map((post) => (
+                <div key={post.id} className="relative aspect-square">
+                  <img 
+                    src={post.image} 
+                    alt={`Post ${post.id}`} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      } else {
+        // Default grid view
+        return (
+          <div className="mt-6">
+            <div className="grid grid-cols-3 gap-1">
+              {posts.map((post) => (
+                <div key={post.id} className="relative aspect-square">
+                  <img 
+                    src={post.image} 
+                    alt={`Post ${post.id}`} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+    } else if (activeTab === 'live') {
+      return (
+        <div className="flex items-center justify-center h-60 text-gray-500">
+          <p>No live videos yet</p>
+        </div>
+      )
+    } else if (activeTab === 'saved') {
+      return (
+        <div className="flex items-center justify-center h-60 text-gray-500">
+          <p>No saved posts yet</p>
+        </div>
+      )
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -113,6 +265,13 @@ export default function ProfilePage() {
               )}
             </div>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={openWalletModal}
+                className="text-gray-400 hover:text-white transition-colors relative"
+              >
+                <WalletIcon className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
+              </button>
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="text-gray-400 hover:text-white transition-colors"
@@ -224,86 +383,135 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Wallet Section */}
-        <div className="mt-8">
-          <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/coin-pattern.svg')] mix-blend-overlay opacity-10"></div>
-            <div className="px-6 py-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <WalletIcon className="h-6 w-6 text-white mr-2" />
-                  <h3 className="text-xl font-semibold text-white">Wallet</h3>
+        {/* Content Tabs with View Options */}
+        <div className="mt-8 border-b border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('posts')}
+                className={`py-3 border-b-2 font-medium ${
+                  activeTab === 'posts'
+                    ? 'border-purple-500 text-purple-500'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                <div className="flex flex-col items-center">
+                  <PhotoIcon className="h-6 w-6" />
+                  <span className="text-xs mt-1">Photos</span>
                 </div>
-                <button 
-                  onClick={() => setShowWalletDetails(!showWalletDetails)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  <ChevronRightIcon className={`w-5 h-5 transform transition-transform ${showWalletDetails ? 'rotate-90' : ''}`} />
-                </button>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-white/10 rounded-lg px-4 py-3 backdrop-blur-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <CurrencyDollarIconSolid className="h-5 w-5 text-green-400 mr-2" />
-                      <span className="text-gray-200 text-sm">Balance</span>
-                    </div>
-                    <span className="text-white font-bold">${user.wallet.balance.toLocaleString()}</span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between">
-                    <div className="flex items-center text-xs text-green-400">
-                      <ArrowTrendingUpIcon className="h-3 w-3 mr-1" />
-                      <span>+5.7%</span>
-                    </div>
-                    <button className="text-xs text-blue-300 hover:text-blue-200 font-medium">
-                      Top Up
-                    </button>
-                  </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('live')}
+                className={`py-3 border-b-2 font-medium ${
+                  activeTab === 'live'
+                    ? 'border-purple-500 text-purple-500'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                <div className="flex flex-col items-center">
+                  <VideoCameraIcon className="h-6 w-6" />
+                  <span className="text-xs mt-1">Live</span>
                 </div>
-                
-                <div className="bg-white/10 rounded-lg px-4 py-3 backdrop-blur-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <span className="w-5 h-5 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs flex items-center justify-center font-bold mr-2">S</span>
-                      <span className="text-gray-200 text-sm">SLUT Coins</span>
-                    </div>
-                    <span className="text-white font-bold">{user.wallet.coins.toLocaleString()}</span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between">
-                    <div className="flex items-center text-xs text-purple-300">
-                      <span>{user.wallet.nfts} NFTs</span>
-                    </div>
-                    <button className="text-xs text-blue-300 hover:text-blue-200 font-medium">
-                      Buy
-                    </button>
-                  </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('saved')}
+                className={`py-3 border-b-2 font-medium ${
+                  activeTab === 'saved'
+                    ? 'border-purple-500 text-purple-500'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                <div className="flex flex-col items-center">
+                  <BookmarkIcon className="h-6 w-6" />
+                  <span className="text-xs mt-1">Saved</span>
                 </div>
-              </div>
-              
-              <div className="flex justify-center space-x-2">
-                <button className="flex-1 flex items-center justify-center py-2 bg-white/20 hover:bg-white/30 transition-colors rounded-lg text-white text-sm font-medium">
-                  <PlusIcon className="h-4 w-4 mr-1" />
-                  <span>Add Funds</span>
-                </button>
-                <button className="flex-1 flex items-center justify-center py-2 bg-white/20 hover:bg-white/30 transition-colors rounded-lg text-white text-sm font-medium">
-                  <ShareIcon className="h-4 w-4 mr-1" />
-                  <span>Send</span>
-                </button>
-                <Link href="/wallet" className="flex-1 flex items-center justify-center py-2 bg-purple-500/50 hover:bg-purple-500/70 transition-colors rounded-lg text-white text-sm font-medium">
-                  <WalletIcon className="h-4 w-4 mr-1" />
-                  <span>Wallet</span>
-                </Link>
-              </div>
+              </button>
             </div>
             
-            {/* Expandable Transaction History */}
-            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showWalletDetails ? 'max-h-64' : 'max-h-0'}`}>
-              <div className="px-6 py-3 bg-gray-800/60 backdrop-blur-sm">
-                <h4 className="text-sm font-medium text-gray-300 mb-3">Recent Transactions</h4>
-                <div className="space-y-2">
+            {activeTab === 'posts' && (
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 rounded-md ${viewMode === 'grid' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+                >
+                  <Squares2X2Icon className="h-5 w-5" />
+                </button>
+                <button 
+                  onClick={() => {
+                    setViewMode('albums');
+                    setSelectedAlbum(null);
+                  }}
+                  className={`p-1.5 rounded-md ${viewMode === 'albums' ? 'bg-gray-700 text-white' : 'text-gray-400'}`}
+                >
+                  <RectangleStackIcon className="h-5 w-5" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Dynamic Content based on tab and view mode */}
+        {renderContentByTab()}
+      </div>
+
+      {/* Wallet Modal */}
+      {isWalletModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl w-full max-w-md relative">
+            <button 
+              onClick={closeWalletModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="p-6">
+              <div className="flex items-center mb-6">
+                <WalletIcon className="h-6 w-6 text-purple-500 mr-2" />
+                <h3 className="text-xl font-semibold text-white">Your Wallet</h3>
+              </div>
+              
+              <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-5 mb-6 overflow-hidden">
+                <div className="absolute inset-0 bg-[url('/coin-pattern.svg')] mix-blend-overlay opacity-10"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="text-sm text-gray-200">Available Balance</div>
+                    <div className="bg-white/20 px-2 py-1 rounded-full text-xs text-white">
+                      <span className="text-green-300">+5.7%</span>
+                    </div>
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-3">${user.wallet.balance.toLocaleString()}</div>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="text-sm text-gray-200">SLUT Coins</div>
+                      <div className="text-white font-semibold">{user.wallet.coins.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-200">NFTs</div>
+                      <div className="text-white font-semibold">{user.wallet.nfts}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <button className="bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg flex items-center justify-center font-medium">
+                  <PlusIcon className="h-5 w-5 mr-1" />
+                  Add Funds
+                </button>
+                <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg flex items-center justify-center font-medium">
+                  <ShareIcon className="h-5 w-5 mr-1" />
+                  Send
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-gray-300">Recent Transactions</h4>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
                   {user.wallet.transactions.map(transaction => (
-                    <div key={transaction.id} className="flex items-center justify-between bg-white/5 rounded-lg p-2">
+                    <div key={transaction.id} className="flex items-center justify-between bg-gray-750 rounded-lg p-3">
                       <div className="flex items-center">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
                           transaction.amount > 0 ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'
@@ -323,80 +531,19 @@ export default function ProfilePage() {
                         <p className={`font-medium ${transaction.amount > 0 ? 'text-green-400' : 'text-blue-400'}`}>
                           {transaction.amount > 0 ? `+$${transaction.amount}` : `-$${Math.abs(transaction.amount)}`}
                         </p>
-                        <p className="text-xs text-gray-400 capitalize">{transaction.status}</p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-3 text-center">
-                  <Link href="/wallet" className="text-blue-400 text-sm hover:underline">
-                    View All Transactions
-                  </Link>
-                </div>
+                
+                <Link href="/wallet" className="block text-center text-blue-400 hover:underline mt-4">
+                  View All Transactions
+                </Link>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Content Tabs */}
-        <div className="mt-12 border-b border-gray-700">
-          <div className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab('posts')}
-              className={`py-4 px-1 border-b-2 font-medium ${
-                activeTab === 'posts'
-                  ? 'border-purple-500 text-purple-500'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              <PhotoIcon className="h-6 w-6 mx-auto" />
-            </button>
-            <button
-              onClick={() => setActiveTab('live')}
-              className={`py-4 px-1 border-b-2 font-medium ${
-                activeTab === 'live'
-                  ? 'border-purple-500 text-purple-500'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              <VideoCameraIcon className="h-6 w-6 mx-auto" />
-            </button>
-            <button
-              onClick={() => setActiveTab('saved')}
-              className={`py-4 px-1 border-b-2 font-medium ${
-                activeTab === 'saved'
-                  ? 'border-purple-500 text-purple-500'
-                  : 'border-transparent text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              <BookmarkIcon className="h-6 w-6 mx-auto" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content Grid */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {posts.map((post) => (
-            <div key={post.id} className="relative group">
-              <img
-                src={post.image}
-                alt="Post"
-                className="w-full aspect-square object-cover rounded-lg"
-              />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <HeartIcon className="h-6 w-6 text-white" />
-                  <span className="text-white">{post.likes}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <ChatBubbleLeftIcon className="h-6 w-6 text-white" />
-                  <span className="text-white">{post.comments}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   )
 } 
