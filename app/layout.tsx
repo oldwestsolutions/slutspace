@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SlutTube - Video Sharing Platform',
+  title: 'SlutSpace - Video Sharing Platform',
   description: 'A YouTube-style video sharing platform',
 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import AppLayout from './components/AppLayout'
 
 export default function Home() {
@@ -77,6 +78,78 @@ export default function Home() {
       posted: '2 weeks ago',
       thumbnail: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       channelIcon: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 9,
+      title: 'Modern Web Design Principles: From Sketch to Launch',
+      channel: 'DesignMaster',
+      views: '276K views',
+      posted: '4 days ago',
+      thumbnail: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 10,
+      title: 'The Complete Python Programming Course 2023',
+      channel: 'PythonMaster',
+      views: '654K views',
+      posted: '1 week ago',
+      thumbnail: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 11,
+      title: 'Data Science Fundamentals: Machine Learning Basics',
+      channel: 'DataWizard',
+      views: '321K views',
+      posted: '5 days ago',
+      thumbnail: 'https://images.unsplash.com/photo-1456428746267-a1756408f782?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 12,
+      title: 'Mobile App Development with React Native',
+      channel: 'AppDevPro',
+      views: '189K views',
+      posted: '6 days ago',
+      thumbnail: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 13,
+      title: 'Mastering CSS Grid and Flexbox',
+      channel: 'CSSNinja',
+      views: '234K views',
+      posted: '2 weeks ago',
+      thumbnail: 'https://images.unsplash.com/photo-1523437113738-bbd3cc89fb19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 14,
+      title: 'Advanced JavaScript: Deep Dive into Modern JS',
+      channel: 'JSMaster',
+      views: '432K views',
+      posted: '1 month ago',
+      thumbnail: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 15,
+      title: 'Cloud Computing: AWS vs Azure vs Google Cloud',
+      channel: 'CloudGuru',
+      views: '376K views',
+      posted: '3 weeks ago',
+      thumbnail: 'https://images.unsplash.com/photo-1511376777868-611b54f68947?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
+    },
+    {
+      id: 16,
+      title: 'GraphQL vs REST API: Which One is Better?',
+      channel: 'APIExpert',
+      views: '210K views',
+      posted: '4 weeks ago',
+      thumbnail: 'https://images.unsplash.com/photo-1489875347897-49f64b51c1f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      channelIcon: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
     }
   ];
 
@@ -89,32 +162,34 @@ export default function Home() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {videos.map((video) => (
-            <div key={video.id} className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-              <div className="relative">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title} 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
-                  12:34
-                </div>
-              </div>
-              <div className="p-3 flex">
-                <div className="flex-shrink-0 mr-3">
+            <Link href={`/video/${video.id}`} key={video.id} className="block">
+              <div className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer hover:bg-gray-750">
+                <div className="relative">
                   <img 
-                    src={video.channelIcon} 
-                    alt={video.channel} 
-                    className="w-9 h-9 rounded-full"
+                    src={video.thumbnail} 
+                    alt={video.title} 
+                    className="w-full h-48 object-cover"
                   />
+                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
+                    12:34
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-white font-medium line-clamp-2 text-sm">{video.title}</h3>
-                  <p className="text-gray-400 text-xs mt-1">{video.channel}</p>
-                  <p className="text-gray-400 text-xs">{video.views} • {video.posted}</p>
+                <div className="p-3 flex">
+                  <div className="flex-shrink-0 mr-3">
+                    <img 
+                      src={video.channelIcon} 
+                      alt={video.channel} 
+                      className="w-9 h-9 rounded-full"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-medium line-clamp-2 text-sm">{video.title}</h3>
+                    <p className="text-gray-400 text-xs mt-1">{video.channel}</p>
+                    <p className="text-gray-400 text-xs">{video.views} • {video.posted}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
