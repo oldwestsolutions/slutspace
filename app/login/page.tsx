@@ -25,7 +25,7 @@ export default function LoginPage() {
       if (email && password) {
         // Store auth state (in a real app, you'd use a proper auth solution)
         localStorage.setItem('isAuthenticated', 'true')
-        router.push('/dashboard')
+        router.push('/')
       } else {
         setError('Please enter both email and password')
       }
@@ -40,8 +40,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-instagram-yellow via-instagram-pink to-instagram-purple bg-clip-text text-transparent">
-            Welcome Back
+          <h1 className="text-3xl font-bold text-red-500">
+            SlutTube
           </h1>
           <p className="mt-2 text-gray-400">Sign in to your account</p>
         </div>
@@ -67,7 +67,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-instagram-blue focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   placeholder="Email"
                 />
               </div>
@@ -86,7 +86,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-instagram-blue focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   placeholder="Password"
                 />
               </div>
@@ -99,7 +99,7 @@ export default function LoginPage() {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 bg-gray-800 border-gray-700 rounded text-instagram-blue focus:ring-instagram-blue"
+                className="h-4 w-4 bg-gray-800 border-gray-700 rounded text-red-500 focus:ring-red-500"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
                 Remember me
@@ -107,7 +107,7 @@ export default function LoginPage() {
             </div>
 
             <div className="text-sm">
-              <a href="#" className="text-instagram-blue hover:text-blue-400">
+              <a href="#" className="text-red-500 hover:text-red-400">
                 Forgot password?
               </a>
             </div>
@@ -117,7 +117,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-instagram-blue hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-instagram-blue transition-colors ${
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors ${
                 isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -129,7 +129,7 @@ export default function LoginPage() {
         <div className="text-center">
           <p className="text-sm text-gray-400">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-instagram-blue hover:text-blue-400">
+            <Link href="/signup" className="text-red-500 hover:text-red-400">
               Sign up
             </Link>
           </p>

@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Invitation - Share Your Moments',
-  description: 'A modern social media platform for sharing your moments with the world',
+  title: 'SlutTube - Video Sharing Platform',
+  description: 'A YouTube-style video sharing platform',
 }
 
 export default function RootLayout({
@@ -16,10 +16,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <main className="min-h-screen">
-          {children}
-        </main>
+      <body className={`${inter.className} bg-gray-900 text-white`}>
+        {children}
       </body>
     </html>
   )

@@ -1,0 +1,39 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="coin" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="white" stroke-width="1.5" opacity="0.2"/>
+      <path d="M20 10 V30 M13 16 L27 16 M13 24 L27 24" stroke="white" stroke-width="1.5" opacity="0.2"/>
+    </symbol>
+  </defs>
+  
+  <!-- Pattern of coins -->
+  <use href="#coin" x="0" y="0" width="40" height="40" />
+  <use href="#coin" x="40" y="0" width="40" height="40" />
+  <use href="#coin" x="80" y="0" width="40" height="40" />
+  <use href="#coin" x="120" y="0" width="40" height="40" />
+  <use href="#coin" x="160" y="0" width="40" height="40" />
+  
+  <use href="#coin" x="20" y="40" width="40" height="40" />
+  <use href="#coin" x="60" y="40" width="40" height="40" />
+  <use href="#coin" x="100" y="40" width="40" height="40" />
+  <use href="#coin" x="140" y="40" width="40" height="40" />
+  <use href="#coin" x="180" y="40" width="40" height="40" />
+  
+  <use href="#coin" x="0" y="80" width="40" height="40" />
+  <use href="#coin" x="40" y="80" width="40" height="40" />
+  <use href="#coin" x="80" y="80" width="40" height="40" />
+  <use href="#coin" x="120" y="80" width="40" height="40" />
+  <use href="#coin" x="160" y="80" width="40" height="40" />
+  
+  <use href="#coin" x="20" y="120" width="40" height="40" />
+  <use href="#coin" x="60" y="120" width="40" height="40" />
+  <use href="#coin" x="100" y="120" width="40" height="40" />
+  <use href="#coin" x="140" y="120" width="40" height="40" />
+  <use href="#coin" x="180" y="120" width="40" height="40" />
+  
+  <use href="#coin" x="0" y="160" width="40" height="40" />
+  <use href="#coin" x="40" y="160" width="40" height="40" />
+  <use href="#coin" x="80" y="160" width="40" height="40" />
+  <use href="#coin" x="120" y="160" width="40" height="40" />
+  <use href="#coin" x="160" y="160" width="40" height="40" />
+</svg> 
