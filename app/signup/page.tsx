@@ -72,7 +72,7 @@ export default function SignupPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutTube</h1>
+          <h1 className="text-4xl font-bold text-red-500 mb-2">slutspace</h1>
           <p className="text-gray-400">Create your account to get started.</p>
         </div>
 
@@ -169,6 +169,18 @@ export default function SignupPage() {
               {confirmPassword && password !== confirmPassword && (
                 <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
               )}
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="ageVerification"
+                type="checkbox"
+                className="h-4 w-4 text-red-500 focus:ring-red-500 border-gray-600 rounded bg-gray-700"
+                required
+              />
+              <label htmlFor="ageVerification" className="ml-2 block text-sm text-gray-400">
+                I confirm that I am at least 18 years old
+              </label>
             </div>
 
             <div className="flex items-center">

@@ -213,13 +213,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                   <div className="border-t border-gray-700 mt-1 pt-1">
                     <Link 
-                      href="/login" 
+                      href="/signup" 
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
                       <div className="flex items-center">
                         <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
-                        <span>Sign out</span>
+                        <span>Sign up</span>
                       </div>
                     </Link>
                   </div>
@@ -326,9 +326,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <CogIcon className="h-6 w-6 mr-3" />
                   <span>Settings</span>
                 </Link>
-                <Link href="/login" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                <Link href="/signup" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <ArrowRightOnRectangleIcon className="h-6 w-6 mr-3" />
-                  <span>Sign out</span>
+                  <span>Sign up</span>
                 </Link>
               </div>
             </div>
