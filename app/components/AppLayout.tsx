@@ -204,10 +204,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
       `}>
         <div className={`
-          h-full max-w-sm w-full bg-gray-800 transition-transform duration-300 ease-in-out transform
+          h-full w-full max-w-sm bg-gray-800 flex flex-col transition-transform duration-300 ease-in-out transform
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
-          <div className="flex justify-between items-center h-14 px-4 bg-gray-800 border-b border-gray-700">
+          {/* Header fixed at top */}
+          <div className="flex justify-between items-center h-14 px-4 bg-gray-800 border-b border-gray-700 flex-shrink-0">
             <Link href="/" className="text-xl font-bold text-red-500">
               slutspace
             </Link>
@@ -220,23 +221,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </button>
           </div>
 
-          {/* Mobile search only */}
-          <div className="px-4 py-4 border-b border-gray-700 bg-gray-750">
-            <div className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full bg-gray-700 border border-gray-600 rounded-full pl-4 pr-10 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button className="absolute right-2 top-2" aria-label="Search">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-              </button>
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-y-auto pb-20 flex flex-col">
+            {/* Mobile search - now part of the scrollable area */}
+            <div className="px-4 py-4 border-b border-gray-700 bg-gray-750">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-full pl-4 pr-10 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button className="absolute right-2 top-2" aria-label="Search">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="overflow-y-auto h-full pb-20">
             {/* Navigation */}
-            <nav className="pt-4 px-2">
+            <nav className="pt-4 px-2 flex-shrink-0">
               <div className="space-y-1">
                 <Link href="/" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <HomeIcon className="h-6 w-6 mr-3" />
@@ -277,8 +279,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </nav>
 
-            {/* Account Section - Simplified */}
-            <div className="px-2 py-4 mt-4 border-t border-gray-700">
+            {/* Account Section - now at the bottom of scrollable area */}
+            <div className="px-2 py-4 mt-auto border-t border-gray-700">
               <h3 className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                 Account
               </h3>

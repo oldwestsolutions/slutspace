@@ -14,8 +14,15 @@ import {
   ShareIcon,
   EllipsisHorizontalIcon,
   PencilIcon,
-  CameraIcon
+  CameraIcon,
+  WalletIcon,
+  CurrencyDollarIcon,
+  ArrowTrendingUpIcon,
+  ChevronRightIcon,
+  PlusIcon
 } from '@heroicons/react/24/outline'
+import { CurrencyDollarIcon as CurrencyDollarIconSolid } from '@heroicons/react/24/solid'
+import Link from 'next/link'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -24,6 +31,7 @@ export default function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [showWalletDetails, setShowWalletDetails] = useState(false)
   const [user, setUser] = useState({
     username: 'johndoe',
     name: 'John Doe',
@@ -31,7 +39,17 @@ export default function ProfilePage() {
     followers: '12.5K',
     following: '856',
     posts: '234',
-    isVerified: true
+    isVerified: true,
+    wallet: {
+      balance: 2580.75,
+      coins: 15000,
+      nfts: 6,
+      transactions: [
+        { id: 1, type: 'deposit', amount: 100, date: '2023-08-15', status: 'completed' },
+        { id: 2, type: 'tip', amount: -25, date: '2023-08-14', status: 'completed' },
+        { id: 3, type: 'purchase', amount: -50, date: '2023-08-10', status: 'completed' }
+      ]
+    }
   })
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,6 +219,120 @@ export default function ProfilePage() {
               <div className="text-center">
                 <p className="font-semibold">{user.following}</p>
                 <p className="text-sm text-gray-400">Following</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Wallet Section */}
+        <div className="mt-8">
+          <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl overflow-hidden">
+            <div className="absolute inset-0 bg-[url('/coin-pattern.svg')] mix-blend-overlay opacity-10"></div>
+            <div className="px-6 py-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <WalletIcon className="h-6 w-6 text-white mr-2" />
+                  <h3 className="text-xl font-semibold text-white">Wallet</h3>
+                </div>
+                <button 
+                  onClick={() => setShowWalletDetails(!showWalletDetails)}
+                  className="text-white hover:text-gray-200 transition-colors"
+                >
+                  <ChevronRightIcon className={`w-5 h-5 transform transition-transform ${showWalletDetails ? 'rotate-90' : ''}`} />
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-white/10 rounded-lg px-4 py-3 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <CurrencyDollarIconSolid className="h-5 w-5 text-green-400 mr-2" />
+                      <span className="text-gray-200 text-sm">Balance</span>
+                    </div>
+                    <span className="text-white font-bold">${user.wallet.balance.toLocaleString()}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <div className="flex items-center text-xs text-green-400">
+                      <ArrowTrendingUpIcon className="h-3 w-3 mr-1" />
+                      <span>+5.7%</span>
+                    </div>
+                    <button className="text-xs text-blue-300 hover:text-blue-200 font-medium">
+                      Top Up
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="bg-white/10 rounded-lg px-4 py-3 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="w-5 h-5 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs flex items-center justify-center font-bold mr-2">S</span>
+                      <span className="text-gray-200 text-sm">SLUT Coins</span>
+                    </div>
+                    <span className="text-white font-bold">{user.wallet.coins.toLocaleString()}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <div className="flex items-center text-xs text-purple-300">
+                      <span>{user.wallet.nfts} NFTs</span>
+                    </div>
+                    <button className="text-xs text-blue-300 hover:text-blue-200 font-medium">
+                      Buy
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-center space-x-2">
+                <button className="flex-1 flex items-center justify-center py-2 bg-white/20 hover:bg-white/30 transition-colors rounded-lg text-white text-sm font-medium">
+                  <PlusIcon className="h-4 w-4 mr-1" />
+                  <span>Add Funds</span>
+                </button>
+                <button className="flex-1 flex items-center justify-center py-2 bg-white/20 hover:bg-white/30 transition-colors rounded-lg text-white text-sm font-medium">
+                  <ShareIcon className="h-4 w-4 mr-1" />
+                  <span>Send</span>
+                </button>
+                <Link href="/wallet" className="flex-1 flex items-center justify-center py-2 bg-purple-500/50 hover:bg-purple-500/70 transition-colors rounded-lg text-white text-sm font-medium">
+                  <WalletIcon className="h-4 w-4 mr-1" />
+                  <span>Wallet</span>
+                </Link>
+              </div>
+            </div>
+            
+            {/* Expandable Transaction History */}
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showWalletDetails ? 'max-h-64' : 'max-h-0'}`}>
+              <div className="px-6 py-3 bg-gray-800/60 backdrop-blur-sm">
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Recent Transactions</h4>
+                <div className="space-y-2">
+                  {user.wallet.transactions.map(transaction => (
+                    <div key={transaction.id} className="flex items-center justify-between bg-white/5 rounded-lg p-2">
+                      <div className="flex items-center">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                          transaction.amount > 0 ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'
+                        }`}>
+                          {transaction.amount > 0 ? (
+                            <PlusIcon className="h-4 w-4" />
+                          ) : (
+                            <CurrencyDollarIcon className="h-4 w-4" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-white text-sm capitalize">{transaction.type}</p>
+                          <p className="text-gray-400 text-xs">{transaction.date}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-medium ${transaction.amount > 0 ? 'text-green-400' : 'text-blue-400'}`}>
+                          {transaction.amount > 0 ? `+$${transaction.amount}` : `-$${Math.abs(transaction.amount)}`}
+                        </p>
+                        <p className="text-xs text-gray-400 capitalize">{transaction.status}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 text-center">
+                  <Link href="/wallet" className="text-blue-400 text-sm hover:underline">
+                    View All Transactions
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
