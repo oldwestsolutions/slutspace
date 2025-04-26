@@ -220,20 +220,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </button>
           </div>
 
-          {/* Mobile menu profile section */}
+          {/* Mobile search only */}
           <div className="px-4 py-4 border-b border-gray-700 bg-gray-750">
-            <div className="flex items-center mb-4">
-              <div className="h-12 w-12 rounded-full bg-gray-600 overflow-hidden mr-3">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Profile" className="h-full w-full object-cover" />
-              </div>
-              <div>
-                <h3 className="text-white font-semibold">John Doe</h3>
-                <p className="text-gray-400 text-sm">john.doe@example.com</p>
-              </div>
-            </div>
-
-            {/* Mobile search */}
-            <div className="relative w-full mb-4">
+            <div className="relative w-full">
               <input
                 type="text"
                 placeholder="Search"
@@ -242,19 +231,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <button className="absolute right-2 top-2" aria-label="Search">
                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
               </button>
-            </div>
-
-            {/* Mobile notifications */}
-            <div className="flex space-x-2 mb-2">
-              <Link href="/notifications" className="flex-1 flex items-center justify-center py-2 bg-gray-700 rounded-lg text-white hover:bg-gray-650 transition-colors">
-                <BellIcon className="h-5 w-5 mr-2" />
-                <span>Notifications</span>
-                <span className="ml-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">3</span>
-              </Link>
-              <Link href="/bookmarks" className="flex-1 flex items-center justify-center py-2 bg-gray-700 rounded-lg text-white hover:bg-gray-650 transition-colors">
-                <BookmarkIcon className="h-5 w-5 mr-2" />
-                <span>Saved</span>
-              </Link>
             </div>
           </div>
 
@@ -301,99 +277,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </div>
             </nav>
 
-            {/* Account & Wallet Section */}
-            <div className="px-2 py-4 mt-2">
-              <h3 className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider">
+            {/* Account Section - Simplified */}
+            <div className="px-2 py-4 mt-4 border-t border-gray-700">
+              <h3 className="px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                 Account
               </h3>
 
-              {/* Wallet section in mobile menu */}
-              <div className="mt-2 px-4">
-                <div className="bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg overflow-hidden">
-                  <div className="p-4 relative">
-                    <div className="absolute inset-0 bg-[url('/coin-pattern.svg')] opacity-20"></div>
-                    <div className="relative">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center">
-                          <WalletIcon className="h-5 w-5 text-white mr-2" />
-                          <span className="text-white font-medium">Wallet</span>
-                        </div>
-                        <button 
-                          onClick={() => setIsWalletExpanded(!isWalletExpanded)} 
-                          className="text-white p-1 rounded-full hover:bg-white/10"
-                          aria-label={isWalletExpanded ? "Collapse wallet" : "Expand wallet"}
-                        >
-                          <ChevronRightIcon className={`h-4 w-4 transition-transform ${isWalletExpanded ? 'rotate-90' : ''}`} />
-                        </button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <CurrencyDollarIcon className="h-6 w-6 text-white mr-1" />
-                          <span className="text-white font-bold text-xl">$2,580.75</span>
-                        </div>
-                        <div className="bg-white/20 px-2 py-1 rounded-full flex items-center text-xs text-white font-medium">
-                          <span>3,240 SLUT</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Expandable wallet content */}
-                  <div className={`overflow-hidden transition-all duration-300 ${isWalletExpanded ? 'max-h-96' : 'max-h-0'}`}>
-                    <div className="p-4 pt-0 bg-gray-800/40">
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <button className="bg-green-500/20 text-green-400 rounded-lg py-2 flex items-center justify-center text-sm font-medium">
-                          <PlusCircleIcon className="h-4 w-4 mr-1" />
-                          <span>Deposit</span>
-                        </button>
-                        <button className="bg-blue-500/20 text-blue-400 rounded-lg py-2 flex items-center justify-center text-sm font-medium">
-                          <WalletIcon className="h-4 w-4 mr-1" />
-                          <span>Withdraw</span>
-                        </button>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="bg-white/10 rounded-lg p-2">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mr-2">
-                                <PlusCircleIcon className="h-4 w-4" />
-                              </div>
-                              <div>
-                                <p className="text-white text-sm">Deposit</p>
-                                <p className="text-gray-400 text-xs">2023-06-15</p>
-                              </div>
-                            </div>
-                            <p className="text-green-400 font-medium">+$100.00</p>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-white/10 rounded-lg p-2">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center mr-2">
-                                <WalletIcon className="h-4 w-4" />
-                              </div>
-                              <div>
-                                <p className="text-white text-sm">Tip</p>
-                                <p className="text-gray-400 text-xs">2023-06-14</p>
-                              </div>
-                            </div>
-                            <p className="text-blue-400 font-medium">-$25.00</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <Link href="/wallet" className="mt-3 block text-center text-blue-400 text-sm py-2 hover:underline">
-                        View All Transactions
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-1">
+              <div className="space-y-1">
                 <Link href="/profile" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <UserCircleIcon className="h-6 w-6 mr-3" />
                   <span>Profile</span>
