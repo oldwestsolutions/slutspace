@@ -189,7 +189,7 @@ export default function TrendingPage() {
         <div className="space-y-6">
           {filteredVideos.map((video) => (
             <div key={video.id} className="flex flex-col md:flex-row bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition-colors">
-              <div className="relative md:w-96">
+              <Link href={`/video/${video.id}`} className="relative md:w-96">
                 <img 
                   src={video.thumbnail} 
                   alt={video.title} 
@@ -202,17 +202,23 @@ export default function TrendingPage() {
                   <FireIcon className="h-3 w-3 mr-1" />
                   <span>#{video.trending}</span>
                 </div>
-              </div>
+              </Link>
               <div className="p-4 flex-1">
-                <h3 className="text-white font-medium text-lg mb-2">{video.title}</h3>
+                <Link href={`/video/${video.id}`}>
+                  <h3 className="text-white font-medium text-lg mb-2 hover:text-blue-400 transition-colors">{video.title}</h3>
+                </Link>
                 <div className="flex items-center mb-4">
-                  <img 
-                    src={video.channelIcon} 
-                    alt={video.channel} 
-                    className="w-8 h-8 rounded-full mr-2"
-                  />
+                  <Link href={`/profile/${video.channel}`} className="mr-2">
+                    <img 
+                      src={video.channelIcon} 
+                      alt={video.channel} 
+                      className="w-8 h-8 rounded-full hover:ring-2 hover:ring-blue-500 transition-all"
+                    />
+                  </Link>
                   <div>
-                    <p className="text-gray-300 text-sm">{video.channel}</p>
+                    <Link href={`/profile/${video.channel}`} className="hover:text-blue-400 transition-colors">
+                      <p className="text-gray-300 text-sm">{video.channel}</p>
+                    </Link>
                     <p className="text-gray-400 text-xs">{video.views} • {video.posted}</p>
                   </div>
                 </div>

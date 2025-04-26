@@ -459,22 +459,28 @@ export default function ModelsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentModels.map((model) => (
             <div key={model.id} className="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition duration-300">
-              <div className="h-48 overflow-hidden">
-                <img 
-                  src={model.image} 
-                  alt={model.name} 
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                />
-              </div>
+              <Link href={`/models/${model.id}`}>
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={model.image} 
+                    alt={model.name} 
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                </div>
+              </Link>
               <div className="p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-white font-medium text-lg">{model.name}</h3>
+                  <Link href={`/models/${model.id}`}>
+                    <h3 className="text-white font-medium text-lg hover:text-blue-400 transition-colors">{model.name}</h3>
+                  </Link>
                   <div className="flex items-center bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded">
                     <span>★</span>
                     <span className="ml-1">{model.rating}</span>
                   </div>
                 </div>
-                <p className="text-gray-400 text-sm mb-2">by {model.creator}</p>
+                <Link href={`/profile/${model.creator}`} className="block hover:text-blue-400 transition-colors">
+                  <p className="text-gray-400 text-sm mb-2">by {model.creator}</p>
+                </Link>
                 <p className="text-gray-300 text-sm mb-4 line-clamp-2">{model.description}</p>
                 
                 <div className="flex flex-wrap gap-2 mb-4">

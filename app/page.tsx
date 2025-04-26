@@ -178,8 +178,8 @@ export default function Home() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {videos.map((video) => (
-            <Link href={`/video/${video.id}`} key={video.id}>
-              <div className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer hover:bg-gray-750">
+            <div key={video.id} className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer hover:bg-gray-750">
+              <Link href={`/video/${video.id}`}>
                 <div className="relative">
                   <img 
                     src={video.thumbnail} 
@@ -190,22 +190,28 @@ export default function Home() {
                     {video.duration}
                   </div>
                 </div>
-                <div className="p-3 flex">
-                  <div className="flex-shrink-0 mr-3">
+              </Link>
+              <div className="p-3 flex">
+                <div className="flex-shrink-0 mr-3">
+                  <Link href={`/profile/${video.channel}`} onClick={(e) => e.stopPropagation()}>
                     <img 
                       src={video.channelIcon} 
                       alt={video.channel} 
-                      className="w-9 h-9 rounded-full"
+                      className="w-9 h-9 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
                     />
-                  </div>
-                  <div>
+                  </Link>
+                </div>
+                <div>
+                  <Link href={`/video/${video.id}`}>
                     <h3 className="text-white font-medium line-clamp-2 text-sm">{video.title}</h3>
+                  </Link>
+                  <Link href={`/profile/${video.channel}`} className="hover:text-blue-400 transition-colors">
                     <p className="text-gray-400 text-xs mt-1">{video.channel}</p>
-                    <p className="text-gray-400 text-xs">{video.views} • {video.posted}</p>
-                  </div>
+                  </Link>
+                  <p className="text-gray-400 text-xs">{video.views} • {video.posted}</p>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

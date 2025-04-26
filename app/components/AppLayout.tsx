@@ -31,6 +31,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isWalletExpanded, setIsWalletExpanded] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   // Close dropdown when clicking outside
@@ -47,6 +49,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     };
   }, []);
   
+  // Handle header visibility on scroll
+  useEffect(() => {
+    const controlHeader = () => {
+      if (window.innerWidth < 768) { // only apply for mobile view
+        if (window.scrollY > lastScrollY && window.scrollY > 50) {
+          // Scrolling down - hide header
+          setShowHeader(false);
+        } else {
+          // Scrolling up - show header
+          setShowHeader(true);
+        }
+        setLastScrollY(window.scrollY);
+      } else {
+        // Always show header on desktop
+        setShowHeader(true);
+      }
+    };
+
+    window.addEventListener('scroll', controlHeader);
+    
+    // Clean up 
+    return () => {
+      window.removeEventListener('scroll', controlHeader);
+    };
+  }, [lastScrollY]);
+  
   // Handle body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -62,7 +90,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Header */}
-      <header className="bg-gray-800 sticky top-0 z-50">
+      <header 
+        className={`bg-gray-800 sticky top-0 z-50 transition-transform duration-300 ${
+          showHeader ? 'transform-none' : '-translate-y-full'
+        }`}
+      >
         <div className="flex justify-between items-center h-14 px-4">
           {/* Left section - Logo */}
           <div className="flex items-center">
