@@ -1,71 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import { useAuth } from '../providers/AuthProvider'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
 export default function SignupPage() {
   const router = useRouter()
-  const { signUp } = useAuth()
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
+  const [countdown, setCountdown] = useState(5)
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  useEffect(() => {
+    if (isRedirecting) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            window.location.href = 'https://www.coinbase.com/signup'
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+      
+      return () => clearInterval(timer)
+    }
+  }, [isRedirecting])
+
+  const handleRedirectToCoinbase = () => {
+    setIsRedirecting(true)
   }
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    // Validate email
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address')
-      return
-    }
-
-    // Validate username
-    if (username.length < 3) {
-      setError('Username must be at least 3 characters')
-      return
-    }
-
-    // Validate password match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    // Validate password strength
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long')
-      return
-    }
-
-    setIsLoading(true)
-    setError('')
-
-    try {
-      const result = await signUp(email, password, username)
-      
-      if (result?.error) {
-        setError(result.error.message || 'Error creating account')
-      } else {
-        // Success - redirect to login or home
-        router.push('/login?registered=true')
-      }
-    } catch (err: any) {
-      setError(err?.message || 'An error occurred during registration')
-      console.error('Signup error:', err)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleCancelRedirect = () => {
+    setIsRedirecting(false)
+    setCountdown(5)
   }
 
   return (
@@ -77,146 +45,75 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-8">
-          <form onSubmit={handleSignup} className="space-y-6">
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg text-sm">
-                {error}
+          {isRedirecting ? (
+            <div className="text-center py-6">
+              <div className="bg-blue-500/20 rounded-full h-20 w-20 flex items-center justify-center mx-auto mb-6">
+                <svg className="h-10 w-10 text-blue-500" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="512" cy="512" r="512" fill="currentColor" fillOpacity="0.2"/>
+                  <path d="M516.3 188C334.6 188 188 334.6 188 516.3C188 698 334.6 844.6 516.3 844.6C698 844.6 844.6 698 844.6 516.3C844.6 334.6 698 188 516.3 188ZM516.3 735.5C394.9 735.5 297.1 637.7 297.1 516.3C297.1 394.9 394.9 297.1 516.3 297.1C637.7 297.1 735.5 394.9 735.5 516.3C735.5 637.7 637.7 735.5 516.3 735.5Z" fill="currentColor"/>
+                  <path d="M448.4 448.4H584.1C590.5 448.4 596.3 454.2 596.3 460.6V572C596.3 578.4 590.5 584.1 584.1 584.1H448.4C442 584.1 436.3 578.4 436.3 572V460.6C436.3 454.2 442 448.4 448.4 448.4Z" fill="currentColor"/>
+                </svg>
               </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                placeholder="Enter your email"
-                required
-              />
-              {email && !validateEmail(email) && (
-                <p className="text-red-500 text-xs mt-1">Please enter a valid email address</p>
-              )}
+              <h2 className="text-xl font-bold mb-4">Redirecting to Coinbase...</h2>
+              <p className="text-gray-400 mb-6">
+                You will be redirected to Coinbase in {countdown} seconds to create your account.
+              </p>
+              <button
+                onClick={handleCancelRedirect}
+                className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-6 rounded-lg font-medium"
+              >
+                Cancel
+              </button>
             </div>
-
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-1">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                placeholder="Choose a username"
-                required
-              />
-              {username && username.length < 3 && (
-                <p className="text-red-500 text-xs mt-1">Username must be at least 3 characters</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent pr-10"
-                  placeholder="Create a password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
+          ) : (
+            <>
+              <div className="text-center mb-6">
+                <p className="text-gray-300 mb-6">
+                  slutspace requires a Coinbase account for secure wallet integration and transactions.
+                </p>
+                <div className="flex justify-center mb-6">
+                  <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-4 max-w-xs">
+                    <p className="text-blue-400 text-sm">
+                      Your Coinbase account will be used to authenticate you and allow you to interact with blockchain content on slutspace.
+                    </p>
+                  </div>
+                </div>
               </div>
-              {password && password.length < 8 && (
-                <p className="text-red-500 text-xs mt-1">Password must be at least 8 characters long</p>
-              )}
-            </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent pr-10"
-                  placeholder="Confirm your password"
-                  required
-                />
+              <button
+                onClick={handleRedirectToCoinbase}
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
+              >
+                <span>Sign up with Coinbase</span>
+                <ArrowTopRightOnSquareIcon className="h-4 w-4 ml-2" />
+              </button>
+              
+              <div className="mt-6 space-y-4">
+                <div className="bg-gray-700/50 rounded-lg p-4">
+                  <h3 className="font-medium text-white mb-2">Why Coinbase?</h3>
+                  <ul className="text-sm text-gray-400 space-y-2">
+                    <li className="flex items-start">
+                      <span className="text-green-500 mr-2">✓</span>
+                      Secure wallet integration
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-green-500 mr-2">✓</span>
+                      Easy blockchain transactions
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-green-500 mr-2">✓</span>
+                      No need to remember additional passwords
+                    </li>
+                  </ul>
+                </div>
               </div>
-              {confirmPassword && password !== confirmPassword && (
-                <p className="text-red-500 text-xs mt-1">Passwords do not match</p>
-              )}
-            </div>
-
-            <div className="flex items-center">
-              <input
-                id="ageVerification"
-                type="checkbox"
-                className="h-4 w-4 text-red-500 focus:ring-red-500 border-gray-600 rounded bg-gray-700"
-                required
-              />
-              <label htmlFor="ageVerification" className="ml-2 block text-sm text-gray-400">
-                I confirm that I am at least 18 years old
-              </label>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                id="terms"
-                type="checkbox"
-                className="h-4 w-4 text-red-500 focus:ring-red-500 border-gray-600 rounded bg-gray-700"
-                required
-              />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-400">
-                I agree to the{' '}
-                <Link href="/terms" className="text-red-500 hover:text-red-400">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link href="/privacy" className="text-red-500 hover:text-red-400">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full bg-red-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              {isLoading ? 'Creating Account...' : 'Sign Up'}
-            </button>
-          </form>
+            </>
+          )}
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
-              Already have an account?{' '}
-              <Link href="/login" className="text-red-500 hover:text-red-400">
+              Already have a Coinbase account?{' '}
+              <Link href="/login" className="text-blue-500 hover:text-blue-400">
                 Login
               </Link>
             </p>

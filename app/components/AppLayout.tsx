@@ -172,43 +172,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                   <Link 
                     href="/wallet" 
-                    className="block px-4 py-3 text-sm hover:bg-gray-700 transition-all duration-300"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >
-                    <div className="relative bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg p-3 overflow-hidden group">
-                      <div className="absolute inset-0 bg-[url('/coin-pattern.svg')] opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center">
-                          <div className="relative">
-                            <WalletIcon className="h-5 w-5 text-white mr-2" />
-                            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
-                          </div>
-                          <span className="text-white font-medium">Wallet</span>
-                        </div>
-                        <div className="bg-white/20 px-2 py-1 rounded-full flex items-center text-xs text-white font-bold">
-                          <CurrencyDollarIcon className="h-3 w-3 mr-1" />
-                          <span>3,240</span>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 mb-2">
-                        <div className="bg-white/10 rounded p-1.5 text-center">
-                          <div className="text-xs text-blue-100 opacity-80">Balance</div>
-                          <div className="text-white text-sm font-bold">$2,580.75</div>
-                        </div>
-                        <div className="bg-white/10 rounded p-1.5 text-center">
-                          <div className="text-xs text-blue-100 opacity-80">SLUT Coins</div>
-                          <div className="text-white text-sm font-bold">15,000</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="text-blue-100">Access your tokens & NFTs</div>
-                        <div className="bg-green-500/20 px-1.5 py-0.5 rounded text-green-300 font-medium flex items-center">
-                          <svg className="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                          </svg>
-                          <span>+5.7%</span>
-                        </div>
-                      </div>
+                    <div className="flex items-center">
+                      <WalletIcon className="h-4 w-4 mr-2" />
+                      <span>Coinbase Wallet</span>
                     </div>
                   </Link>
                   <div className="border-t border-gray-700 mt-1 pt-1">

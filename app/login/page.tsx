@@ -35,6 +35,15 @@ export default function LoginPage() {
     }
   }
 
+  const handleCoinbaseLogin = () => {
+    setIsLoading(true)
+    // This will be replaced with actual Coinbase OAuth flow later
+    setTimeout(() => {
+      // Mock successful login
+      router.push('/')
+    }, 1500)
+  }
+
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
@@ -45,91 +54,72 @@ export default function LoginPage() {
           <p className="mt-2 text-gray-400">Sign in to your account</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && (
-            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">Email</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <UserCircleIcon className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  placeholder="Email"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <LockClosedIcon className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  placeholder="Password"
-                />
-              </div>
-            </div>
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm">
+            {error}
           </div>
+        )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 bg-gray-800 border-gray-700 rounded text-red-500 focus:ring-red-500"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="text-red-500 hover:text-red-400">
-                Forgot password?
-              </a>
-            </div>
-          </div>
-
+        <div className="mt-8 space-y-6">
+          {/* Coinbase Login Button */}
           <div>
             <button
-              type="submit"
+              onClick={handleCoinbaseLogin}
               disabled={isLoading}
-              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors ${
+              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
                 isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              <div className="flex items-center">
+                {/* Coinbase Logo */}
+                <svg className="h-5 w-5 mr-2" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="512" cy="512" r="512" fill="white"/>
+                  <path d="M516.3 188C334.6 188 188 334.6 188 516.3C188 698 334.6 844.6 516.3 844.6C698 844.6 844.6 698 844.6 516.3C844.6 334.6 698 188 516.3 188ZM516.3 735.5C394.9 735.5 297.1 637.7 297.1 516.3C297.1 394.9 394.9 297.1 516.3 297.1C637.7 297.1 735.5 394.9 735.5 516.3C735.5 637.7 637.7 735.5 516.3 735.5Z" fill="#0052FF"/>
+                  <path d="M448.4 448.4H584.1C590.5 448.4 596.3 454.2 596.3 460.6V572C596.3 578.4 590.5 584.1 584.1 584.1H448.4C442 584.1 436.3 578.4 436.3 572V460.6C436.3 454.2 442 448.4 448.4 448.4Z" fill="#0052FF"/>
+                </svg>
+                <span>
+                  {isLoading ? 'Connecting to Coinbase...' : 'Continue with Coinbase'}
+                </span>
+              </div>
             </button>
           </div>
-        </form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-black text-gray-400">Required for access</span>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-gray-400 italic">
+              slutspace requires Coinbase authentication for secure wallet integration.
+            </p>
+          </div>
+        </div>
 
         <div className="text-center">
           <p className="text-sm text-gray-400">
-            Don't have an account?{' '}
-            <Link href="/signup" className="text-red-500 hover:text-red-400">
-              Sign up
+            Don't have a Coinbase account?{' '}
+            <a 
+              href="https://www.coinbase.com/signup" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-blue-500 hover:text-blue-400"
+            >
+              Sign up with Coinbase
+            </a>
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            By continuing, you agree to our{' '}
+            <Link href="/terms" className="text-gray-400 hover:text-white">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link href="/privacy" className="text-gray-400 hover:text-white">
+              Privacy Policy
             </Link>
           </p>
         </div>
