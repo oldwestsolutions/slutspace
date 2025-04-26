@@ -20,13 +20,43 @@ module.exports = {
         'youtube-dark': '#0F0F0F',
         'youtube-light': '#272727',
         'youtube-lightest': '#383838',
+        'gray-650': '#374151',
+        'gray-750': '#1f2937',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      animation: {
+        'fadeIn': 'fadeIn 0.3s ease-in-out',
+        'slideUp': 'slideUp 0.3s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      screens: {
+        'xs': '375px',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addComponents }) {
+      addComponents({
+        '.touch-action-manipulation': {
+          'touch-action': 'manipulation',
+        },
+        '.ios-tap-highlight-transparent': {
+          '-webkit-tap-highlight-color': 'transparent',
+        },
+      })
+    },
+  ],
 } 
