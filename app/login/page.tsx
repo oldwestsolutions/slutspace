@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UserCircleIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '../providers/AuthProvider'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,19 +20,16 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const result = await signIn(email, password)
       
-      // For demo purposes, accept any non-empty credentials
-      if (email && password) {
-        // Store auth state (in a real app, you'd use a proper auth solution)
-        localStorage.setItem('isAuthenticated', 'true')
-        router.push('/')
+      if (result?.error) {
+        setError(result.error.message || 'Invalid email or password')
       } else {
-        setError('Please enter both email and password')
+        router.push('/')
       }
     } catch (err) {
       setError('An error occurred. Please try again.')
+      console.error('Login error:', err)
     } finally {
       setIsLoading(false)
     }

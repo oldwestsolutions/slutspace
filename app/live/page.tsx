@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { VideoCameraIcon, HeartIcon, ChatBubbleLeftIcon, PaperAirplaneIcon, BookmarkIcon } from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+import { VideoCameraIcon, HeartIcon, ChatBubbleLeftIcon, PaperAirplaneIcon, BookmarkIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
+import { HeartIcon as HeartSolidIcon, BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/24/solid'
 import AppLayout from '../components/AppLayout'
 
 export default function LivePage() {
@@ -249,25 +249,28 @@ export default function LivePage() {
 
   return (
     <AppLayout>
-      <div>
-        <div className="flex items-center justify-between mb-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header with Instagram-like title */}
+        <div className="flex items-center justify-between mb-6 px-4">
           <div className="flex items-center">
-            <VideoCameraIcon className="h-6 w-6 text-red-500 mr-2" />
-            <h1 className="text-2xl font-bold text-white">Live</h1>
+            <h1 className="text-2xl font-bold text-white">SlutSpace Live</h1>
           </div>
-          <Link href="/wallet" className="text-blue-400 text-sm">
-            Back to Wallet
-          </Link>
+          <div className="flex items-center space-x-4">
+            <VideoCameraIcon className="h-6 w-6 text-red-500" />
+            <Link href="/wallet" className="text-blue-400 text-sm">
+              Wallet
+            </Link>
+          </div>
         </div>
         
-        {/* Stories Section (Instagram-like) */}
-        <div className="mb-8 bg-gray-800 rounded-lg p-4">
-          <div className="flex justify-between overflow-x-auto pb-2 scrollbar-hide">
+        {/* Stories Section - Instagram-like */}
+        <div className="mb-6 bg-gray-800 rounded-lg px-2 py-4 overflow-hidden border border-gray-700">
+          <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide pl-2">
             {stories.map((story) => (
-              <div key={story.id} className="flex flex-col items-center flex-shrink-0 w-[12.5%] px-1">
-                <div className="relative">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-400 to-pink-500 p-0.5">
-                    <div className="w-full h-full rounded-full border-2 border-gray-800 overflow-hidden">
+              <div key={story.id} className="flex flex-col items-center flex-shrink-0">
+                <div className="relative cursor-pointer">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-[2px]">
+                    <div className="w-full h-full rounded-full border-[2px] border-gray-900 overflow-hidden">
                       <img 
                         src={story.image} 
                         alt={story.name} 
@@ -288,32 +291,33 @@ export default function LivePage() {
           </div>
         </div>
 
-        {/* 3x3 Live Stream Categories Grid */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">Live Categories</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Categories as horizontal scrollable items (like Instagram Explore) */}
+        <div className="mb-6 px-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-white">Explore Categories</h2>
+            <Link href="/live/categories" className="text-blue-400 text-sm">
+              View All
+            </Link>
+          </div>
+          <div className="flex overflow-x-auto space-x-3 pb-3 scrollbar-hide">
             {categories.map((category) => (
               <Link
                 key={category.id} 
                 href={`/live/category/${category.id}`}
-                className="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition-colors"
+                className="block flex-shrink-0 w-32 relative group"
               >
-                <div className="relative">
+                <div className="rounded-lg overflow-hidden">
                   <img 
                     src={category.image} 
                     alt={category.name} 
-                    className="w-full h-36 object-cover"
+                    className="w-32 h-32 object-cover group-hover:opacity-90 transition-opacity"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
-                  <div className="absolute bottom-0 left-0 p-4">
-                    <h3 className="text-white font-bold text-lg">{category.name}</h3>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                  <div className="absolute bottom-0 left-0 p-2">
+                    <h3 className="text-white font-bold text-sm">{category.name}</h3>
                     <div className="flex items-center mt-1">
-                      <div className="flex items-center">
-                        <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-1 animate-pulse"></span>
-                        <span className="text-white text-sm">{category.viewers} viewers</span>
-                      </div>
-                      <span className="mx-2 text-gray-400">•</span>
-                      <span className="text-gray-300 text-sm">{category.channels} channels</span>
+                      <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></span>
+                      <span className="text-white text-xs">{category.viewers}</span>
                     </div>
                   </div>
                 </div>
@@ -322,17 +326,19 @@ export default function LivePage() {
           </div>
         </div>
 
-        {/* Instagram-like Feed */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Instagram-like Feed - Full width posts */}
+        <div className="space-y-6">
           {liveStreams.map((stream) => (
-            <div key={stream.id} className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+            <div key={stream.id} className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
               {/* Header */}
-              <div className="flex items-center p-3 border-b border-gray-700">
-                <img 
-                  src={stream.streamerImage} 
-                  alt={stream.streamer} 
-                  className="w-8 h-8 rounded-full mr-2"
-                />
+              <div className="flex items-center p-3">
+                <div className="w-9 h-9 rounded-full border border-pink-500 p-[2px] mr-3">
+                  <img 
+                    src={stream.streamerImage} 
+                    alt={stream.streamer} 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                </div>
                 <div className="flex-1">
                   <div className="flex items-center">
                     <p className="text-white text-sm font-semibold">{stream.streamer}</p>
@@ -343,7 +349,10 @@ export default function LivePage() {
                   </div>
                   <p className="text-gray-400 text-xs">{stream.startedAt}</p>
                 </div>
-                <button className="text-blue-400 text-sm font-medium">Follow</button>
+                <button className="text-blue-400 text-sm font-medium mr-2">Follow</button>
+                <button className="text-gray-400">
+                  <EllipsisHorizontalIcon className="h-5 w-5" />
+                </button>
               </div>
 
               {/* Main Content - Make clickable */}
@@ -354,13 +363,13 @@ export default function LivePage() {
                     alt={stream.title} 
                     className="w-full aspect-video object-cover"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <button className="bg-red-600 hover:bg-red-700 text-white rounded-full px-5 py-2 font-medium transition-colors flex items-center">
-                      <span className="mr-1">Watch Now</span>
-                      <span className="inline-block w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                    </button>
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
+                    <div className="bg-black bg-opacity-60 rounded-full p-3">
+                      <VideoCameraIcon className="h-10 w-10 text-white" />
+                    </div>
                   </div>
-                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                  <div className="absolute bottom-3 right-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-md flex items-center">
+                    <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></span>
                     {stream.viewers.toLocaleString()} viewers
                   </div>
                 </div>
@@ -368,7 +377,7 @@ export default function LivePage() {
               
               {/* Action Buttons */}
               <div className="p-3">
-                <div className="flex justify-between mb-2">
+                <div className="flex justify-between mb-3">
                   <div className="flex space-x-4">
                     <button onClick={() => toggleLike(stream.id)} className="focus:outline-none">
                       {likedPosts.includes(stream.id) ? 
@@ -385,7 +394,7 @@ export default function LivePage() {
                   </div>
                   <button onClick={() => toggleSave(stream.id)} className="focus:outline-none">
                     {savedPosts.includes(stream.id) ? 
-                      <BookmarkIcon className="h-6 w-6 text-white fill-current" /> : 
+                      <BookmarkSolidIcon className="h-6 w-6 text-white" /> : 
                       <BookmarkIcon className="h-6 w-6 text-white hover:text-gray-300" />
                     }
                   </button>
@@ -399,12 +408,19 @@ export default function LivePage() {
                       `${stream.likes} likes`
                     }
                   </p>
-                  <div className="flex flex-wrap">
-                    <p className="text-white text-sm font-semibold mr-1">{stream.streamer}</p>
-                    <p className="text-white text-sm truncate">{stream.title}</p>
+                  <div className="mb-1">
+                    <span className="text-white text-sm font-semibold mr-1">{stream.streamer}</span>
+                    <span className="text-white text-sm">{stream.title}</span>
                   </div>
-                  <p className="text-gray-400 text-xs mt-1">View all {stream.comments} comments</p>
-                  <p className="text-gray-500 text-xs mt-1">{stream.startedAt}</p>
+                  <button className="text-gray-400 text-sm">View all {stream.comments} comments</button>
+                  <div className="flex mt-2">
+                    <input 
+                      type="text" 
+                      placeholder="Add a comment..." 
+                      className="bg-transparent text-sm text-gray-300 focus:outline-none w-full"
+                    />
+                    <button className="text-blue-400 text-sm font-semibold">Post</button>
+                  </div>
                 </div>
               </div>
             </div>

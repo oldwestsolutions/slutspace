@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.1",
+    "@supabase/supabase-js": "^2.49.4",
     "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.17",
     "firebase": "^10.8.0",
