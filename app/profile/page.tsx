@@ -25,7 +25,10 @@ import {
   RectangleStackIcon,
   Squares2X2Icon,
   FilmIcon,
-  StarIcon
+  StarIcon,
+  ClockIcon,
+  AdjustmentsHorizontalIcon,
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline'
 import { CurrencyDollarIcon as CurrencyDollarIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
@@ -61,6 +64,8 @@ export default function ProfilePage() {
       ]
     }
   })
+  const [photoFilter, setPhotoFilter] = useState<'recent' | 'favorites' | 'all'>('recent')
+  const [showAllPhotos, setShowAllPhotos] = useState(false)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -267,6 +272,24 @@ export default function ProfilePage() {
     setIsWalletModalOpen(false);
   };
 
+  // Sort photos based on filter
+  const getFilteredPhotos = () => {
+    let filteredPhotos = [...photos];
+    
+    if (photoFilter === 'recent') {
+      // Return photos sorted by date (most recent first)
+      filteredPhotos = filteredPhotos.sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+    } else if (photoFilter === 'favorites') {
+      // Return photos with most likes
+      filteredPhotos = filteredPhotos.sort((a, b) => b.likes - a.likes);
+    }
+    
+    // Return all or limited photos based on showAllPhotos state
+    return showAllPhotos ? filteredPhotos : filteredPhotos.slice(0, 6);
+  };
+
   const renderContentByTab = () => {
     if (activeTab === 'posts') {
       if (viewMode === 'albums' && !selectedAlbum) {
@@ -368,8 +391,56 @@ export default function ProfilePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Photos</h3>
+              <div className="flex space-x-2">
+                <div className="bg-gray-800 rounded-lg p-1 flex">
+                  <motion.button
+                    onClick={() => setPhotoFilter('recent')}
+                    className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
+                      photoFilter === 'recent' ? 'bg-gray-700 text-white' : 'text-gray-400'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <ClockIcon className="h-3.5 w-3.5 mr-1" />
+                    <span className="hidden sm:inline">Recent</span>
+                  </motion.button>
+                  <motion.button
+                    onClick={() => setPhotoFilter('favorites')}
+                    className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
+                      photoFilter === 'favorites' ? 'bg-gray-700 text-white' : 'text-gray-400'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <StarIcon className="h-3.5 w-3.5 mr-1" />
+                    <span className="hidden sm:inline">Popular</span>
+                  </motion.button>
+                  <motion.button
+                    onClick={() => setPhotoFilter('all')}
+                    className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
+                      photoFilter === 'all' ? 'bg-gray-700 text-white' : 'text-gray-400'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Squares2X2Icon className="h-3.5 w-3.5 mr-1" />
+                    <span className="hidden sm:inline">All</span>
+                  </motion.button>
+                </div>
+                <motion.button
+                  onClick={() => setShowAllPhotos(!showAllPhotos)}
+                  className="px-2 sm:px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg flex items-center"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {showAllPhotos ? 'Show Less' : 'View All'}
+                </motion.button>
+              </div>
+            </div>
             <div className="grid grid-cols-3 gap-1">
-              {photos.map((photo) => (
+              {getFilteredPhotos().map((photo) => (
                 <motion.div 
                   key={photo.id} 
                   className="relative aspect-square"
@@ -402,6 +473,16 @@ export default function ProfilePage() {
                 </motion.div>
               ))}
             </div>
+            {photoFilter !== 'all' && photos.length > 6 && (
+              <motion.button
+                onClick={() => setPhotoFilter('all')}
+                className="w-full mt-4 py-2 border border-gray-700 rounded-lg text-blue-400 text-sm font-medium flex items-center justify-center"
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                whileTap={{ scale: 0.98 }}
+              >
+                View All Photos ({photos.length})
+              </motion.button>
+            )}
           </motion.div>
         );
       }
@@ -828,7 +909,7 @@ export default function ProfilePage() {
         {/* Content Tabs with View Options */}
         <div className="mt-8 border-b border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <div className="flex space-x-8">
+            <div className="flex space-x-4 sm:space-x-8">
               <motion.button
                 onClick={() => handleTabChange('posts')}
                 className={`py-3 border-b-2 font-medium ${
@@ -840,7 +921,7 @@ export default function ProfilePage() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex flex-col items-center">
-                  <PhotoIcon className="h-6 w-6" />
+                  <PhotoIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span className="text-xs mt-1">Photos</span>
                 </div>
               </motion.button>
@@ -855,7 +936,7 @@ export default function ProfilePage() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex flex-col items-center">
-                  <FilmIcon className="h-6 w-6" />
+                  <FilmIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span className="text-xs mt-1">Videos</span>
                 </div>
               </motion.button>
@@ -870,7 +951,7 @@ export default function ProfilePage() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="flex flex-col items-center">
-                  <StarIcon className="h-6 w-6" />
+                  <StarIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                   <span className="text-xs mt-1">Favorites</span>
                 </div>
               </motion.button>
