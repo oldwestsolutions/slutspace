@@ -371,7 +371,7 @@ export default function VideoPage() {
           
           {/* Recommendations */}
           <div className="lg:col-span-1">
-            <h3 className="text-lg font-medium text-white mb-4">Recommended Streams</h3>
+            <h3 className="text-lg font-medium text-white mb-4">For You Streams</h3>
             <div className="space-y-4">
               {recommendations.slice(0, 5).map(stream => (
                 <Link 

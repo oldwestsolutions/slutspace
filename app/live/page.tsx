@@ -1,35 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { VideoCameraIcon, HeartIcon, ChatBubbleLeftIcon, PaperAirplaneIcon, BookmarkIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon, BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/24/solid'
+import { VideoCameraIcon } from '@heroicons/react/24/outline'
 import AppLayout from '../components/AppLayout'
 
 export default function LivePage() {
-  const [likedPosts, setLikedPosts] = useState<number[]>([]);
-  const [savedPosts, setSavedPosts] = useState<number[]>([]);
-  
-  // Toggle like status for a stream
-  const toggleLike = (id: number) => {
-    if (likedPosts.includes(id)) {
-      setLikedPosts(likedPosts.filter(postId => postId !== id));
-    } else {
-      setLikedPosts([...likedPosts, id]);
-    }
-  };
-
-  // Toggle save status for a stream
-  const toggleSave = (id: number) => {
-    if (savedPosts.includes(id)) {
-      setSavedPosts(savedPosts.filter(postId => postId !== id));
-    } else {
-      setSavedPosts([...savedPosts, id]);
-    }
-  };
-  
-  // Stories data
+  // Stories data for the top row
   const stories = [
     {
       id: 1,
@@ -81,73 +57,6 @@ export default function LivePage() {
     }
   ];
   
-  // Live stream categories
-  const categories = [
-    {
-      id: 1,
-      name: 'Gaming',
-      image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '245K',
-      channels: 478
-    },
-    {
-      id: 2,
-      name: 'Music',
-      image: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '135K',
-      channels: 312
-    },
-    {
-      id: 3,
-      name: 'Technology',
-      image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '98K',
-      channels: 215
-    },
-    {
-      id: 4,
-      name: 'Cooking',
-      image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '78K',
-      channels: 187
-    },
-    {
-      id: 5,
-      name: 'Fitness',
-      image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '110K',
-      channels: 243
-    },
-    {
-      id: 6,
-      name: 'Travel',
-      image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '67K',
-      channels: 156
-    },
-    {
-      id: 7,
-      name: 'Art',
-      image: 'https://images.unsplash.com/photo-1585314062604-1a357de8b000?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '45K',
-      channels: 134
-    },
-    {
-      id: 8,
-      name: 'Education',
-      image: 'https://images.unsplash.com/photo-1605106702734-205df224ecce?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '58K',
-      channels: 167
-    },
-    {
-      id: 9,
-      name: 'Science',
-      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      viewers: '37K',
-      channels: 94
-    }
-  ];
-  
   const liveStreams = [
     {
       id: 1,
@@ -158,8 +67,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'tech',
-      likes: 253,
-      comments: 124
+      tags: ['coding', 'tutorial', 'indie'],
+      location: 'San Francisco'
     },
     {
       id: 2,
@@ -170,8 +79,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'gaming',
-      likes: 1547,
-      comments: 348
+      tags: ['esports', 'tournament', 'trending'],
+      location: 'Los Angeles'
     },
     {
       id: 3,
@@ -182,8 +91,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'music',
-      likes: 742,
-      comments: 98
+      tags: ['piano', 'classical', 'indie'],
+      location: 'New York'
     },
     {
       id: 4,
@@ -194,8 +103,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'food',
-      likes: 325,
-      comments: 86
+      tags: ['cooking', 'italian', 'trending'],
+      location: 'Chicago'
     },
     {
       id: 5,
@@ -206,8 +115,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'fitness',
-      likes: 198,
-      comments: 42
+      tags: ['workout', 'hiit', 'trending'],
+      location: 'Miami'
     },
     {
       id: 6,
@@ -218,8 +127,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'travel',
-      likes: 412,
-      comments: 78
+      tags: ['travel', 'japan', 'indie'],
+      location: 'Tokyo'
     },
     {
       id: 7,
@@ -230,8 +139,8 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1585314062604-1a357de8b000?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'art',
-      likes: 156,
-      comments: 29
+      tags: ['drawing', 'digital', 'indie'],
+      location: 'Seattle'
     },
     {
       id: 8,
@@ -242,30 +151,90 @@ export default function LivePage() {
       thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       streamerImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       category: 'science',
-      likes: 267,
-      comments: 54
+      tags: ['diy', 'astronomy', 'trending'],
+      location: 'Boston'
     }
   ];
 
-  return (
-    <AppLayout>
-      <div className="max-w-4xl mx-auto">
-        {/* Header with Instagram-like title */}
-        <div className="flex items-center justify-between mb-6 px-4">
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-white">SlutSpace Live</h1>
+  // Generate more streams for each category
+  const categoryStreams = {
+    recommended: [...liveStreams].sort(() => 0.5 - Math.random()),
+    popular: [...liveStreams].sort((a, b) => b.viewers - a.viewers),
+    new: [...liveStreams].sort(() => 0.5 - Math.random()),
+    lastWatch: [...liveStreams].slice(0, 4).sort(() => 0.5 - Math.random()),
+    indie: liveStreams.filter(stream => stream.tags.includes('indie')),
+    recentlyWatched: [...liveStreams].slice(0, 5).sort(() => 0.5 - Math.random()),
+    favoriteTag: liveStreams.filter(stream => stream.tags.includes('trending')),
+    trending: liveStreams.filter(stream => stream.tags.includes('trending')),
+    nearYou: [...liveStreams].sort(() => 0.5 - Math.random()),
+    topRated: [...liveStreams].sort(() => 0.5 - Math.random())
+  };
+
+  const categories = [
+    { id: 'recommended', name: 'Recommended For You' },
+    { id: 'popular', name: 'Most Popular' },
+    { id: 'new', name: 'New' },
+    { id: 'lastWatch', name: 'Based on Your Last Watch' },
+    { id: 'indie', name: 'Indie' },
+    { id: 'recentlyWatched', name: 'Recently Watched' },
+    { id: 'favoriteTag', name: 'Favorite Tag' },
+    { id: 'trending', name: 'Trending' },
+    { id: 'nearYou', name: 'Near You' },
+    { id: 'topRated', name: 'Top Rated' }
+  ];
+
+  // Video card component for reuse
+  const VideoCard = ({ stream }: { stream: typeof liveStreams[0] }) => (
+    <Link href={`/video/${stream.id}`} className="block">
+      <div className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-shadow hover:bg-gray-750">
+        <div className="relative">
+          <img 
+            src={stream.thumbnail} 
+            alt={stream.title} 
+            className="w-full aspect-video object-cover"
+          />
+          <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-1 py-0.5 rounded flex items-center">
+            <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></span>
+            <span>{stream.viewers.toLocaleString()}</span>
           </div>
-          <div className="flex items-center space-x-4">
-            <VideoCameraIcon className="h-6 w-6 text-red-500" />
-            <Link href="/wallet" className="text-blue-400 text-sm">
-              Wallet
-            </Link>
+          <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded flex items-center">
+            <span className="inline-block w-1.5 h-1.5 bg-white rounded-full mr-0.5 animate-pulse"></span>
+            <span>LIVE</span>
           </div>
         </div>
+        <div className="p-3">
+          <div className="flex items-start space-x-2">
+            <img 
+              src={stream.streamerImage} 
+              alt={stream.streamer} 
+              className="w-8 h-8 rounded-full mt-1 border border-gray-700"
+            />
+            <div>
+              <h3 className="text-white font-medium line-clamp-1 text-sm">{stream.title}</h3>
+              <p className="text-gray-400 text-xs">{stream.streamer}</p>
+              <p className="text-gray-500 text-xs">{stream.category} • {stream.startedAt}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+
+  return (
+    <AppLayout>
+      <div>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-xl font-bold text-white">Live</h1>
+          <Link href="/go-live" className="bg-red-500 text-white text-sm px-4 py-2 rounded-full flex items-center">
+            <VideoCameraIcon className="h-4 w-4 mr-1" />
+            Go Live
+          </Link>
+        </div>
         
-        {/* Stories Section - Instagram-like */}
-        <div className="mb-6 bg-gray-800 rounded-lg px-2 py-4 overflow-hidden border border-gray-700">
-          <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide pl-2">
+        {/* Stories Section */}
+        <div className="mb-6 overflow-hidden">
+          <div className="flex overflow-x-auto space-x-4 pb-2 scrollbar-hide">
             {stories.map((story) => (
               <div key={story.id} className="flex flex-col items-center flex-shrink-0">
                 <div className="relative cursor-pointer">
@@ -291,141 +260,20 @@ export default function LivePage() {
           </div>
         </div>
 
-        {/* Categories as horizontal scrollable items (like Instagram Explore) */}
-        <div className="mb-6 px-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-white">Explore Categories</h2>
-            <Link href="/live/categories" className="text-blue-400 text-sm">
-              View All
-            </Link>
-          </div>
-          <div className="flex overflow-x-auto space-x-3 pb-3 scrollbar-hide">
-            {categories.map((category) => (
-              <Link
-                key={category.id} 
-                href={`/live/category/${category.id}`}
-                className="block flex-shrink-0 w-32 relative group"
-              >
-                <div className="rounded-lg overflow-hidden">
-                  <img 
-                    src={category.image} 
-                    alt={category.name} 
-                    className="w-32 h-32 object-cover group-hover:opacity-90 transition-opacity"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                  <div className="absolute bottom-0 left-0 p-2">
-                    <h3 className="text-white font-bold text-sm">{category.name}</h3>
-                    <div className="flex items-center mt-1">
-                      <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></span>
-                      <span className="text-white text-xs">{category.viewers}</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Instagram-like Feed - Full width posts */}
-        <div className="space-y-6">
-          {liveStreams.map((stream) => (
-            <div key={stream.id} className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center p-3">
-                <div className="w-9 h-9 rounded-full border border-pink-500 p-[2px] mr-3">
-                  <img 
-                    src={stream.streamerImage} 
-                    alt={stream.streamer} 
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center">
-                    <p className="text-white text-sm font-semibold">{stream.streamer}</p>
-                    <div className="ml-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full flex items-center">
-                      <span className="inline-block w-1.5 h-1.5 bg-white rounded-full mr-0.5 animate-pulse"></span>
-                      <span>LIVE</span>
-                    </div>
-                  </div>
-                  <p className="text-gray-400 text-xs">{stream.startedAt}</p>
-                </div>
-                <button className="text-blue-400 text-sm font-medium mr-2">Follow</button>
-                <button className="text-gray-400">
-                  <EllipsisHorizontalIcon className="h-5 w-5" />
-                </button>
-              </div>
-
-              {/* Main Content - Make clickable */}
-              <Link href={`/video/${stream.id}`}>
-                <div className="relative">
-                  <img 
-                    src={stream.thumbnail} 
-                    alt={stream.title} 
-                    className="w-full aspect-video object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
-                    <div className="bg-black bg-opacity-60 rounded-full p-3">
-                      <VideoCameraIcon className="h-10 w-10 text-white" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-3 right-3 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-md flex items-center">
-                    <span className="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mr-1 animate-pulse"></span>
-                    {stream.viewers.toLocaleString()} viewers
-                  </div>
-                </div>
-              </Link>
-              
-              {/* Action Buttons */}
-              <div className="p-3">
-                <div className="flex justify-between mb-3">
-                  <div className="flex space-x-4">
-                    <button onClick={() => toggleLike(stream.id)} className="focus:outline-none">
-                      {likedPosts.includes(stream.id) ? 
-                        <HeartSolidIcon className="h-6 w-6 text-red-500" /> : 
-                        <HeartIcon className="h-6 w-6 text-white hover:text-gray-300" />
-                      }
-                    </button>
-                    <button className="focus:outline-none">
-                      <ChatBubbleLeftIcon className="h-6 w-6 text-white hover:text-gray-300" />
-                    </button>
-                    <button className="focus:outline-none">
-                      <PaperAirplaneIcon className="h-6 w-6 text-white hover:text-gray-300 rotate-45" />
-                    </button>
-                  </div>
-                  <button onClick={() => toggleSave(stream.id)} className="focus:outline-none">
-                    {savedPosts.includes(stream.id) ? 
-                      <BookmarkSolidIcon className="h-6 w-6 text-white" /> : 
-                      <BookmarkIcon className="h-6 w-6 text-white hover:text-gray-300" />
-                    }
-                  </button>
-                </div>
-                
-                {/* Likes & Caption */}
-                <div>
-                  <p className="text-white text-sm font-semibold mb-1">
-                    {likedPosts.includes(stream.id) ? 
-                      `${stream.likes + 1} likes` : 
-                      `${stream.likes} likes`
-                    }
-                  </p>
-                  <div className="mb-1">
-                    <span className="text-white text-sm font-semibold mr-1">{stream.streamer}</span>
-                    <span className="text-white text-sm">{stream.title}</span>
-                  </div>
-                  <button className="text-gray-400 text-sm">View all {stream.comments} comments</button>
-                  <div className="flex mt-2">
-                    <input 
-                      type="text" 
-                      placeholder="Add a comment..." 
-                      className="bg-transparent text-sm text-gray-300 focus:outline-none w-full"
-                    />
-                    <button className="text-blue-400 text-sm font-semibold">Post</button>
-                  </div>
-                </div>
-              </div>
+        {/* All category sections displayed as rows */}
+        {categories.map(category => (
+          <div key={category.id} className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">{category.name}</h2>
+              <Link href={`/live/categories/${category.id}`} className="text-sm text-blue-400">See all</Link>
             </div>
-          ))}
-        </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-x-auto">
+              {categoryStreams[category.id as keyof typeof categoryStreams].slice(0, 4).map(stream => (
+                <VideoCard key={`${category.id}-${stream.id}`} stream={stream} />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </AppLayout>
   )

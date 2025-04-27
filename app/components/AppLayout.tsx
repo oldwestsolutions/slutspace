@@ -249,10 +249,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <HomeIcon className="h-6 w-6 mr-3" />
                   <span>Home</span>
                 </Link>
-                <Link href="/trending" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                  <FireIcon className="h-6 w-6 mr-3" />
-                  <span>Trending</span>
-                </Link>
                 <Link href="/music" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <MusicalNoteIcon className="h-6 w-6 mr-3" />
                   <span>Music</span>
@@ -317,10 +313,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <Link href="/" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                 <HomeIcon className="h-6 w-6 mr-3" />
                 <span>Home</span>
-              </Link>
-              <Link href="/trending" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                <FireIcon className="h-6 w-6 mr-3" />
-                <span>Trending</span>
               </Link>
               <Link href="/music" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                 <MusicalNoteIcon className="h-6 w-6 mr-3" />
