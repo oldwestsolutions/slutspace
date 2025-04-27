@@ -25,7 +25,7 @@ const models = [
     creator: 'Anthropic',
     image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     description: 'Claude 3 Opus is the most powerful model from Anthropic, offering superior intelligence and reasoning capabilities.',
-    fullDescription: 'Claude 3 Opus is Anthropic's most intelligent AI assistant, capable of handling complex reasoning, following nuanced instructions, coding proficiently, and collaborating effectively with humans. It understands documents, images, and text with remarkable depth, proving valuable for research, creative work, programming, and data analysis. Opus is particularly skilled at maintaining a factual, helpful, and harmless approach in its interactions.',
+    fullDescription: 'Claude 3 Opus is Anthropic\'s most intelligent AI assistant, capable of handling complex reasoning, following nuanced instructions, coding proficiently, and collaborating effectively with humans. It understands documents, images, and text with remarkable depth, proving valuable for research, creative work, programming, and data analysis. Opus is particularly skilled at maintaining a factual, helpful, and harmless approach in its interactions.',
     tags: ['Text Generation', 'Reasoning', 'Creative'],
     rating: 4.9,
     category: 'text',
