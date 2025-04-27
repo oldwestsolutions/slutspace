@@ -96,7 +96,7 @@ export const videos = [
     channel: 'CryptoExplorer',
     views: '423K views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1605664041952-4a2855d8051b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '34:56'
   },
