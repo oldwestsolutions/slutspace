@@ -128,36 +128,40 @@ export default function LivePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const randomNames = ['Jamie', 'Casey', 'Robin', 'Jordan', 'Taylor', 'Avery', 'Quinn', 'Morgan', 'Riley', 'Alex'];
     
-    const randomMessages = [
-      { user: 'Jamie', text: 'Just joined! What did I miss?', userColor: 'text-green-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-      { user: 'Casey', text: 'Love your energy!', userColor: 'text-blue-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-      { user: 'Robin', text: 'Followed you! Keep it up!', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-      { user: 'Jordan', text: 'Just sent a star!', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, userColor: 'text-yellow-400' },
-      { user: 'Taylor', text: 'Can you do a dance?', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-      { user: 'Avery', text: 'You look amazing today!', userColor: 'text-red-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-      { user: 'Quinn', text: 'Just gifted you a rocket!', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, userColor: 'text-orange-400' }
+    // Define messages with proper typing
+    const randomMessages: Message[] = [
+      { id: 1, user: 'Jamie', text: 'Just joined! What did I miss?', time: '1 min ago', userColor: 'text-green-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { id: 2, user: 'Casey', text: 'Love your energy!', time: '1 min ago', userColor: 'text-blue-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { id: 3, user: 'Robin', text: 'Followed you! Keep it up!', time: '1 min ago', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { id: 4, user: 'Jordan', text: 'Just sent a star!', time: '1 min ago', userColor: 'text-yellow-400', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50 },
+      { id: 5, user: 'Taylor', text: 'Can you do a dance?', time: '1 min ago', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { id: 6, user: 'Avery', text: 'You look amazing today!', time: '1 min ago', userColor: 'text-red-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { id: 7, user: 'Quinn', text: 'Just gifted you a rocket!', time: '1 min ago', userColor: 'text-orange-400', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100 }
     ];
 
     const interval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * randomMessages.length)
       const randomMsg = randomMessages[randomIndex]
       
-      setMessages(prev => [...prev, {
-        id: prev.length + 1,
+      // Create a new message with the same structure as Message interface
+      const newMessage: Message = {
+        id: messages.length + 1,
         user: randomMsg.user,
         text: randomMsg.text,
         time: 'Just now',
         userColor: randomMsg.userColor,
         isGift: randomMsg.isGift,
-        giftIcon: randomMsg.giftIcon || undefined,
+        ...(randomMsg.giftIcon && { giftIcon: randomMsg.giftIcon }),
         giftColor: randomMsg.giftColor,
         giftName: randomMsg.giftName,
         giftValue: randomMsg.giftValue
-      }])
+      };
+      
+      setMessages(prev => [...prev, newMessage])
     }, 3000)
     
     return () => clearInterval(interval)
-  }, [])
+  }, [messages]) // Add messages dependency to properly track length
 
   const handleSendMessage = () => {
     if (message.trim() === '') return
