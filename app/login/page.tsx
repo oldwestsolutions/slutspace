@@ -113,7 +113,7 @@ export default function LoginPage() {
 
         <div className="text-center">
           <p className="text-sm text-gray-400">
-            Don't have a Coinbase account?{' '}
+            Don&apos;t have a Coinbase account?{' '}
             <a 
               href="https://www.coinbase.com/signup" 
               target="_blank" 

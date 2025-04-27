@@ -223,8 +223,8 @@ export default function FantasyPage() {
                 <span className="mx-2 text-gray-400">•</span>
                 <p className="text-gray-400 text-sm">Featured Story</p>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-3">The Heart's Surrender</h2>
-              <p className="text-gray-300 mb-6 max-w-2xl">Select your preference below to personalize your experience. Choosing "Submissive" or "Dominant" will customize your content recommendations and match you with compatible partners. Your preference will appear in the header for easy access and can be toggled off at any time.</p>
+              <h2 className="text-4xl font-bold text-white mb-3">The Heart&apos;s Surrender</h2>
+              <p className="text-gray-300 mb-6 max-w-2xl">Select your preference below to personalize your experience. Choosing &quot;Submissive&quot; or &quot;Dominant&quot; will customize your content recommendations and match you with compatible partners. Your preference will appear in the header for easy access and can be toggled off at any time.</p>
               <div className="flex space-x-4">
                 <button 
                   onClick={() => handlePreferenceClick('submissive')}

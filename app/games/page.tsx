@@ -159,7 +159,7 @@ export default function GamesPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6">
               <h2 className="text-3xl font-bold text-white mb-2">Cyber Clash</h2>
-              <p className="text-gray-300 mb-4 max-w-xl">Join the battle royale that's taking the gaming world by storm. Intense combat, stunning visuals, and endless fun await!</p>
+              <p className="text-gray-300 mb-4 max-w-xl">Join the battle royale that&apos;s taking the gaming world by storm. Intense combat, stunning visuals, and endless fun await!</p>
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                 Play Now
               </button>
