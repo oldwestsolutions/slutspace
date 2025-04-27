@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { 
   VideoCameraIcon, 
   UserCircleIcon, 
@@ -124,6 +125,9 @@ export default function SearchPage() {
   })
   const [likedItems, setLikedItems] = useState<string[]>([])
   const [savedItems, setSavedItems] = useState<string[]>([])
+  
+  // Get search params from URL
+  const searchParams = useSearchParams();
 
   // Sample data
   const models = [
@@ -317,16 +321,31 @@ export default function SearchPage() {
     },
   ]
 
-  // Initialize with videos by default
+  // Initialize with videos by default and check for query params
   useEffect(() => {
     // Set initial results to videos when the component mounts
     setSearchResults({ type: 'videos', data: initialVideos })
-  }, [])
+    
+    // Check if there's a search query in the URL
+    const queryParam = searchParams.get('q');
+    if (queryParam) {
+      setSearchQuery(queryParam);
+      // Perform search with the query from URL
+      setTimeout(() => {
+        handleSearchWithQuery(queryParam);
+      }, 100);
+    }
+  }, [searchParams])
 
   const handleSearch = () => {
-    if (!searchQuery.trim()) return
+    if (!searchQuery.trim()) return;
+    handleSearchWithQuery(searchQuery);
+  }
 
-    setSearching(true)
+  const handleSearchWithQuery = (query: string) => {
+    if (!query.trim()) return;
+    
+    setSearching(true);
     
     // Simulate search loading
     setTimeout(() => {
@@ -335,20 +354,20 @@ export default function SearchPage() {
       switch (activeTab) {
         case 'videos':
           results = videos.filter(video => 
-            video.title.toLowerCase().includes(searchQuery.toLowerCase())
+            video.title.toLowerCase().includes(query.toLowerCase())
           )
           setSearchResults({ type: 'videos', data: results })
           break
         case 'photos':
           results = photos.filter(photo => 
-            photo.caption?.toLowerCase().includes(searchQuery.toLowerCase())
+            photo.caption?.toLowerCase().includes(query.toLowerCase())
           )
           setSearchResults({ type: 'photos', data: results })
           break
         case 'models':
           results = models.filter(model => 
-            model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            model.bio.toLowerCase().includes(searchQuery.toLowerCase())
+            model.name.toLowerCase().includes(query.toLowerCase()) ||
+            model.bio.toLowerCase().includes(query.toLowerCase())
           )
           setSearchResults({ type: 'models', data: results })
           break

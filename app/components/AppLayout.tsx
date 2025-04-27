@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { 
   HomeIcon, 
   FireIcon,
@@ -33,8 +34,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isWalletExpanded, setIsWalletExpanded] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   
+  // Handle search submission
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -98,38 +109,51 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="flex justify-between items-center h-14 px-4">
           {/* Left section - Logo */}
           <div className="flex items-center">
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
-              className="md:hidden p-2 text-gray-400 hover:text-white"
-              aria-label="Open menu"
-            >
-              <Bars3Icon className="h-6 w-6" />
-            </button>
-            <Link href="/" className="hidden md:block ml-2 md:ml-4 text-xl md:text-2xl font-bold text-red-500">
+            <Link href="/" className="text-xl font-bold text-red-500">
               slutspace
             </Link>
           </div>
 
           {/* Middle section - Search */}
           <div className="hidden md:flex items-center flex-1 max-w-2xl mx-4">
-            <div className="relative w-full">
+            <form onSubmit={handleSearch} className="relative w-full">
               <input
                 type="text"
                 placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-gray-700 border border-gray-600 rounded-l-full pl-4 pr-10 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button className="absolute bg-gray-600 hover:bg-gray-500 rounded-r-full right-0 top-0 bottom-0 px-4 flex items-center justify-center">
+              <button 
+                type="submit"
+                className="absolute bg-gray-600 hover:bg-gray-500 rounded-r-full right-0 top-0 bottom-0 px-4 flex items-center justify-center"
+              >
                 <MagnifyingGlassIcon className="h-5 w-5 text-white" />
               </button>
-            </div>
+            </form>
+          </div>
+
+          {/* Mobile search - visible on mobile */}
+          <div className="flex md:hidden items-center flex-1 max-w-xs mx-2">
+            <form onSubmit={handleSearch} className="relative w-full">
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded-full pl-4 pr-8 py-1.5 text-sm text-white placeholder-gray-400 focus:outline-none"
+              />
+              <button 
+                type="submit"
+                className="absolute right-2 top-1.5 text-gray-400"
+              >
+                <MagnifyingGlassIcon className="h-5 w-5" />
+              </button>
+            </form>
           </div>
 
           {/* Right section - User controls */}
           <div className="flex items-center space-x-1">
-            {/* Mobile title logo aligned to the right */}
-            <Link href="/" className="md:hidden text-xl font-bold text-red-500">
-              slutspace
-            </Link>
             {/* Only show these buttons on desktop */}
             <button className="hidden md:block p-2 text-gray-400 hover:text-white">
               <MagnifyingGlassIcon className="h-6 w-6" />
@@ -199,6 +223,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </div>
               )}
             </div>
+            
+            {/* Mobile hamburger menu button - moved to right side */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+              className="md:hidden p-2 text-gray-400 hover:text-white"
+              aria-label="Open menu"
+            >
+              <Bars3Icon className="h-6 w-6" />
+            </button>
           </div>
         </div>
       </header>
@@ -228,20 +261,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto pb-20 flex flex-col">
-            {/* Mobile search - now part of the scrollable area */}
-            <div className="px-4 py-4 border-b border-gray-700 bg-gray-750">
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full bg-gray-700 border border-gray-600 rounded-full pl-4 pr-10 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button className="absolute right-2 top-2" aria-label="Search">
-                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                </button>
-              </div>
-            </div>
-
             {/* Navigation */}
             <nav className="pt-4 px-2 flex-shrink-0">
               <div className="space-y-1">
