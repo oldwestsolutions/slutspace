@@ -1,4 +1,4 @@
-# SlutTube
+# SlutSpace
 
 A YouTube-style video sharing platform.
 
@@ -16,8 +16,8 @@ A YouTube-style video sharing platform.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/sluttube.git
-cd sluttube
+git clone https://github.com/your-username/slutspace.git
+cd slutspace
 ```
 
 2. Install dependencies:

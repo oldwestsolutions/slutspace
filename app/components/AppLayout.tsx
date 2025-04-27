@@ -168,7 +168,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
           {/* Left section - Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-xl font-bold text-red-500">
-              SlutTube
+              SlutSpace
             </Link>
           </div>
 
@@ -330,7 +330,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
               <XMarkIcon className="h-6 w-6" />
             </button>
             <Link href="/" className="text-xl font-bold text-red-500">
-              SlutTube
+              SlutSpace
             </Link>
           </div>
 

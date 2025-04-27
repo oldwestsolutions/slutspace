@@ -58,7 +58,7 @@ export default function SignupPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutTube</h1>
+          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutSpace</h1>
           <p className="text-gray-400">Create your account to get started.</p>
         </div>
 
@@ -93,12 +93,12 @@ export default function SignupPage() {
             <>
               <div className="text-center mb-6">
                 <p className="text-gray-300 mb-6">
-                  SlutTube requires a Coinbase account for secure wallet integration and transactions.
+                  SlutSpace requires a Coinbase account for secure wallet integration and transactions.
                 </p>
                 <div className="flex justify-center mb-6">
                   <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-4 max-w-xs">
                     <p className="text-blue-400 text-sm">
-                      Your Coinbase account will be used to authenticate you and allow you to interact with blockchain content on SlutTube.
+                      Your Coinbase account will be used to authenticate you and allow you to interact with blockchain content on SlutSpace.
                     </p>
                   </div>
                 </div>

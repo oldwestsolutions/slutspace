@@ -61,7 +61,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutTube</h1>
+          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutSpace</h1>
           <p className="mt-2 text-gray-400">Sign in to your account</p>
         </div>
 
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <p className="text-sm text-zinc-400 max-w-sm text-center mb-6">
-              SlutTube requires Coinbase authentication for secure wallet integration.
+              SlutSpace requires Coinbase authentication for secure wallet integration.
             </p>
           </div>
         </div>

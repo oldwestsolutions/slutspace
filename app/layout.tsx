@@ -7,12 +7,12 @@ import { AuthProvider } from './providers/AuthProvider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SlutTube - Video Sharing Platform',
+  title: 'SlutSpace - Video Sharing Platform',
   description: 'A video sharing platform for creators and viewers',
-  applicationName: 'SlutTube',
+  applicationName: 'SlutSpace',
   appleWebApp: {
     capable: true,
-    title: 'SlutTube',
+    title: 'SlutSpace',
     statusBarStyle: 'black-translucent',
   },
 }
