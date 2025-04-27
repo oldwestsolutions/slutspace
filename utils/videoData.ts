@@ -6,7 +6,7 @@ export const videos = [
     channel: 'CodeMaster',
     views: '120K views',
     posted: '2 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '12:34'
   },
@@ -16,7 +16,7 @@ export const videos = [
     channel: 'WebDevSimplified',
     views: '254K views',
     posted: '1 week ago',
-    thumbnail: 'https://images.unsplash.com/photo-1555952517-2e8e729e0b44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '18:21'
   },
@@ -26,7 +26,7 @@ export const videos = [
     channel: 'TechTalks',
     views: '543K views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '24:15'
   },
@@ -36,7 +36,7 @@ export const videos = [
     channel: 'JSMaster',
     views: '324K views',
     posted: '5 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1579403124614-197f69d8187b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '15:48'
   },
@@ -46,7 +46,7 @@ export const videos = [
     channel: 'FrontendMaster',
     views: '187K views',
     posted: '1 month ago',
-    thumbnail: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '22:10'
   },
@@ -56,7 +56,7 @@ export const videos = [
     channel: 'TypeMaster',
     views: '432K views',
     posted: '2 months ago',
-    thumbnail: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '1:02:34'
   },
@@ -66,7 +66,7 @@ export const videos = [
     channel: 'BackendDev',
     views: '198K views',
     posted: '3 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1484417894907-623942c8ee29?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1558898479-33c0057a5d12?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '32:45'
   },
@@ -76,7 +76,7 @@ export const videos = [
     channel: 'DevOpsMaster',
     views: '345K views',
     posted: '2 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1605745341112-85968b19335b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '45:21'
   },
@@ -86,7 +86,7 @@ export const videos = [
     channel: 'AIExplorer',
     views: '276K views',
     posted: '1 week ago',
-    thumbnail: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1597586124394-fbd6ef244026?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '28:12'
   },
@@ -96,7 +96,7 @@ export const videos = [
     channel: 'CryptoExplorer',
     views: '423K views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1605664041952-4a2855d8051b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '34:56'
   },
@@ -106,7 +106,7 @@ export const videos = [
     channel: 'APIExpert',
     views: '198K views',
     posted: '2 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '16:42'
   },
@@ -116,7 +116,7 @@ export const videos = [
     channel: 'SecureCode',
     views: '324K views',
     posted: '1 month ago',
-    thumbnail: 'https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1596075780750-81249df16d19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '42:18'
   },
@@ -126,7 +126,7 @@ export const videos = [
     channel: 'ReactMaster',
     views: '245K views',
     posted: '2 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '19:27'
   },
@@ -136,7 +136,7 @@ export const videos = [
     channel: 'CSSWizard',
     views: '167K views',
     posted: '4 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1551650992-ee4fd47df41f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '14:53'
   },
@@ -146,7 +146,7 @@ export const videos = [
     channel: 'MERNMaster',
     views: '543K views',
     posted: '2 months ago',
-    thumbnail: 'https://images.unsplash.com/photo-1619410283995-43d9134e7656?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1523824921871-d6f1a15151f1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '52:14'
   },
@@ -156,7 +156,7 @@ export const videos = [
     channel: 'GitPro',
     views: '321K views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     channelIcon: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '26:38'
   }
