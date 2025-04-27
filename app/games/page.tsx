@@ -12,8 +12,8 @@ export default function GamesPage() {
     {
       id: 1,
       title: 'Cyber Clash',
-      developer: 'TechGames',
-      image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Sarah Johnson',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'A futuristic battle royale with stunning visuals and fast-paced gameplay.',
       category: 'action',
       rating: 4.8,
@@ -22,8 +22,8 @@ export default function GamesPage() {
     {
       id: 2,
       title: 'Fantasy Realms',
-      developer: 'EpicStudios',
-      image: 'https://images.unsplash.com/photo-1605899435973-ca2d1a8431cf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Michael Chen',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Explore a vast open world filled with magic, monsters, and epic quests.',
       category: 'rpg',
       rating: 4.9,
@@ -32,8 +32,8 @@ export default function GamesPage() {
     {
       id: 3,
       title: 'Puzzle Masters',
-      developer: 'BrainGames',
-      image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Amelia Rodriguez',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Challenge your mind with increasingly difficult puzzles and brain teasers.',
       category: 'puzzle',
       rating: 4.6,
@@ -42,8 +42,8 @@ export default function GamesPage() {
     {
       id: 4,
       title: 'Speed Racers',
-      developer: 'TurboGames',
-      image: 'https://images.unsplash.com/photo-1592155931584-901ac15763e3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'James Wilson',
+      image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Experience the thrill of high-speed racing with realistic physics and stunning tracks.',
       category: 'racing',
       rating: 4.7,
@@ -52,8 +52,8 @@ export default function GamesPage() {
     {
       id: 5,
       title: 'Castle Defense',
-      developer: 'StrategyMasters',
-      image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Julia Martinez',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Build, defend, and expand your medieval kingdom against waves of enemies.',
       category: 'strategy',
       rating: 4.5,
@@ -62,8 +62,8 @@ export default function GamesPage() {
     {
       id: 6,
       title: 'Dungeon Crawlers',
-      developer: 'RPGStudios',
-      image: 'https://images.unsplash.com/photo-1591635566278-10dca0ca76ee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'David Park',
+      image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Delve into dangerous dungeons, defeat monsters, and collect epic loot.',
       category: 'rpg',
       rating: 4.7,
@@ -72,8 +72,8 @@ export default function GamesPage() {
     {
       id: 7,
       title: 'Word Masters',
-      developer: 'LetterGames',
-      image: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Emma Thompson',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Put your vocabulary to the test with challenging word puzzles and games.',
       category: 'puzzle',
       rating: 4.4,
@@ -82,8 +82,8 @@ export default function GamesPage() {
     {
       id: 8,
       title: 'Zombie Apocalypse',
-      developer: 'SurvivalStudios',
-      image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Marcus Johnson',
+      image: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Survive in a post-apocalyptic world overrun by zombies. Craft, build, and fight!',
       category: 'action',
       rating: 4.6,
@@ -92,8 +92,8 @@ export default function GamesPage() {
     {
       id: 9,
       title: 'Football Manager',
-      developer: 'SportSimulation',
-      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Sofia Patel',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Manage your own football team, develop players, and compete for championships.',
       category: 'sports',
       rating: 4.8,
@@ -102,8 +102,8 @@ export default function GamesPage() {
     {
       id: 10,
       title: 'Cosmic Explorers',
-      developer: 'GalaxyGames',
-      image: 'https://images.unsplash.com/photo-1614294148960-9aa740632a87?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Alex Rivera',
+      image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Explore distant galaxies, discover alien civilizations, and build your space empire.',
       category: 'strategy',
       rating: 4.9,
@@ -112,8 +112,8 @@ export default function GamesPage() {
     {
       id: 11,
       title: 'Dance Revolution',
-      developer: 'MusicGames',
-      image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Isabella Kim',
+      image: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Dance to the latest hits and compete with players worldwide for the highest score.',
       category: 'music',
       rating: 4.5,
@@ -122,8 +122,8 @@ export default function GamesPage() {
     {
       id: 12,
       title: 'Cooking Master',
-      developer: 'FoodGames',
-      image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      developer: 'Thomas Singh',
+      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Test your culinary skills in timed challenges and become the ultimate chef.',
       category: 'simulation',
       rating: 4.3,
@@ -152,7 +152,7 @@ export default function GamesPage() {
         <div className="mb-8">
           <div className="relative rounded-xl overflow-hidden">
             <img 
-              src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
               alt="Featured Game" 
               className="w-full h-80 object-cover"
             />

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { 
   HomeIcon, 
   FireIcon,
@@ -25,19 +25,49 @@ import {
   WalletIcon,
   CurrencyDollarIcon,
   PlusCircleIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  ChevronDownIcon,
+  TvIcon,
+  UserGroupIcon,
+  BookOpenIcon,
+  Cog6ToothIcon
 } from '@heroicons/react/24/outline'
+import { CheckIcon } from '@heroicons/react/24/solid'
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+interface AppLayoutProps {
+  children: React.ReactNode;
+  userPreference?: 'submissive' | 'dominant' | null;
+}
+
+export default function AppLayout({ children, userPreference: propPreference }: AppLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isWalletExpanded, setIsWalletExpanded] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [userPreference, setUserPreference] = useState<'submissive' | 'dominant' | null>(null);
+  const [userColor, setUserColor] = useState<'purple' | 'red' | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [autoplay, setAutoplay] = useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   
+  // Function to clear user preference
+  const clearUserPreference = () => {
+    localStorage.removeItem('userPreference');
+    setUserPreference(null);
+  };
+
+  // Check localStorage for user preference on mount and update when prop changes
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('userPreference') as 'submissive' | 'dominant' | null;
+    setUserPreference(propPreference || savedPreference || null);
+  }, [propPreference]);
+
   // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +128,28 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     };
   }, [isMobileMenuOpen]);
   
+  // set active tab when page loads
+  useEffect(() => {
+    const route = pathname.split('/')[1];
+    setActiveTab(route || 'home');
+  }, [pathname]);
+
+  // Handle animations for clicked tab
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  // Update user color based on preference
+  useEffect(() => {
+    if (userPreference === 'submissive') {
+      setUserColor('purple');
+    } else if (userPreference === 'dominant') {
+      setUserColor('red');
+    } else {
+      setUserColor(null);
+    }
+  }, [userPreference]);
+
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Header */}
@@ -154,13 +206,30 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
           {/* Right section - User controls */}
           <div className="flex items-center space-x-1">
-            {/* Only show these buttons on desktop */}
-            <button className="hidden md:block p-2 text-gray-400 hover:text-white">
-              <MagnifyingGlassIcon className="h-6 w-6" />
-            </button>
-            <button className="hidden md:block p-2 text-gray-400 hover:text-white">
-              <BellIcon className="h-6 w-6" />
-            </button>
+            {/* Preference indicator - visible on desktop */}
+            {userPreference && (
+              <div 
+                onClick={clearUserPreference}
+                className={`hidden md:flex items-center preference-indicator preference-${userPreference} px-3 py-1.5 rounded-full cursor-pointer bg-gray-700/30 hover:bg-gray-700/50 transition-all group`}
+                title={`Click to remove your ${userPreference} preference`}
+              >
+                <HeartIcon className={`h-5 w-5 mr-1.5 ${userPreference === 'dominant' ? 'text-red-500 animate-heart-pulse-red' : 'text-purple-500 animate-heart-pulse-purple'}`} />
+                <span className="text-sm font-medium capitalize">{userPreference}</span>
+                <XMarkIcon className="h-4 w-4 ml-1.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            )}
+
+            {/* Preference indicator - visible on mobile, enhanced */}
+            {userPreference && (
+              <div 
+                onClick={clearUserPreference}
+                className={`md:hidden p-2 preference-indicator preference-${userPreference} rounded-full bg-gray-700/30 hover:bg-gray-700/50 active:bg-gray-700/70 transition-all cursor-pointer`}
+                title={`Click to remove your ${userPreference} preference`}
+              >
+                <HeartIcon className={`h-6 w-6 ${userPreference === 'dominant' ? 'text-red-500 animate-heart-pulse-red' : 'text-purple-500 animate-heart-pulse-purple'}`} />
+              </div>
+            )}
+
             {/* Profile button with dropdown - only on desktop */}
             <div className="relative hidden md:block" ref={dropdownRef}>
               <button 
@@ -183,30 +252,30 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >
-                    <div className="flex items-center">
+                    <span className="flex items-center">
                       <UserCircleIcon className="h-4 w-4 mr-2" />
                       <span>Your Profile</span>
-                    </div>
+                    </span>
                   </Link>
                   <Link 
                     href="/settings" 
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >
-                    <div className="flex items-center">
+                    <span className="flex items-center">
                       <CogIcon className="h-4 w-4 mr-2" />
                       <span>Settings</span>
-                    </div>
+                    </span>
                   </Link>
                   <Link 
                     href="/wallet" 
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                     onClick={() => setIsProfileDropdownOpen(false)}
                   >
-                    <div className="flex items-center">
+                    <span className="flex items-center">
                       <WalletIcon className="h-4 w-4 mr-2" />
                       <span>Coinbase Wallet</span>
-                    </div>
+                    </span>
                   </Link>
                   <div className="border-t border-gray-700 mt-1 pt-1">
                     <Link 
@@ -214,10 +283,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                       onClick={() => setIsProfileDropdownOpen(false)}
                     >
-                      <div className="flex items-center">
+                      <span className="flex items-center">
                         <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
                         <span>Sign up</span>
-                      </div>
+                      </span>
                     </Link>
                   </div>
                 </div>
@@ -288,12 +357,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <SparklesIcon className="h-6 w-6 mr-3" />
                   <span>Fantasy</span>
                 </Link>
-                <Link href="/dating" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                  <HeartIcon className="h-6 w-6 mr-3" />
-                  <span>Dating</span>
-                </Link>
                 <Link href="/models" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                  <LightBulbIcon className="h-6 w-6 mr-3" />
+                  <HeartIcon className="h-6 w-6 mr-3" />
                   <span>Models</span>
                 </Link>
               </div>
@@ -353,12 +418,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <SparklesIcon className="h-6 w-6 mr-3" />
                 <span>Fantasy</span>
               </Link>
-              <Link href="/dating" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                <HeartIcon className="h-6 w-6 mr-3" />
-                <span>Dating</span>
-              </Link>
               <Link href="/models" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                <LightBulbIcon className="h-6 w-6 mr-3" />
+                <HeartIcon className="h-6 w-6 mr-3" />
                 <span>Models</span>
               </Link>
             </div>

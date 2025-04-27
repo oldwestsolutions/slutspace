@@ -1,34 +1,81 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { SparklesIcon, UserIcon, ChatBubbleLeftIcon, HandThumbUpIcon } from '@heroicons/react/24/outline'
+import { SparklesIcon, UserIcon, ChatBubbleLeftIcon, HandThumbUpIcon, XMarkIcon, HeartIcon, CheckIcon } from '@heroicons/react/24/outline'
 import AppLayout from '../components/AppLayout'
 
 export default function FantasyPage() {
   const [activeCategory, setActiveCategory] = useState('trending');
+  const [selectedPreference, setSelectedPreference] = useState<'submissive' | 'dominant' | null>(null);
+  const [isButtonAnimating, setIsButtonAnimating] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  // Check for existing preference on mount
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('userPreference') as 'submissive' | 'dominant' | null;
+    if (savedPreference) {
+      setSelectedPreference(savedPreference);
+    }
+  }, []);
+
+  // Save preference to localStorage when user confirms
+  const savePreference = (preference: 'submissive' | 'dominant' | null) => {
+    if (preference) {
+      localStorage.setItem('userPreference', preference);
+      showToastNotification(`Preferences set for preferred recommended content`);
+    } else {
+      localStorage.removeItem('userPreference');
+      showToastNotification('Preference cleared');
+    }
+  };
+
+  const showToastNotification = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handlePreferenceClick = (preference: 'submissive' | 'dominant') => {
+    // If they click the same preference they already selected, toggle it off
+    if (selectedPreference === preference) {
+      setSelectedPreference(null);
+      savePreference(null);
+      return;
+    }
+    
+    setSelectedPreference(preference);
+    setIsButtonAnimating(true);
+    
+    // Animate the button press and directly save preference
+    setTimeout(() => {
+      setIsButtonAnimating(false);
+      savePreference(preference);
+    }, 500);
+  };
 
   const stories = [
     {
       id: 1,
-      title: "The Dragon's Promise",
+      title: "The Heart's Surrender",
       author: 'ElvenWriter',
       authorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1578302758063-0a6b00a8c6ee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      preview: 'The ancient prophecy spoke of a human who would gain the trust of dragons. No one expected it would be a simple village girl...',
-      category: 'dragons',
-      tags: ['Adventure', 'Medieval', 'Dragons'],
-      views: 45600,
-      likes: 8243,
-      comments: 1243,
-      date: '3 days ago'
+      coverImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      preview: 'When powerful CEO Alexander first met the headstrong artist Sophia, neither expected the intense passion that would ignite between them...',
+      category: 'romance',
+      tags: ['Romance', 'Passion', 'Desire'],
+      views: 67800,
+      likes: 12543,
+      comments: 2187,
+      date: '1 day ago'
     },
     {
       id: 2,
       title: "The Witch's Familiar",
       author: 'MysticScribe',
-      authorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1520207588543-0e61b1f2cb56?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'She never wanted a familiar, especially not one as troublesome as this snarky black cat with golden eyes and secrets of his own...',
       category: 'witches',
       tags: ['Witches', 'Familiars', 'Magic'],
@@ -41,8 +88,8 @@ export default function FantasyPage() {
       id: 3,
       title: 'Starship Odyssey',
       author: 'CosmicTales',
-      authorImage: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1581822261290-991df61a7da2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'The crew of the Andromeda was sent to explore a newly discovered planet, but what they found there defied all scientific explanation...',
       category: 'scifi',
       tags: ['Space', 'Exploration', 'Aliens'],
@@ -55,8 +102,8 @@ export default function FantasyPage() {
       id: 4,
       title: 'The Forgotten Kingdom',
       author: 'LegendMaster',
-      authorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'Hidden behind magical mists, the ancient kingdom of Avaloria awaited its rightful heir. The crown would only accept one of true royal blood...',
       category: 'medieval',
       tags: ['Kingdom', 'Royalty', 'Magic'],
@@ -69,8 +116,8 @@ export default function FantasyPage() {
       id: 5,
       title: 'Whispers in the Shadows',
       author: 'NightScribe',
-      authorImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1557682257-2f9c37a3a5f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'The old mansion had a reputation for being haunted, but Claire never believed in ghosts... until she started hearing the whispers...',
       category: 'paranormal',
       tags: ['Ghosts', 'Haunting', 'Mystery'],
@@ -83,8 +130,8 @@ export default function FantasyPage() {
       id: 6,
       title: 'The Last Spellcaster',
       author: 'ArcaneMage',
-      authorImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'With magic dying out across the land, Elara discovered she might be the last person capable of casting the ancient spells...',
       category: 'magic',
       tags: ['Spells', 'Ancient', 'Power'],
@@ -97,8 +144,8 @@ export default function FantasyPage() {
       id: 7,
       title: 'Fae Contracts',
       author: 'EnchantedScribe',
-      authorImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1596496181871-9681eacf9764?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'Never sign a contract with the fae without reading the fine print. Unfortunately, Thomas only learned this lesson after it was too late...',
       category: 'fae',
       tags: ['Faeries', 'Contracts', 'Trickery'],
@@ -111,8 +158,8 @@ export default function FantasyPage() {
       id: 8,
       title: "The Time Traveler's Journal",
       author: 'ChronoWanderer',
-      authorImage: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-      coverImage: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      authorImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       preview: 'The journal appeared on his doorstep with notes written in his own handwriting, but he hadn\'t written them yet. The dates were from the future...',
       category: 'time',
       tags: ['Time Travel', 'Paradox', 'Mystery'],
@@ -133,8 +180,24 @@ export default function FantasyPage() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout userPreference={selectedPreference}>
       <div>
+        {/* Toast Notification */}
+        {showToast && (
+          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-fadeIn">
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg ${
+              selectedPreference === 'submissive' 
+                ? 'bg-purple-600 text-white' 
+                : selectedPreference === 'dominant' 
+                  ? 'bg-red-600 text-white' 
+                  : 'bg-gray-800 text-white'
+            }`}>
+              <CheckIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">{toastMessage}</span>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center mb-6">
           <SparklesIcon className="h-6 w-6 text-purple-500 mr-2" />
           <h1 className="text-2xl font-bold text-white">Fantasy Stories</h1>
@@ -144,7 +207,7 @@ export default function FantasyPage() {
         <div className="mb-10">
           <div className="relative rounded-xl overflow-hidden">
             <img 
-              src="https://images.unsplash.com/photo-1633621533208-fad11c23631c?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
+              src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
               alt="Featured Story" 
               className="w-full h-96 object-cover"
             />
@@ -160,14 +223,42 @@ export default function FantasyPage() {
                 <span className="mx-2 text-gray-400">•</span>
                 <p className="text-gray-400 text-sm">Featured Story</p>
               </div>
-              <h2 className="text-4xl font-bold text-white mb-3">The Dragon's Promise</h2>
-              <p className="text-gray-300 mb-6 max-w-2xl">The ancient prophecy spoke of a human who would gain the trust of dragons. No one expected it would be a simple village girl named Lyra, with nothing to her name but a kind heart and unbreakable determination...</p>
+              <h2 className="text-4xl font-bold text-white mb-3">The Heart's Surrender</h2>
+              <p className="text-gray-300 mb-6 max-w-2xl">Select your preference below to personalize your experience. Choosing "Submissive" or "Dominant" will customize your content recommendations and match you with compatible partners. Your preference will appear in the header for easy access and can be toggled off at any time.</p>
               <div className="flex space-x-4">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                  Read Now
+                <button 
+                  onClick={() => handlePreferenceClick('submissive')}
+                  className={`bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform ${
+                    selectedPreference === 'submissive' 
+                      ? 'ring-2 ring-white bg-purple-700' 
+                      : ''
+                  } ${
+                    isButtonAnimating && selectedPreference === 'submissive' 
+                      ? 'scale-90 bg-purple-800 ring-4 ring-purple-400 ring-opacity-50 shadow-lg shadow-purple-600/50' 
+                      : 'hover:shadow-md hover:shadow-purple-600/30'
+                  }`}
+                >
+                  <span className="flex items-center">
+                    <HeartIcon className={`h-5 w-5 mr-2 ${isButtonAnimating && selectedPreference === 'submissive' ? 'animate-ping' : ''}`} />
+                    Submissive
+                  </span>
                 </button>
-                <button className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                  Add to Library
+                <button 
+                  onClick={() => handlePreferenceClick('dominant')}
+                  className={`bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-all transform ${
+                    selectedPreference === 'dominant' 
+                      ? 'ring-2 ring-white bg-red-700' 
+                      : ''
+                  } ${
+                    isButtonAnimating && selectedPreference === 'dominant' 
+                      ? 'scale-90 bg-red-800 ring-4 ring-red-400 ring-opacity-50 shadow-lg shadow-red-600/50' 
+                      : 'hover:shadow-md hover:shadow-gray-500/30 hover:bg-red-700'
+                  }`}
+                >
+                  <span className="flex items-center">
+                    <HeartIcon className={`h-5 w-5 mr-2 ${isButtonAnimating && selectedPreference === 'dominant' ? 'animate-ping' : ''}`} />
+                    Dominant
+                  </span>
                 </button>
               </div>
             </div>
@@ -186,6 +277,16 @@ export default function FantasyPage() {
               }`}
             >
               Trending
+            </button>
+            <button
+              onClick={() => setActiveCategory('romance')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeCategory === 'romance' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              Romance
             </button>
             <button
               onClick={() => setActiveCategory('dragons')}

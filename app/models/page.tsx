@@ -6,213 +6,218 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
 import AppLayout from '../components/AppLayout'
 
 export default function ModelsPage() {
-  const [activeCategory, setActiveCategory] = useState('popular');
+  const [activeCategory, setActiveCategory] = useState('top');
   const [currentPage, setCurrentPage] = useState(1);
-  const [regionFilter, setRegionFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
   const modelsPerPage = 9;
   
   const models = [
     {
       id: 1,
       name: 'Claude 3 Opus',
-      creator: 'Anthropic',
-      image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Sophia Chen',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Claude 3 Opus is the most powerful model from Anthropic, offering superior intelligence and reasoning capabilities.',
       tags: ['Text Generation', 'Reasoning', 'Creative'],
       rating: 4.9,
       category: 'text',
-      region: 'us',
-      type: 'language'
+      popularity: 98,
+      isNew: false,
+      date: '2023-09-15'
     },
     {
       id: 2,
       name: 'GPT-4',
-      creator: 'OpenAI',
-      image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Emma Watson',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'GPT-4 is OpenAI\'s most advanced system, producing safer and more useful responses.',
       tags: ['Text Generation', 'Code', 'Multimodal'],
       rating: 4.8,
       category: 'text',
-      region: 'us',
-      type: 'language'
+      popularity: 100,
+      isNew: false,
+      date: '2023-03-14'
     },
     {
       id: 3,
       name: 'Gemini Pro',
-      creator: 'Google',
-      image: 'https://images.unsplash.com/photo-1677442136019-21740b2d7be3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Aisha Johnson',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Gemini Pro is Google\'s advanced multimodal AI model designed for diverse tasks.',
       tags: ['Text Generation', 'Multimodal', 'Reasoning'],
       rating: 4.7,
       category: 'multimodal',
-      region: 'us',
-      type: 'multimodal'
+      popularity: 92,
+      isNew: false,
+      date: '2023-12-06'
     },
     {
       id: 4,
       name: 'DALL-E 3',
-      creator: 'OpenAI',
-      image: 'https://images.unsplash.com/photo-1681372930015-b567afbc9dd8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Maya Patel',
+      image: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'DALL-E 3 creates realistic images and art from natural language descriptions.',
       tags: ['Image Generation', 'Creative', 'Art'],
       rating: 4.6,
       category: 'image',
-      region: 'us',
-      type: 'image'
+      popularity: 95,
+      isNew: false,
+      date: '2023-10-03'
     },
     {
       id: 5,
       name: 'Midjourney',
-      creator: 'Midjourney',
-      image: 'https://images.unsplash.com/photo-1684141149833-090ebc4d9acb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Zoe Martinez',
+      image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Midjourney is an independent research lab that produces a proprietary artificial intelligence program that creates images from textual descriptions.',
       tags: ['Image Generation', 'Art', 'Creative'],
       rating: 4.8,
       category: 'image',
-      region: 'us',
-      type: 'image'
+      popularity: 97,
+      isNew: false,
+      date: '2022-07-12'
     },
     {
       id: 6,
       name: 'Stable Diffusion XL',
-      creator: 'Stability AI',
-      image: 'https://images.unsplash.com/photo-1684391539255-d81ffcb88fc7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Olivia Kim',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Stable Diffusion XL is a text-to-image model that generates high-quality images from text prompts.',
       tags: ['Image Generation', 'Open Source', 'Creative'],
       rating: 4.5,
       category: 'image',
-      region: 'uk',
-      type: 'image'
+      popularity: 90,
+      isNew: false,
+      date: '2023-07-24'
     },
     {
       id: 7,
       name: 'Whisper',
-      creator: 'OpenAI',
-      image: 'https://images.unsplash.com/photo-1618761617460-bcd05bd2f86a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Leila Rodriguez',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Whisper is an automatic speech recognition system that provides robust transcription in multiple languages.',
       tags: ['Speech Recognition', 'Transcription', 'Multilingual'],
       rating: 4.7,
       category: 'audio',
-      region: 'us',
-      type: 'audio'
+      popularity: 85,
+      isNew: false,
+      date: '2022-09-21'
     },
     {
       id: 8,
       name: 'CodeLlama',
-      creator: 'Meta',
-      image: 'https://images.unsplash.com/photo-1607798748738-b15c40d33d57?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Tara Chakraborty',
+      image: 'https://images.unsplash.com/photo-1629747490241-624f07d70e1e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'CodeLlama is a large language model specialized for code generation and understanding.',
       tags: ['Code Generation', 'Programming', 'Technical'],
       rating: 4.6,
       category: 'code',
-      region: 'us',
-      type: 'language'
+      popularity: 88,
+      isNew: false,
+      date: '2023-08-24'
     },
     {
       id: 9,
       name: 'Baidu ERNIE',
-      creator: 'Baidu',
-      image: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Lin Wei',
+      image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'ERNIE (Enhanced Representation through kNowledge IntEgration) is a large language model developed by Baidu.',
       tags: ['Text Generation', 'Multilingual', 'Knowledge'],
       rating: 4.5,
       category: 'text',
-      region: 'asia',
-      type: 'language'
+      popularity: 82,
+      isNew: false,
+      date: '2023-03-16'
     },
     {
       id: 10,
       name: 'Jukebox',
-      creator: 'OpenAI',
-      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Carmen Morales',
+      image: 'https://images.unsplash.com/photo-1485893086445-ed75865251e0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Jukebox is a neural net that generates music, including rudimentary singing, in a variety of genres and artist styles.',
       tags: ['Music Generation', 'Creative', 'Audio'],
       rating: 4.3,
       category: 'audio',
-      region: 'us',
-      type: 'audio'
+      popularity: 78,
+      isNew: false,
+      date: '2020-04-30'
     },
     {
       id: 11,
       name: 'Llama 2',
-      creator: 'Meta',
-      image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Naomi Wright',
+      image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Llama 2 is a collection of open-source large language models released by Meta, available in various sizes.',
       tags: ['Text Generation', 'Open Source', 'Research'],
       rating: 4.4,
       category: 'text',
-      region: 'us',
-      type: 'language'
+      popularity: 89,
+      isNew: false,
+      date: '2023-07-18'
     },
     {
       id: 12,
       name: 'Runway Gen-2',
-      creator: 'Runway',
-      image: 'https://images.unsplash.com/photo-1599453383199-8edcbd52aaa8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Jessica Liu',
+      image: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Gen-2 is a text-to-video AI model that can generate, edit, and extend videos from text prompts.',
       tags: ['Video Generation', 'Creative', 'Motion'],
       rating: 4.7,
       category: 'video',
-      region: 'us',
-      type: 'video'
+      popularity: 91,
+      isNew: false,
+      date: '2023-03-20'
     },
     {
       id: 13,
       name: 'DeepL Translator',
-      creator: 'DeepL',
-      image: 'https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Sophia Miller',
+      image: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'DeepL Translator is a neural machine translation service that produces more natural-sounding translations.',
       tags: ['Translation', 'Multilingual', 'NLP'],
       rating: 4.8,
       category: 'text',
-      region: 'europe',
-      type: 'language'
+      popularity: 93,
+      isNew: false,
+      date: '2017-08-29'
     },
     {
       id: 14,
       name: 'ChatGLM',
-      creator: 'Tsinghua University',
-      image: 'https://images.unsplash.com/photo-1579403124614-197f69d8187b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Elena Zhang',
+      image: 'https://images.unsplash.com/photo-1464863979621-258859e62245?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'ChatGLM is a bilingual (Chinese and English) dialogue model based on General Language Model architecture.',
       tags: ['Text Generation', 'Bilingual', 'Dialogue'],
       rating: 4.3,
       category: 'text',
-      region: 'asia',
-      type: 'language'
+      popularity: 75,
+      isNew: false,
+      date: '2023-03-13'
     },
     {
       id: 15,
       name: 'Suno AI',
-      creator: 'Suno',
-      image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      creator: 'Amara Thomas',
+      image: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
       description: 'Suno AI is a music generation model that creates complete songs from text prompts with vocals, instruments, and lyrics.',
       tags: ['Music Generation', 'Creative', 'Audio'],
       rating: 4.5,
       category: 'audio',
-      region: 'us',
-      type: 'audio'
+      popularity: 96,
+      isNew: true,
+      date: '2024-03-01'
     }
   ];
 
   const getFilteredModels = () => {
     let filtered = [...models];
     
-    // Apply category filter
-    if (activeCategory === 'popular') {
+    // Apply sorting based on active category
+    if (activeCategory === 'top') {
       filtered = filtered.sort((a, b) => b.rating - a.rating);
-    } else if (activeCategory !== 'all') {
-      filtered = filtered.filter(model => model.category === activeCategory);
-    }
-    
-    // Apply region filter
-    if (regionFilter !== 'all') {
-      filtered = filtered.filter(model => model.region === regionFilter);
-    }
-    
-    // Apply type filter
-    if (typeFilter !== 'all') {
-      filtered = filtered.filter(model => model.type === typeFilter);
+    } else if (activeCategory === 'new') {
+      filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } else if (activeCategory === 'hottest') {
+      filtered = filtered.sort((a, b) => b.popularity - a.popularity);
     }
     
     return filtered;
@@ -233,224 +238,28 @@ export default function ModelsPage() {
 
   return (
     <AppLayout>
-      <div>
-        <h1 className="text-2xl font-bold text-white mb-6">AI Models</h1>
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <h1 className="text-2xl font-bold text-white mb-6">Models</h1>
         
-        {/* Main Category Navigation */}
-        <div className="flex mb-6 overflow-x-auto scrollbar-hide pb-2">
-          <button
-            onClick={() => {setActiveCategory('popular'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium mr-2 transition-colors ${
-              activeCategory === 'popular' 
-                ? 'bg-white text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Popular
-          </button>
-          <button
-            onClick={() => {setActiveCategory('text'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium mr-2 transition-colors ${
-              activeCategory === 'text' 
-                ? 'bg-white text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Text Generation
-          </button>
-          <button
-            onClick={() => {setActiveCategory('image'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium mr-2 transition-colors ${
-              activeCategory === 'image' 
-                ? 'bg-white text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Image Generation
-          </button>
-          <button
-            onClick={() => {setActiveCategory('audio'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium mr-2 transition-colors ${
-              activeCategory === 'audio' 
-                ? 'bg-white text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Audio Processing
-          </button>
-          <button
-            onClick={() => {setActiveCategory('video'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium mr-2 transition-colors ${
-              activeCategory === 'video' 
-                ? 'bg-white text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Video Models
-          </button>
-          <button
-            onClick={() => {setActiveCategory('code'); setCurrentPage(1);}}
-            className={`px-4 py-2 rounded-full text-sm font-medium mr-2 transition-colors ${
-              activeCategory === 'code' 
-                ? 'bg-white text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
-          >
-            Code Models
-          </button>
-        </div>
-        
-        {/* Additional Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {/* Model Type Filter */}
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-white font-medium mb-2">Model Type</h3>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => {setTypeFilter('all'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  typeFilter === 'all' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                All Types
-              </button>
-              <button
-                onClick={() => {setTypeFilter('language'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  typeFilter === 'language' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Language Models
-              </button>
-              <button
-                onClick={() => {setTypeFilter('image'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  typeFilter === 'image' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Image Models
-              </button>
-              <button
-                onClick={() => {setTypeFilter('audio'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  typeFilter === 'audio' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Audio Models
-              </button>
-              <button
-                onClick={() => {setTypeFilter('video'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  typeFilter === 'video' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Video Models
-              </button>
-              <button
-                onClick={() => {setTypeFilter('multimodal'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  typeFilter === 'multimodal' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Multimodal
-              </button>
-            </div>
-          </div>
-          
-          {/* Region Filter */}
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <h3 className="text-white font-medium mb-2">Region</h3>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => {setRegionFilter('all'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  regionFilter === 'all' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Worldwide
-              </button>
-              <button
-                onClick={() => {setRegionFilter('us'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  regionFilter === 'us' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                United States
-              </button>
-              <button
-                onClick={() => {setRegionFilter('europe'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  regionFilter === 'europe' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Europe
-              </button>
-              <button
-                onClick={() => {setRegionFilter('asia'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  regionFilter === 'asia' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Asia
-              </button>
-              <button
-                onClick={() => {setRegionFilter('uk'); setCurrentPage(1);}}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                  regionFilter === 'uk' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                United Kingdom
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* Results Summary */}
-        <div className="flex justify-between items-center mb-4">
+        {/* Results Summary and Sort By */}
+        <div className="flex justify-between items-center mb-6">
           <p className="text-gray-400 text-sm">
             Showing {indexOfFirstModel + 1}-{Math.min(indexOfLastModel, filteredModels.length)} of {filteredModels.length} models
           </p>
           <div className="flex items-center">
             <span className="text-gray-400 text-sm mr-2">Sort by:</span>
             <select 
-              className="bg-gray-700 text-white text-sm rounded-md px-2 py-1 border border-gray-600"
+              className="bg-gray-700 text-white text-sm rounded-md px-3 py-2 border border-gray-600"
               onChange={(e) => {
-                if (e.target.value === 'rating') {
-                  setActiveCategory('popular');
-                } else {
-                  setActiveCategory(e.target.value);
-                }
+                setActiveCategory(e.target.value);
                 setCurrentPage(1);
               }}
-              value={activeCategory === 'popular' ? 'rating' : activeCategory}
+              value={activeCategory}
             >
-              <option value="rating">Highest Rating</option>
-              <option value="text">Text Models</option>
-              <option value="image">Image Models</option>
-              <option value="audio">Audio Models</option>
-              <option value="video">Video Models</option>
+              <option value="top">Top</option>
+              <option value="new">New</option>
+              <option value="hottest">Hottest</option>
             </select>
           </div>
         </div>
@@ -460,12 +269,17 @@ export default function ModelsPage() {
           {currentModels.map((model) => (
             <div key={model.id} className="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition duration-300">
               <Link href={`/models/${model.id}`}>
-                <div className="h-48 overflow-hidden">
+                <div className="h-48 overflow-hidden relative">
                   <img 
                     src={model.image} 
                     alt={model.name} 
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                   />
+                  {model.isNew && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+                      NEW
+                    </div>
+                  )}
                 </div>
               </Link>
               <div className="p-4">
