@@ -603,7 +603,7 @@ export default function LivePage({ params }: { params: { id: string } }) {
             <div className="flex items-center">
               <input 
                 type="text" 
-                value={`https://sluttube.com/live/${params.id}`} 
+                value={`https://slutspace.com/live/${params.id}`} 
                 readOnly
                 className="bg-gray-800 rounded-l-lg px-4 py-2 flex-1 text-sm"
               />
