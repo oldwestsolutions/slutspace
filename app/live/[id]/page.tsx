@@ -29,6 +29,33 @@ import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
+// Define Icon type for component icons
+type IconType = React.ForwardRefExoticComponent<React.SVGProps<SVGSVGElement>>
+
+// Define Message interface
+interface Message {
+  id: number;
+  user: string;
+  text: string;
+  time: string;
+  userColor: string;
+  isGift: boolean;
+  giftIcon?: IconType;
+  giftColor?: string;
+  giftName?: string;
+  giftValue?: number;
+}
+
+// Define Gift interface
+interface Gift {
+  id: number;
+  name: string;
+  price: number;
+  icon: IconType;
+  category: string;
+  color: string;
+}
+
 export default function LivePage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const streamRef = useRef<HTMLDivElement>(null)
@@ -38,14 +65,14 @@ export default function LivePage({ params }: { params: { id: string } }) {
   const [likeCount, setLikeCount] = useState(1245)
   const [floatingHearts, setFloatingHearts] = useState<{id: number, x: number, y: number}[]>([])
   const [message, setMessage] = useState('')
-  const [messages, setMessages] = useState([
-    { id: 1, user: 'Sophie', text: 'Hey everyone! 👋', time: '2 min ago', userColor: 'text-pink-400' },
-    { id: 2, user: 'Mike', text: 'Love this stream!', time: '1 min ago', userColor: 'text-blue-400' },
-    { id: 3, user: 'Jen23', text: 'Where did you get that shirt?', time: '1 min ago', userColor: 'text-purple-400' },
-    { id: 4, user: 'Taylor', text: 'Just gifted you a rocket! 🚀', time: '45 sec ago', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, userColor: 'text-green-400' },
-    { id: 5, user: 'Chris', text: 'Your makeup looks great today', time: '30 sec ago', userColor: 'text-yellow-400' },
-    { id: 6, user: 'Alex', text: 'Just sent you a star! ⭐', time: '20 sec ago', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, userColor: 'text-orange-400' },
-    { id: 7, user: 'Brooklyn', text: "What's your favorite song right now?", time: '10 sec ago', userColor: 'text-indigo-400' }
+  const [messages, setMessages] = useState<Message[]>([
+    { id: 1, user: 'Sophie', text: 'Hey everyone!', time: '2 min ago', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+    { id: 2, user: 'Mike', text: 'Love this stream!', time: '1 min ago', userColor: 'text-blue-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+    { id: 3, user: 'Jen23', text: 'Where did you get that shirt?', time: '1 min ago', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+    { id: 4, user: 'Taylor', text: 'Just gifted you a rocket!', time: '45 sec ago', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, userColor: 'text-green-400' },
+    { id: 5, user: 'Chris', text: 'Your makeup looks great today', time: '30 sec ago', userColor: 'text-yellow-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+    { id: 6, user: 'Alex', text: 'Just sent you a star!', time: '20 sec ago', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, userColor: 'text-orange-400' },
+    { id: 7, user: 'Brooklyn', text: "What's your favorite song right now?", time: '10 sec ago', userColor: 'text-indigo-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 }
   ])
   const [showGiftMenu, setShowGiftMenu] = useState(false)
   const [selectedGiftCategory, setSelectedGiftCategory] = useState('popular')
@@ -99,52 +126,56 @@ export default function LivePage({ params }: { params: { id: string } }) {
 
   // Simulate new messages
   useEffect(() => {
+    const randomNames = ['Jamie', 'Casey', 'Robin', 'Jordan', 'Taylor', 'Avery', 'Quinn', 'Morgan', 'Riley', 'Alex'];
+    
     const randomMessages = [
-      { user: 'Jamie', text: 'Just joined! What did I miss?', userColor: 'text-green-400' },
-      { user: 'Casey', text: 'Love your energy!', userColor: 'text-blue-400' },
-      { user: 'Robin', text: 'Followed you! Keep it up!', userColor: 'text-purple-400' },
-      { user: 'Jordan', text: 'Just sent a star! ⭐', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, userColor: 'text-yellow-400' },
-      { user: 'Taylor', text: 'Can you do a dance?', userColor: 'text-pink-400' },
-      { user: 'Avery', text: 'You look amazing today!', userColor: 'text-red-400' },
-      { user: 'Quinn', text: 'Just gifted you a rocket! 🚀', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, userColor: 'text-orange-400' }
+      { user: 'Jamie', text: 'Just joined! What did I miss?', userColor: 'text-green-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { user: 'Casey', text: 'Love your energy!', userColor: 'text-blue-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { user: 'Robin', text: 'Followed you! Keep it up!', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { user: 'Jordan', text: 'Just sent a star!', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, userColor: 'text-yellow-400' },
+      { user: 'Taylor', text: 'Can you do a dance?', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { user: 'Avery', text: 'You look amazing today!', userColor: 'text-red-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+      { user: 'Quinn', text: 'Just gifted you a rocket!', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, userColor: 'text-orange-400' }
     ];
 
     const interval = setInterval(() => {
-      const newMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
-      const now = new Date();
+      const randomIndex = Math.floor(Math.random() * randomMessages.length)
+      const randomMsg = randomMessages[randomIndex]
+      
       setMessages(prev => [...prev, {
-        id: Date.now(),
-        user: newMessage.user,
-        text: newMessage.text,
-        time: 'just now',
-        userColor: newMessage.userColor,
-        isGift: newMessage.isGift,
-        giftIcon: newMessage.giftIcon,
-        giftColor: newMessage.giftColor,
-        giftName: newMessage.giftName,
-        giftValue: newMessage.giftValue
-      }]);
-
-      // If it's a gift, also show floating gift
-      if (newMessage.isGift) {
-        addFloatingGift(newMessage.giftIcon);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
+        id: prev.length + 1,
+        user: randomMsg.user,
+        text: randomMsg.text,
+        time: 'Just now',
+        userColor: randomMsg.userColor,
+        isGift: randomMsg.isGift,
+        giftIcon: randomMsg.giftIcon || undefined,
+        giftColor: randomMsg.giftColor,
+        giftName: randomMsg.giftName,
+        giftValue: randomMsg.giftValue
+      }])
+    }, 3000)
+    
+    return () => clearInterval(interval)
+  }, [])
 
   const handleSendMessage = () => {
-    if (message.trim()) {
-      setMessages([...messages, { 
-        id: Date.now(),
-        user: 'You', 
-        text: message, 
-        time: 'just now',
-        userColor: 'text-white'
-      }]);
-      setMessage('');
+    if (message.trim() === '') return
+    
+    const newMessage: Message = {
+      id: messages.length + 1,
+      user: 'You',
+      text: message,
+      time: 'Just now',
+      userColor: 'text-blue-500',
+      isGift: false,
+      giftColor: '',
+      giftName: '',
+      giftValue: 0
     }
+    
+    setMessages(prev => [...prev, newMessage])
+    setMessage('')
   }
 
   const handleLike = () => {
@@ -191,22 +222,23 @@ export default function LivePage({ params }: { params: { id: string } }) {
     }, 3000);
   }
 
-  const handleSendGift = (gift: any) => {
-    setMessages([...messages, { 
-      id: Date.now(),
-      user: 'You', 
-      text: `Just sent a ${gift.name}!`, 
-      time: 'just now',
-      userColor: 'text-white',
+  const handleSendGift = (gift: Gift) => {
+    const newMessage: Message = {
+      id: messages.length + 1,
+      user: 'You',
+      text: `Just sent a ${gift.name}!`,
+      time: 'Just now',
+      userColor: 'text-blue-500',
       isGift: true,
       giftIcon: gift.icon,
       giftColor: gift.color,
       giftName: gift.name,
       giftValue: gift.price
-    }]);
+    }
     
-    addFloatingGift(gift.icon);
-    setShowGiftMenu(false);
+    setMessages(prev => [...prev, newMessage])
+    addFloatingGift(gift.icon)
+    setShowGiftMenu(false)
   }
 
   const toggleFullscreen = () => {
