@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'SlutTube - Video Sharing Platform',
-  description: 'A YouTube-style video sharing platform',
+  description: 'A video sharing platform for creators and viewers',
   applicationName: 'SlutTube',
   appleWebApp: {
     capable: true,

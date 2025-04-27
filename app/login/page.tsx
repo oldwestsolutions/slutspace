@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { UserCircleIcon, LockClosedIcon } from '@heroicons/react/24/outline'
@@ -13,6 +13,23 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  // Check for error parameter in URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const errorParam = searchParams.get('error');
+    
+    if (errorParam) {
+      const errorMessages: Record<string, string> = {
+        'missing_code': 'Authentication code was missing from the response.',
+        'token_error': 'Failed to authenticate with Coinbase.',
+        'user_data_error': 'Could not retrieve user information.',
+        'unknown_error': 'An unknown error occurred during authentication.'
+      };
+      
+      setError(errorMessages[errorParam] || 'Authentication failed.');
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,20 +54,14 @@ export default function LoginPage() {
 
   const handleCoinbaseLogin = () => {
     setIsLoading(true)
-    // This will be replaced with actual Coinbase OAuth flow later
-    setTimeout(() => {
-      // Mock successful login
-      router.push('/')
-    }, 1500)
+    window.location.href = '/api/auth/coinbase'
   }
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-red-500">
-            slutspace
-          </h1>
+          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutTube</h1>
           <p className="mt-2 text-gray-400">Sign in to your account</p>
         </div>
 
@@ -94,8 +105,8 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-400 italic">
-              slutspace requires Coinbase authentication for secure wallet integration.
+            <p className="text-sm text-zinc-400 max-w-sm text-center mb-6">
+              SlutTube requires Coinbase authentication for secure wallet integration.
             </p>
           </div>
         </div>

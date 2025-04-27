@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { supabase } from '../../utils/supabase'
 import { User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 
 type AuthContextType = {
   user: User | null
@@ -10,6 +11,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<{ error: any } | undefined>
   signUp: (email: string, password: string, username: string) => Promise<{ error: any, user: any } | undefined>
   signOut: () => Promise<void>
+  coinbaseUser: any | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -21,7 +23,9 @@ const isUsingPlaceholderCredentials =
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [coinbaseUser, setCoinbaseUser] = useState<any | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,6 +34,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.warn('Using placeholder credentials. Authentication is in demo mode.')
         setLoading(false)
         return () => {}
+      }
+
+      try {
+        // Check for Coinbase auth cookie
+        const coinbaseAuthCookie = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('coinbase_auth='))
+          ?.split('=')[1];
+          
+        if (coinbaseAuthCookie) {
+          try {
+            const coinbaseData = JSON.parse(decodeURIComponent(coinbaseAuthCookie));
+            setCoinbaseUser(coinbaseData.user);
+          } catch (e) {
+            console.error('Failed to parse Coinbase auth cookie', e);
+          }
+        }
+      } catch (e) {
+        console.error('Error checking Coinbase auth', e);
       }
 
       const { data: { session } } = await supabase.auth.getSession()
@@ -137,7 +160,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.warn('Auth in demo mode: Simulating sign out')
       return
     }
+
+    // Clear Coinbase auth cookie
+    document.cookie = 'coinbase_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    setCoinbaseUser(null);
+    
     await supabase.auth.signOut()
+    
+    // Redirect to login
+    router.push('/login')
   }
 
   return (
@@ -148,6 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signUp,
         signOut,
+        coinbaseUser
       }}
     >
       {children}

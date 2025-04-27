@@ -9,6 +9,24 @@ export default function SignupPage() {
   const router = useRouter()
   const [isRedirecting, setIsRedirecting] = useState(false)
   const [countdown, setCountdown] = useState(5)
+  const [error, setError] = useState('')
+
+  // Check for error parameter in URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const errorParam = searchParams.get('error');
+    
+    if (errorParam) {
+      const errorMessages: Record<string, string> = {
+        'missing_code': 'Authentication code was missing from the response.',
+        'token_error': 'Failed to authenticate with Coinbase.',
+        'user_data_error': 'Could not retrieve user information.',
+        'unknown_error': 'An unknown error occurred during authentication.'
+      };
+      
+      setError(errorMessages[errorParam] || 'Authentication failed.');
+    }
+  }, []);
 
   useEffect(() => {
     if (isRedirecting) {
@@ -16,7 +34,7 @@ export default function SignupPage() {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(timer)
-            window.location.href = 'https://www.coinbase.com/signup'
+            window.location.href = '/api/auth/coinbase'
             return 0
           }
           return prev - 1
@@ -40,9 +58,15 @@ export default function SignupPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-red-500 mb-2">slutspace</h1>
+          <h1 className="text-4xl font-bold text-red-500 mb-2">SlutTube</h1>
           <p className="text-gray-400">Create your account to get started.</p>
         </div>
+
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm mb-6">
+            {error}
+          </div>
+        )}
 
         <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-8">
           {isRedirecting ? (
@@ -69,12 +93,12 @@ export default function SignupPage() {
             <>
               <div className="text-center mb-6">
                 <p className="text-gray-300 mb-6">
-                  slutspace requires a Coinbase account for secure wallet integration and transactions.
+                  SlutTube requires a Coinbase account for secure wallet integration and transactions.
                 </p>
                 <div className="flex justify-center mb-6">
                   <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-4 max-w-xs">
                     <p className="text-blue-400 text-sm">
-                      Your Coinbase account will be used to authenticate you and allow you to interact with blockchain content on slutspace.
+                      Your Coinbase account will be used to authenticate you and allow you to interact with blockchain content on SlutTube.
                     </p>
                   </div>
                 </div>

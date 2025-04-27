@@ -261,6 +261,16 @@ export default function ProfilePage() {
     }
   ]
 
+  // Sample messages for inbox
+  const messages = [
+    { id: 1, sender: 'Alice Smith', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3', message: 'Hey, loved your latest video! Can we collab sometime?', time: '2 hours ago', unread: true },
+    { id: 2, sender: 'Bob Johnson', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3', message: 'Thanks for the tips on your photography tutorial!', time: '5 hours ago', unread: false },
+    { id: 3, sender: 'Carol Williams', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3', message: 'When are you going live next? I missed your last stream.', time: 'Yesterday', unread: true },
+    { id: 4, sender: 'David Brown', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3', message: 'Can you check out my new content? Would love your feedback!', time: '2 days ago', unread: false },
+    { id: 5, sender: 'Emma Davis', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3', message: 'The NFT you sent is amazing! Thank you so much.', time: '3 days ago', unread: false },
+    { id: 6, sender: 'Frank Miller', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3', message: 'Just sent you some crypto for that awesome tutorial!', time: '1 week ago', unread: false }
+  ];
+
   // Wallet modal state and handlers
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
@@ -291,426 +301,521 @@ export default function ProfilePage() {
   };
 
   const renderContentByTab = () => {
-    if (activeTab === 'posts') {
-      if (viewMode === 'albums' && !selectedAlbum) {
-        return (
-          <motion.div 
-            className="mt-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Photo Albums</h3>
-              <button 
-                onClick={() => setViewMode('grid')} 
-                className="text-sm text-blue-400 font-medium"
-              >
-                See All Photos
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {photoAlbums.map((album) => (
-                <motion.div 
-                  key={album.id} 
-                  className="relative rounded-xl overflow-hidden cursor-pointer shadow-lg border border-gray-700"
-                  onClick={() => setSelectedAlbum(album.id)}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
+    switch (activeTab) {
+      case 'posts':
+        if (viewMode === 'albums' && !selectedAlbum) {
+          return (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Photo Albums</h3>
+                <button 
+                  onClick={() => setViewMode('grid')} 
+                  className="text-sm text-blue-400 font-medium"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
-                  <img 
-                    src={album.cover} 
-                    alt={album.name} 
-                    className="w-full aspect-square object-cover"
-                  />
-                  <div className="absolute top-3 right-3 z-20">
-                    <div className="bg-gray-900/70 rounded-full p-1.5">
-                      <PhotoIcon className="h-5 w-5 text-white" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 p-3 z-20">
-                    <h4 className="text-white font-medium text-lg">{album.name}</h4>
-                    <p className="text-gray-300 text-sm">{album.count} photos</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        );
-      } else if (viewMode === 'albums' && selectedAlbum) {
-        // Album detail view
-        const album = photoAlbums.find(a => a.id === selectedAlbum);
-        return (
-          <motion.div 
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <button 
-                className="flex items-center text-blue-400"
-                onClick={() => setSelectedAlbum(null)}
-              >
-                <ChevronRightIcon className="h-4 w-4 transform rotate-180 mr-1" />
-                <span>Albums</span>
-              </button>
-              <div className="text-white font-medium">{album?.name}</div>
-              <button 
-                onClick={() => setViewMode('grid')} 
-                className="text-sm text-blue-400 font-medium"
-              >
-                See All
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-1">
-              {photos.map((photo) => (
-                <motion.div 
-                  key={photo.id} 
-                  className="relative aspect-square"
-                  whileHover={{ scale: 1.05, zIndex: 10 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <img 
-                    src={photo.image} 
-                    alt={`Photo ${photo.id}`} 
-                    className="w-full h-full object-cover rounded-sm"
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        );
-      } else {
-        // Default grid view
-        return (
-          <motion.div 
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Photos</h3>
-              <div className="flex space-x-2">
-                <div className="bg-gray-800 rounded-lg p-1 flex">
-                  <motion.button
-                    onClick={() => setPhotoFilter('recent')}
-                    className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
-                      photoFilter === 'recent' ? 'bg-gray-700 text-white' : 'text-gray-400'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ClockIcon className="h-3.5 w-3.5 mr-1" />
-                    <span className="hidden sm:inline">Recent</span>
-                  </motion.button>
-                  <motion.button
-                    onClick={() => setPhotoFilter('favorites')}
-                    className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
-                      photoFilter === 'favorites' ? 'bg-gray-700 text-white' : 'text-gray-400'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <StarIcon className="h-3.5 w-3.5 mr-1" />
-                    <span className="hidden sm:inline">Popular</span>
-                  </motion.button>
-                </div>
-                <motion.button
-                  onClick={() => setShowAllPhotos(!showAllPhotos)}
-                  className="px-2 sm:px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg flex items-center"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {showAllPhotos ? 'Show Less' : 'View All'}
-                </motion.button>
+                  See All Photos
+                </button>
               </div>
-            </div>
-            <div className="grid grid-cols-3 gap-1">
-              {getFilteredPhotos().map((photo) => (
-                <motion.div 
-                  key={photo.id} 
-                  className="relative aspect-square"
-                  whileHover={{ 
-                    scale: 1.03, 
-                    zIndex: 10,
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <img 
-                    src={photo.image} 
-                    alt={`Photo ${photo.id}`} 
-                    className="w-full h-full object-cover"
-                  />
+              <div className="grid grid-cols-2 gap-3">
+                {photoAlbums.map((album) => (
                   <motion.div 
-                    className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center space-x-4"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
+                    key={album.id} 
+                    className="relative rounded-xl overflow-hidden cursor-pointer shadow-lg border border-gray-700"
+                    onClick={() => setSelectedAlbum(album.id)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <div className="flex items-center space-x-2">
-                      <HeartIcon className="h-5 w-5 text-white" />
-                      <span className="text-white text-sm">{photo.likes}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <ChatBubbleLeftIcon className="h-5 w-5 text-white" />
-                      <span className="text-white text-sm">{photo.comments}</span>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              ))}
-            </div>
-            {photoFilter !== 'all' && photos.length > 6 && (
-              <motion.button
-                onClick={() => setPhotoFilter('all')}
-                className="w-full mt-4 py-2 border border-gray-700 rounded-lg text-blue-400 text-sm font-medium flex items-center justify-center"
-                whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
-                whileTap={{ scale: 0.98 }}
-              >
-                View All Photos ({photos.length})
-              </motion.button>
-            )}
-          </motion.div>
-        );
-      }
-    } else if (activeTab === 'videos') {
-      if (viewMode === 'albums' && !selectedAlbum) {
-        return (
-          <motion.div 
-            className="mt-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Video Collections</h3>
-              <button 
-                onClick={() => setViewMode('grid')} 
-                className="text-sm text-blue-400 font-medium"
-              >
-                See All Videos
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {videoAlbums.map((album) => (
-                <motion.div 
-                  key={album.id} 
-                  className="relative rounded-xl overflow-hidden cursor-pointer shadow-lg border border-gray-700"
-                  onClick={() => setSelectedAlbum(album.id)}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
-                  <img 
-                    src={album.cover} 
-                    alt={album.name} 
-                    className="w-full aspect-video object-cover"
-                  />
-                  <div className="absolute top-3 right-3 z-20">
-                    <div className="bg-gray-900/70 rounded-full p-1.5">
-                      <FilmIcon className="h-5 w-5 text-white" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 p-3 z-20">
-                    <h4 className="text-white font-medium text-lg">{album.name}</h4>
-                    <p className="text-gray-300 text-sm">{album.count} videos</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        );
-      } else if (viewMode === 'albums' && selectedAlbum) {
-        // Video album detail view
-        const album = videoAlbums.find(a => a.id === selectedAlbum);
-        return (
-          <motion.div 
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <button 
-                className="flex items-center text-blue-400"
-                onClick={() => setSelectedAlbum(null)}
-              >
-                <ChevronRightIcon className="h-4 w-4 transform rotate-180 mr-1" />
-                <span>Collections</span>
-              </button>
-              <div className="text-white font-medium">{album?.name}</div>
-              <button 
-                onClick={() => setViewMode('grid')} 
-                className="text-sm text-blue-400 font-medium"
-              >
-                See All
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {videos.map((video) => (
-                <motion.div 
-                  key={video.id} 
-                  className="relative rounded-lg overflow-hidden"
-                  whileHover={{ scale: 1.03, zIndex: 10 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
                     <img 
-                      src={video.thumbnail} 
-                      alt={video.title} 
-                      className="w-full aspect-video object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                        <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      {video.duration}
-                    </div>
-                  </div>
-                  <div className="p-2">
-                    <h3 className="text-white text-sm font-medium truncate">{video.title}</h3>
-                    <p className="text-gray-400 text-xs">{video.views.toLocaleString()} views</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        );
-      } else {
-        // Default video grid view
-        return (
-          <motion.div 
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="grid grid-cols-2 gap-3">
-              {videos.map((video) => (
-                <motion.div 
-                  key={video.id} 
-                  className="relative rounded-lg overflow-hidden bg-gray-800"
-                  whileHover={{ scale: 1.03, zIndex: 10 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <div className="relative">
-                    <img 
-                      src={video.thumbnail} 
-                      alt={video.title} 
-                      className="w-full aspect-video object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                        <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      {video.duration}
-                    </div>
-                  </div>
-                  <div className="p-2">
-                    <h3 className="text-white text-sm font-medium truncate">{video.title}</h3>
-                    <p className="text-gray-400 text-xs">{video.views.toLocaleString()} views • {video.date}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        );
-      }
-    } else if (activeTab === 'favorites') {
-      return (
-        <motion.div 
-          className="mt-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Favorites</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {favorites.map((item) => (
-              <motion.div 
-                key={item.id} 
-                className="relative rounded-lg overflow-hidden"
-                whileHover={{ scale: 1.03, zIndex: 10 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                {item.type === 'photo' ? (
-                  <>
-                    <img 
-                      src={item.image} 
-                      alt={`Favorite ${item.id}`} 
+                      src={album.cover} 
+                      alt={album.name} 
                       className="w-full aspect-square object-cover"
                     />
-                    <div className="absolute top-2 right-2">
-                      <div className="bg-black/50 rounded-full p-1">
-                        <StarIcon className="h-4 w-4 text-yellow-400" />
+                    <div className="absolute top-3 right-3 z-20">
+                      <div className="bg-gray-900/70 rounded-full p-1.5">
+                        <PhotoIcon className="h-5 w-5 text-white" />
                       </div>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
-                      <div className="flex items-center justify-between text-white text-xs">
-                        <div className="flex items-center space-x-2">
-                          <HeartIcon className="h-3 w-3" />
-                          <span>{item.likes}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <ChatBubbleLeftIcon className="h-3 w-3" />
-                          <span>{item.comments}</span>
-                        </div>
+                    <div className="absolute bottom-0 left-0 p-3 z-20">
+                      <h4 className="text-white font-medium text-lg">{album.name}</h4>
+                      <p className="text-gray-300 text-sm">{album.count} photos</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          );
+        } else if (viewMode === 'albums' && selectedAlbum) {
+          // Album detail view
+          const album = photoAlbums.find(a => a.id === selectedAlbum);
+          return (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <button 
+                  className="flex items-center text-blue-400"
+                  onClick={() => setSelectedAlbum(null)}
+                >
+                  <ChevronRightIcon className="h-4 w-4 transform rotate-180 mr-1" />
+                  <span>Albums</span>
+                </button>
+                <div className="text-white font-medium">{album?.name}</div>
+                <button 
+                  onClick={() => setViewMode('grid')} 
+                  className="text-sm text-blue-400 font-medium"
+                >
+                  See All
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-1">
+                {photos.map((photo) => (
+                  <motion.div 
+                    key={photo.id} 
+                    className="relative aspect-square"
+                    whileHover={{ scale: 1.05, zIndex: 10 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <img 
+                      src={photo.image} 
+                      alt={`Photo ${photo.id}`} 
+                      className="w-full h-full object-cover rounded-sm"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          );
+        } else {
+          // Default grid view
+          return (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Photos</h3>
+                <div className="flex space-x-2">
+                  <div className="bg-gray-800 rounded-lg p-1 flex">
+                    <motion.button
+                      onClick={() => setPhotoFilter('recent')}
+                      className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
+                        photoFilter === 'recent' ? 'bg-gray-700 text-white' : 'text-gray-400'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ClockIcon className="h-3.5 w-3.5 mr-1" />
+                      <span className="hidden sm:inline">Recent</span>
+                    </motion.button>
+                    <motion.button
+                      onClick={() => setPhotoFilter('favorites')}
+                      className={`px-2 sm:px-3 py-1.5 text-xs rounded-md flex items-center ${
+                        photoFilter === 'favorites' ? 'bg-gray-700 text-white' : 'text-gray-400'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <StarIcon className="h-3.5 w-3.5 mr-1" />
+                      <span className="hidden sm:inline">Popular</span>
+                    </motion.button>
+                  </div>
+                  <motion.button
+                    onClick={() => setShowAllPhotos(!showAllPhotos)}
+                    className="px-2 sm:px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg flex items-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {showAllPhotos ? 'Show Less' : 'View All'}
+                  </motion.button>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-1">
+                {getFilteredPhotos().map((photo) => (
+                  <motion.div 
+                    key={photo.id} 
+                    className="relative aspect-square"
+                    whileHover={{ 
+                      scale: 1.03, 
+                      zIndex: 10,
+                      transition: { duration: 0.2 }
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <img 
+                      src={photo.image} 
+                      alt={`Photo ${photo.id}`} 
+                      className="w-full h-full object-cover"
+                    />
+                    <motion.div 
+                      className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center space-x-4"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <HeartIcon className="h-5 w-5 text-white" />
+                        <span className="text-white text-sm">{photo.likes}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <ChatBubbleLeftIcon className="h-5 w-5 text-white" />
+                        <span className="text-white text-sm">{photo.comments}</span>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </div>
+              {photoFilter !== 'all' && photos.length > 6 && (
+                <motion.button
+                  onClick={() => setPhotoFilter('all')}
+                  className="w-full mt-4 py-2 border border-gray-700 rounded-lg text-blue-400 text-sm font-medium flex items-center justify-center"
+                  whileHover={{ scale: 1.02, backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  View All Photos ({photos.length})
+                </motion.button>
+              )}
+            </motion.div>
+          );
+        }
+      case 'videos':
+        if (viewMode === 'albums' && !selectedAlbum) {
+          return (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Video Collections</h3>
+                <button 
+                  onClick={() => setViewMode('grid')} 
+                  className="text-sm text-blue-400 font-medium"
+                >
+                  See All Videos
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {videoAlbums.map((album) => (
+                  <motion.div 
+                    key={album.id} 
+                    className="relative rounded-xl overflow-hidden cursor-pointer shadow-lg border border-gray-700"
+                    onClick={() => setSelectedAlbum(album.id)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10"></div>
+                    <img 
+                      src={album.cover} 
+                      alt={album.name} 
+                      className="w-full aspect-video object-cover"
+                    />
+                    <div className="absolute top-3 right-3 z-20">
+                      <div className="bg-gray-900/70 rounded-full p-1.5">
+                        <FilmIcon className="h-5 w-5 text-white" />
                       </div>
                     </div>
-                  </>
-                ) : (
-                  <>
+                    <div className="absolute bottom-0 left-0 p-3 z-20">
+                      <h4 className="text-white font-medium text-lg">{album.name}</h4>
+                      <p className="text-gray-300 text-sm">{album.count} videos</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          );
+        } else if (viewMode === 'albums' && selectedAlbum) {
+          // Video album detail view
+          const album = videoAlbums.find(a => a.id === selectedAlbum);
+          return (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <button 
+                  className="flex items-center text-blue-400"
+                  onClick={() => setSelectedAlbum(null)}
+                >
+                  <ChevronRightIcon className="h-4 w-4 transform rotate-180 mr-1" />
+                  <span>Collections</span>
+                </button>
+                <div className="text-white font-medium">{album?.name}</div>
+                <button 
+                  onClick={() => setViewMode('grid')} 
+                  className="text-sm text-blue-400 font-medium"
+                >
+                  See All
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {videos.map((video) => (
+                  <motion.div 
+                    key={video.id} 
+                    className="relative rounded-lg overflow-hidden"
+                    whileHover={{ scale: 1.03, zIndex: 10 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
                     <div className="relative">
                       <img 
-                        src={item.thumbnail} 
-                        alt={item.title} 
+                        src={video.thumbnail} 
+                        alt={video.title} 
                         className="w-full aspect-video object-cover"
                       />
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                          <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                          <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
+                            <svg className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M8 5v14l11-7z" />
                             </svg>
                           </div>
                         </div>
                       </div>
+                      <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        {video.duration}
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <h3 className="text-white text-sm font-medium truncate">{video.title}</h3>
+                      <p className="text-gray-400 text-xs">{video.views.toLocaleString()} views</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          );
+        } else {
+          // Default video grid view
+          return (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="grid grid-cols-2 gap-3">
+                {videos.map((video) => (
+                  <motion.div 
+                    key={video.id} 
+                    className="relative rounded-lg overflow-hidden bg-gray-800"
+                    whileHover={{ scale: 1.03, zIndex: 10 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <div className="relative">
+                      <img 
+                        src={video.thumbnail} 
+                        alt={video.title} 
+                        className="w-full aspect-video object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                          <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
+                            <svg className="w-4 h-4 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        {video.duration}
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <h3 className="text-white text-sm font-medium truncate">{video.title}</h3>
+                      <p className="text-gray-400 text-xs">{video.views.toLocaleString()} views • {video.date}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          );
+        }
+      case 'favorites':
+        return (
+          <motion.div 
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Favorites</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {favorites.map((item) => (
+                <motion.div 
+                  key={item.id} 
+                  className="relative rounded-lg overflow-hidden"
+                  whileHover={{ scale: 1.03, zIndex: 10 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {item.type === 'photo' ? (
+                    <>
+                      <img 
+                        src={item.image} 
+                        alt={`Favorite ${item.id}`} 
+                        className="w-full aspect-square object-cover"
+                      />
                       <div className="absolute top-2 right-2">
                         <div className="bg-black/50 rounded-full p-1">
                           <StarIcon className="h-4 w-4 text-yellow-400" />
                         </div>
                       </div>
-                      <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                        {item.duration}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+                        <div className="flex items-center justify-between text-white text-xs">
+                          <div className="flex items-center space-x-2">
+                            <HeartIcon className="h-3 w-3" />
+                            <span>{item.likes}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <ChatBubbleLeftIcon className="h-3 w-3" />
+                            <span>{item.comments}</span>
+                          </div>
+                        </div>
                       </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="relative">
+                        <img 
+                          src={item.thumbnail} 
+                          alt={item.title} 
+                          className="w-full aspect-video object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                            <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
+                              <svg className="w-3 h-3 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="absolute top-2 right-2">
+                          <div className="bg-black/50 rounded-full p-1">
+                            <StarIcon className="h-4 w-4 text-yellow-400" />
+                          </div>
+                        </div>
+                        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                          {item.duration}
+                        </div>
+                      </div>
+                      <div className="p-2 bg-gray-800">
+                        <h3 className="text-white text-sm font-medium truncate">{item.title}</h3>
+                        <p className="text-gray-400 text-xs">Saved {item.saved}</p>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        );
+      case 'messages':
+        return (
+          <motion.div 
+            className="mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Messages</h3>
+              <div>
+                <button className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                  <PencilIcon className="h-4 w-4 mr-1" />
+                  New Message
+                </button>
+              </div>
+            </div>
+            
+            <div className="bg-gray-800 rounded-lg">
+              {messages.map((msg) => (
+                <motion.div 
+                  key={msg.id}
+                  className={`p-4 flex items-start space-x-3 border-b border-gray-700 hover:bg-gray-750 cursor-pointer transition-colors ${
+                    msg.unread ? 'bg-gray-750/50' : ''
+                  }`}
+                  whileHover={{ backgroundColor: 'rgba(31, 41, 55, 0.7)' }}
+                >
+                  <img 
+                    src={msg.avatar} 
+                    alt={msg.sender} 
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-medium text-white">{msg.sender}</h4>
+                      <span className="text-gray-400 text-xs">{msg.time}</span>
                     </div>
-                    <div className="p-2 bg-gray-800">
-                      <h3 className="text-white text-sm font-medium truncate">{item.title}</h3>
-                      <p className="text-gray-400 text-xs">Saved {item.saved}</p>
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      );
+                    <p className={`text-sm mt-1 ${msg.unread ? 'text-white' : 'text-gray-400'}`}>
+                      {msg.message}
+                    </p>
+                  </div>
+                  {msg.unread && (
+                    <div className="w-2 h-2 rounded-full bg-purple-500 mt-2" />
+                  )}
+                </motion.div>
+              ))}
+              
+              {messages.length === 0 && (
+                <div className="p-8 text-center">
+                  <div className="bg-gray-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <ChatBubbleLeftIcon className="h-8 w-8 text-gray-500" />
+                  </div>
+                  <h4 className="text-gray-300 font-medium mb-2">No messages yet</h4>
+                  <p className="text-gray-500 text-sm">
+                    Connect with other users to start conversations
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        );
+      case 'wallet':
+        return (
+          <motion.div 
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Wallet</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <motion.button 
+                className="bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg flex items-center justify-center font-medium"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <PlusIcon className="h-5 w-5 mr-1" />
+                Add Funds
+              </motion.button>
+              <motion.button 
+                className="bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg flex items-center justify-center font-medium"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <ShareIcon className="h-5 w-5 mr-1" />
+                Send
+              </motion.button>
+            </div>
+          </motion.div>
+        );
+      default:
+        return null;
     }
   }
 

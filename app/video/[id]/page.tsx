@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
@@ -29,6 +29,12 @@ export default function VideoPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [comments, setComments] = useState<any[]>([])
   const [commentText, setCommentText] = useState('')
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [showControls, setShowControls] = useState(true)
+  const [videoProgress, setVideoProgress] = useState(0)
+  const [volume, setVolume] = useState(80)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const videoRef = useRef<HTMLDivElement>(null)
   
   // Mock data - would normally come from an API
   const liveStreams = [
@@ -190,6 +196,49 @@ export default function VideoPage() {
     setCommentText('');
   };
 
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+  };
+
+  const handleSave = () => {
+    setIsSaved(!isSaved);
+  };
+
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(parseInt(e.target.value));
+  };
+
+  const toggleFullscreen = () => {
+    if (!videoRef.current) return;
+    
+    if (!isFullscreen) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      }
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+      setIsFullscreen(false);
+    }
+  };
+
+  const handleVideoClick = () => {
+    togglePlay();
+    setShowControls(!showControls);
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
   if (isLoading || !currentStream) {
     return (
       <AppLayout>
@@ -218,41 +267,136 @@ export default function VideoPage() {
           {/* Main video content */}
           <div className="lg:col-span-2">
             {/* Video player */}
-            <div className="relative bg-black rounded-lg overflow-hidden">
-              <div className="aspect-video relative">
+            <div ref={videoRef} className="relative bg-black rounded-lg overflow-hidden group">
+              <div className="aspect-video relative" onClick={handleVideoClick}>
                 {/* Replace with actual video player component */}
                 <img 
                   src={currentStream.thumbnail} 
                   alt={currentStream.title} 
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-red-600 rounded-full h-16 w-16 flex items-center justify-center">
-                    <svg className="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"></path>
-                    </svg>
+                
+                {/* Play/Pause overlay */}
+                {showControls && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300">
+                    <div className="bg-white/20 backdrop-blur-sm rounded-full h-16 w-16 flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+                      {isPlaying ? (
+                        <svg className="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path>
+                        </svg>
+                      ) : (
+                        <svg className="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="bg-black bg-opacity-70 text-white px-3 py-2 rounded">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="relative">
-                          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse absolute -top-0.5 -right-0.5"></div>
-                          <span className="text-red-500 font-medium">LIVE</span>
-                        </div>
-                        <span className="mx-2">•</span>
-                        <span>{currentStream.viewers.toLocaleString()} viewers</span>
+                )}
+                
+                {/* Video controls */}
+                <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+                  <div className="space-y-2">
+                    {/* Progress bar */}
+                    <div className="relative">
+                      <div className="h-1 bg-gray-600 rounded-full">
+                        <div 
+                          className="h-1 bg-red-500 rounded-full" 
+                          style={{ width: `${videoProgress}%` }}
+                        ></div>
                       </div>
-                      <div className="flex space-x-3">
-                        <button className="hover:text-gray-300">
-                          <ShareIcon className="h-5 w-5" />
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2" 
+                        style={{ left: `${videoProgress}%` }}
+                      >
+                        <div className="w-3 h-3 bg-red-500 rounded-full -mt-1"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Controls row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <button onClick={togglePlay} className="text-white hover:text-gray-300">
+                          {isPlaying ? (
+                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"></path>
+                            </svg>
+                          ) : (
+                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                          )}
                         </button>
-                        <button className="hover:text-gray-300">
-                          <FlagIcon className="h-5 w-5" />
+                        
+                        {/* Volume control */}
+                        <div className="flex items-center space-x-2">
+                          <button className="text-white hover:text-gray-300">
+                            {volume === 0 ? (
+                              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M3.63 3.63a.996.996 0 0 0 0 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 1 0 1.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-3.83-2.4-7.11-5.78-8.4-.59-.23-1.22.23-1.22.86v.19c0 .38.25.71.61.85C17.18 6.54 19 9.06 19 12zm-8.71-6.29l-.17.17L12 7.76V6.41c0-.89-1.08-1.33-1.71-.7zM16.5 12A4.5 4.5 0 0 0 14 7.97v1.79l2.48 2.48c.01-.08.02-.16.02-.24z"></path>
+                              </svg>
+                            ) : (
+                              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+                              </svg>
+                            )}
+                          </button>
+                          <div className="w-20 lg:w-32">
+                            <input 
+                              type="range" 
+                              min="0" 
+                              max="100" 
+                              value={volume} 
+                              onChange={handleVolumeChange}
+                              className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Time display */}
+                        <div className="text-white text-xs">
+                          {formatTime(videoProgress * 5)} / {formatTime(500)}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        {/* Settings */}
+                        <button className="text-white hover:text-gray-300">
+                          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path>
+                          </svg>
+                        </button>
+                        
+                        {/* Fullscreen */}
+                        <button onClick={toggleFullscreen} className="text-white hover:text-gray-300">
+                          {isFullscreen ? (
+                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path>
+                            </svg>
+                          ) : (
+                            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path>
+                            </svg>
+                          )}
                         </button>
                       </div>
                     </div>
+                  </div>
+                </div>
+                
+                {/* Live indicator */}
+                <div className="absolute top-4 left-4">
+                  <div className="bg-black/70 text-white px-3 py-1 rounded-full flex items-center">
+                    <div className="relative">
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <span className="ml-2 text-sm font-semibold">LIVE</span>
+                  </div>
+                </div>
+                
+                {/* Viewer count */}
+                <div className="absolute top-4 right-4">
+                  <div className="bg-black/70 text-white px-3 py-1 rounded-full flex items-center">
+                    <span className="text-sm">{currentStream.viewers.toLocaleString()} viewers</span>
                   </div>
                 </div>
               </div>
@@ -274,38 +418,36 @@ export default function VideoPage() {
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition">
-                    Follow
+                  <button
+                    onClick={handleLike}
+                    className={`px-4 py-2 rounded-md font-medium flex items-center ${
+                      isLiked 
+                        ? 'bg-red-600 text-white' 
+                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                    }`}
+                  >
+                    {isLiked ? (
+                      <HeartSolidIcon className="h-5 w-5 mr-1" />
+                    ) : (
+                      <HeartIcon className="h-5 w-5 mr-1" />
+                    )}
+                    Like
                   </button>
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition">
-                    Subscribe
+                  <button
+                    onClick={handleSave}
+                    className={`px-4 py-2 rounded-md font-medium flex items-center ${
+                      isSaved 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                    }`}
+                  >
+                    <BookmarkIcon className="h-5 w-5 mr-1" />
+                    {isSaved ? 'Saved' : 'Save'}
+                  </button>
+                  <button className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-md">
+                    <ShareIcon className="h-5 w-5" />
                   </button>
                 </div>
-              </div>
-              
-              <div className="flex space-x-4 border-t border-b border-gray-700 py-3 mb-4">
-                <button 
-                  onClick={() => setIsLiked(!isLiked)}
-                  className="flex items-center text-gray-300 hover:text-white"
-                >
-                  <HandThumbUpIcon className="h-5 w-5 mr-1" />
-                  <span>{isLiked ? currentStream.likes + 1 : currentStream.likes}</span>
-                </button>
-                <button className="flex items-center text-gray-300 hover:text-white">
-                  <HandThumbDownIcon className="h-5 w-5 mr-1" />
-                  <span>Dislike</span>
-                </button>
-                <button className="flex items-center text-gray-300 hover:text-white">
-                  <ShareIcon className="h-5 w-5 mr-1" />
-                  <span>Share</span>
-                </button>
-                <button 
-                  onClick={() => setIsSaved(!isSaved)}
-                  className="flex items-center text-gray-300 hover:text-white"
-                >
-                  <BookmarkIcon className="h-5 w-5 mr-1" />
-                  <span>{isSaved ? 'Saved' : 'Save'}</span>
-                </button>
               </div>
               
               <div className="bg-gray-750 rounded-lg p-3 mb-4">
