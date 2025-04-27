@@ -92,6 +92,9 @@ export default function AppLayout({ children, userPreference: propPreference }: 
   
   // Handle header visibility on scroll
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
+    
     const controlHeader = () => {
       if (window.innerWidth < 768) { // only apply for mobile view
         if (window.scrollY > lastScrollY && window.scrollY > 50) {
@@ -118,6 +121,9 @@ export default function AppLayout({ children, userPreference: propPreference }: 
   
   // Handle body scroll when mobile menu is open
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
+    
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {

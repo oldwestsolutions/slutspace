@@ -21,6 +21,9 @@ const isUsingPlaceholderCredentials =
   process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://example.supabase.co' ||
   !process.env.NEXT_PUBLIC_SUPABASE_URL
 
+// Check if code is running in browser environment
+const isBrowser = typeof window !== 'undefined'
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [coinbaseUser, setCoinbaseUser] = useState<any | null>(null)
@@ -37,18 +40,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        // Check for Coinbase auth cookie
-        const coinbaseAuthCookie = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('coinbase_auth='))
-          ?.split('=')[1];
-          
-        if (coinbaseAuthCookie) {
-          try {
-            const coinbaseData = JSON.parse(decodeURIComponent(coinbaseAuthCookie));
-            setCoinbaseUser(coinbaseData.user);
-          } catch (e) {
-            console.error('Failed to parse Coinbase auth cookie', e);
+        // Only access document.cookie in browser environment
+        if (isBrowser) {
+          // Check for Coinbase auth cookie
+          const coinbaseAuthCookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('coinbase_auth='))
+            ?.split('=')[1];
+            
+          if (coinbaseAuthCookie) {
+            try {
+              const coinbaseData = JSON.parse(decodeURIComponent(coinbaseAuthCookie));
+              setCoinbaseUser(coinbaseData.user);
+            } catch (e) {
+              console.error('Failed to parse Coinbase auth cookie', e);
+            }
           }
         }
       } catch (e) {
@@ -161,8 +167,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    // Clear Coinbase auth cookie
-    document.cookie = 'coinbase_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    // Only access document.cookie in browser environment
+    if (isBrowser) {
+      // Clear Coinbase auth cookie
+      document.cookie = 'coinbase_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    }
+    
     setCoinbaseUser(null);
     
     await supabase.auth.signOut()

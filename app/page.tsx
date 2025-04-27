@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import AppLayout from './components/AppLayout'
 import { allVideos } from '../utils/videoData'
 
@@ -18,7 +19,10 @@ export default function Home() {
   // Function to handle page changes
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo(0, 0);
+    // Only scroll to top in browser environment
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
   };
 
   return (
@@ -32,28 +36,40 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {currentVideos.map((video) => (
             <div key={video.id} className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition-all hover:scale-105 cursor-pointer hover:bg-gray-750 flex flex-col h-full">
-              <Link href={`/video/${video.id}`} className="group">
-                <div className="relative">
-                  <img 
-                    src={video.thumbnail} 
-                    alt={video.title} 
-                    className="w-full aspect-video object-cover"
-                  />
-                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
-                    {video.duration}
+              {/* Main video card - clickable area */}
+              <div className="group">
+                <Link href={`/video/${video.id}`}>
+                  <div className="relative w-full aspect-video">
+                    <Image 
+                      src={video.thumbnail}
+                      alt={video.title}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      priority={video.id <= 5}
+                    />
+                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded z-10">
+                      {video.duration}
+                    </div>
                   </div>
-                </div>
+                </Link>
                 <div className="p-3 flex-1">
-                  <h3 className="text-white font-medium text-sm group-hover:text-blue-400 line-clamp-2">{video.title}</h3>
+                  <Link href={`/video/${video.id}`}>
+                    <h3 className="text-white font-medium text-sm group-hover:text-blue-400 line-clamp-2">{video.title}</h3>
+                  </Link>
                   <div className="flex items-center mt-2">
+                    {/* Channel icon - separate link */}
                     <Link href={`/profile/${video.channel}`} onClick={(e) => e.stopPropagation()} className="mr-2">
-                      <img 
-                        src={video.channelIcon} 
-                        alt={video.channel} 
-                        className="w-6 h-6 rounded-full cursor-pointer hover:ring-1 hover:ring-blue-500 transition-all"
-                      />
+                      <div className="relative w-6 h-6">
+                        <Image 
+                          src={video.channelIcon}
+                          alt={video.channel}
+                          fill
+                          className="rounded-full hover:ring-1 hover:ring-blue-500 transition-all"
+                        />
+                      </div>
                     </Link>
                     <div>
+                      {/* Channel name - separate link */}
                       <Link href={`/profile/${video.channel}`} className="hover:text-blue-400 transition-colors">
                         <span className="text-gray-300 text-xs">{video.channel}</span>
                       </Link>
@@ -61,7 +77,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             </div>
           ))}
         </div>

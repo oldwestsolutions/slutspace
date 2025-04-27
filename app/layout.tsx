@@ -26,6 +26,9 @@ export const viewport: Viewport = {
   themeColor: '#0F0F0F',
 }
 
+// Force dynamic rendering to avoid hydration issues
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: {

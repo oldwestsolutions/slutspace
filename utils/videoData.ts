@@ -2,41 +2,41 @@
 export const videos = [
   {
     id: 1,
-    title: 'How to Build a NextJS Application in 10 Minutes',
-    channel: 'CodeMaster',
-    views: '120K views',
+    title: 'Two Hot Blondes Kissing on Couch',
+    channel: 'HotLesbians',
+    views: '1.2M views',
     posted: '2 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/girl.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-    duration: '12:34'
+    duration: '10:34'
   },
   {
     id: 2,
-    title: 'The Ultimate Guide to Tailwind CSS',
-    channel: 'WebDevSimplified',
-    views: '254K views',
+    title: 'Young Friends Making Out Against the Wall',
+    channel: 'SexyMoments',
+    views: '854K views',
     posted: '1 week ago',
-    thumbnail: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/girl2.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '18:21'
   },
   {
     id: 3,
-    title: 'React vs. Vue vs. Angular: Which One Should You Choose?',
-    channel: 'TechTalks',
-    views: '543K views',
+    title: 'Blonde Beauty Gets Intimate on Tile Floor',
+    channel: 'IcyHotGirls',
+    views: '1.5M views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/girl3.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '24:15'
   },
   {
     id: 4,
-    title: 'Mastering JavaScript Promises and Async/Await',
-    channel: 'JSMaster',
-    views: '324K views',
+    title: 'Mature Woman with Young Man on Couch',
+    channel: 'MatureFantasy',
+    views: '924K views',
     posted: '5 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/girl4.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '15:48'
   },
@@ -162,8 +162,8 @@ export const videos = [
   }
 ];
 
-// Generate more videos for pagination (total of 160 videos - 8 pages with 20 videos each)
-export const allVideos = [...Array(160)].map((_, index) => {
+// Generate more videos in a consistent way for pagination
+export const allVideos = Array.from({ length: 160 }, (_, index) => {
   const videoIndex = index % videos.length;
   const pageIndex = Math.floor(index / 20);
   return {

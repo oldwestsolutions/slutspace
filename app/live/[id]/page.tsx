@@ -41,9 +41,9 @@ interface Message {
   userColor: string;
   isGift: boolean;
   giftIcon?: IconType;
-  giftColor?: string;
-  giftName?: string;
-  giftValue?: number;
+  giftColor: string;
+  giftName: string;
+  giftValue: number;
 }
 
 // Define Gift interface
@@ -69,9 +69,9 @@ export default function LivePage({ params }: { params: { id: string } }) {
     { id: 1, user: 'Sophie', text: 'Hey everyone!', time: '2 min ago', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
     { id: 2, user: 'Mike', text: 'Love this stream!', time: '1 min ago', userColor: 'text-blue-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
     { id: 3, user: 'Jen23', text: 'Where did you get that shirt?', time: '1 min ago', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-    { id: 4, user: 'Taylor', text: 'Just gifted you a rocket!', time: '45 sec ago', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, userColor: 'text-green-400' },
+    { id: 4, user: 'Taylor', text: 'Just gifted you a rocket!', time: '45 sec ago', userColor: 'text-green-400', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100 },
     { id: 5, user: 'Chris', text: 'Your makeup looks great today', time: '30 sec ago', userColor: 'text-yellow-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-    { id: 6, user: 'Alex', text: 'Just sent you a star!', time: '20 sec ago', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, userColor: 'text-orange-400' },
+    { id: 6, user: 'Alex', text: 'Just sent you a star!', time: '20 sec ago', userColor: 'text-orange-400', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50 },
     { id: 7, user: 'Brooklyn', text: "What's your favorite song right now?", time: '10 sec ago', userColor: 'text-indigo-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 }
   ])
   const [showGiftMenu, setShowGiftMenu] = useState(false)
@@ -140,34 +140,30 @@ export default function LivePage({ params }: { params: { id: string } }) {
     ];
 
     const interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * randomMessages.length)
-      const randomMsg = randomMessages[randomIndex]
-      
-      // Create a new message with the same structure as Message interface
-      const newMessage: Message = {
-        id: messages.length + 1,
-        user: randomMsg.user,
-        text: randomMsg.text,
+      const newMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+      const now = new Date();
+      setMessages(prev => [...prev, {
+        id: Date.now(),
+        user: newMessage.user,
+        text: newMessage.text,
         time: 'Just now',
-        userColor: randomMsg.userColor,
-        isGift: randomMsg.isGift,
-        ...(randomMsg.giftIcon && { giftIcon: randomMsg.giftIcon }),
-        giftColor: randomMsg.giftColor,
-        giftName: randomMsg.giftName,
-        giftValue: randomMsg.giftValue
-      };
-      
-      setMessages(prev => [...prev, newMessage])
-    }, 3000)
+        userColor: newMessage.userColor,
+        isGift: newMessage.isGift,
+        ...(newMessage.isGift && { giftIcon: newMessage.giftIcon }),
+        giftColor: newMessage.giftColor,
+        giftName: newMessage.giftName,
+        giftValue: newMessage.giftValue
+      }]);
+    }, 3000);
     
-    return () => clearInterval(interval)
-  }, [messages]) // Add messages dependency to properly track length
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array
 
   const handleSendMessage = () => {
     if (message.trim() === '') return
     
     const newMessage: Message = {
-      id: messages.length + 1,
+      id: Date.now(),
       user: 'You',
       text: message,
       time: 'Just now',
@@ -228,7 +224,7 @@ export default function LivePage({ params }: { params: { id: string } }) {
 
   const handleSendGift = (gift: Gift) => {
     const newMessage: Message = {
-      id: messages.length + 1,
+      id: Date.now(),
       user: 'You',
       text: `Just sent a ${gift.name}!`,
       time: 'Just now',
