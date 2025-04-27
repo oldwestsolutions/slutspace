@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { 
@@ -108,223 +108,140 @@ const initialVideos: VideoType[] = [
   }
 ];
 
-export default function SearchPage() {
-  const [activeTab, setActiveTab] = useState<'videos' | 'photos' | 'models'>('videos')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searching, setSearching] = useState(false)
+// Sample models data
+const models = [
+  { 
+    id: 'user1', 
+    username: 'sophie_model', 
+    name: 'Sophie J.',
+    followers: 158000, 
+    isVerified: true,
+    profileImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+    bio: 'Fashion model & content creator',
+    postsCount: 240
+  },
+  { 
+    id: 'user2', 
+    username: 'alex_star', 
+    name: 'Alex Star',
+    followers: 89400, 
+    isVerified: true,
+    profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+    bio: 'Fitness & lifestyle model',
+    postsCount: 186
+  },
+  { 
+    id: 'user3', 
+    username: 'emma_rose', 
+    name: 'Emma Rose',
+    followers: 67800, 
+    isVerified: false,
+    profileImage: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
+    bio: 'Travel enthusiast & model',
+    postsCount: 124
+  }
+];
+
+// Sample photos data
+const photos = [
+  { 
+    id: 'photo1', 
+    username: 'sophie_model', 
+    userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+    image: 'https://images.unsplash.com/photo-1516575832020-0933dd936006',
+    likes: 12450, 
+    comments: 238,
+    caption: 'Beach day vibes ☀️ #summer',
+    date: '2023-08-15'
+  },
+  { 
+    id: 'photo2', 
+    username: 'alex_star', 
+    userImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+    image: 'https://images.unsplash.com/photo-1547586696-ea22b4d4235d',
+    likes: 8670, 
+    comments: 154,
+    caption: 'Morning workout routine 💪',
+    date: '2023-08-12'
+  },
+  { 
+    id: 'photo3', 
+    username: 'emma_rose', 
+    userImage: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
+    image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206',
+    likes: 7340, 
+    comments: 98,
+    caption: 'City explore day',
+    date: '2023-08-10'
+  }
+];
+
+// Sample videos data
+const videos = [
+  { 
+    id: 'video1', 
+    username: 'sophie_model', 
+    userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+    thumbnail: 'https://images.unsplash.com/photo-1536240478700-b869070f9279',
+    duration: '2:45', 
+    views: 45600,
+    title: 'Summer fashion lookbook 2023',
+    date: '2023-08-14',
+    likes: 342,
+    comments: 56
+  },
+  { 
+    id: 'video2', 
+    username: 'alex_star', 
+    userImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+    thumbnail: 'https://images.unsplash.com/photo-1576633587382-13ddf37b1fc1',
+    duration: '8:12', 
+    views: 32800,
+    title: 'Full body workout routine',
+    date: '2023-08-11',
+    likes: 342,
+    comments: 56
+  },
+  { 
+    id: 'video3', 
+    username: 'emma_rose', 
+    userImage: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
+    thumbnail: 'https://images.unsplash.com/photo-1580554996018-ff8b408fc162',
+    duration: '4:37', 
+    views: 27400,
+    title: 'Paris vlog day 2',
+    date: '2023-08-09',
+    likes: 342,
+    comments: 56
+  }
+];
+
+// Client-side only component that uses useSearchParams
+function SearchContent() {
+  const [activeTab, setActiveTab] = useState<'videos' | 'photos' | 'models'>('videos');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<
     | { type: 'videos'; data: VideoType[] }
     | { type: 'photos'; data: PhotoType[] }
     | { type: 'models'; data: ModelType[] }
-  >({ type: 'videos', data: initialVideos })
-  const [showFilters, setShowFilters] = useState(false)
+  >({ type: 'videos', data: initialVideos });
+  const [showFilters, setShowFilters] = useState(false);
   const [filterOptions, setFilterOptions] = useState({
     duration: 'any',
     date: 'any',
     sort: 'relevance'
-  })
-  const [likedItems, setLikedItems] = useState<string[]>([])
-  const [savedItems, setSavedItems] = useState<string[]>([])
+  });
+  const [likedItems, setLikedItems] = useState<string[]>([]);
+  const [savedItems, setSavedItems] = useState<string[]>([]);
   
   // Get search params from URL
   const searchParams = useSearchParams();
 
-  // Sample data
-  const models = [
-    { 
-      id: 'user1', 
-      username: 'sophie_model', 
-      name: 'Sophie J.',
-      followers: 158000, 
-      isVerified: true,
-      profileImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-      bio: 'Fashion model & content creator',
-      postsCount: 240
-    },
-    { 
-      id: 'user2', 
-      username: 'alex_star', 
-      name: 'Alex Star',
-      followers: 89400, 
-      isVerified: true,
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-      bio: 'Fitness & lifestyle model',
-      postsCount: 186
-    },
-    { 
-      id: 'user3', 
-      username: 'emma_rose', 
-      name: 'Emma Rose',
-      followers: 67800, 
-      isVerified: false,
-      profileImage: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
-      bio: 'Travel enthusiast & model',
-      postsCount: 124
-    },
-    { 
-      id: 'user4', 
-      username: 'david_fox', 
-      name: 'David Fox',
-      followers: 125000, 
-      isVerified: true,
-      profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-      bio: 'Commercial model & actor',
-      postsCount: 310
-    },
-    { 
-      id: 'user5', 
-      username: 'mia_bella', 
-      name: 'Mia Bella',
-      followers: 93600, 
-      isVerified: false,
-      profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
-      bio: 'Runway model & designer',
-      postsCount: 215
-    },
-  ]
-
-  const photos = [
-    { 
-      id: 'photo1', 
-      username: 'sophie_model', 
-      userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-      image: 'https://images.unsplash.com/photo-1516575832020-0933dd936006',
-      likes: 12450, 
-      comments: 238,
-      caption: 'Beach day vibes ☀️ #summer',
-      date: '2023-08-15'
-    },
-    { 
-      id: 'photo2', 
-      username: 'alex_star', 
-      userImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-      image: 'https://images.unsplash.com/photo-1547586696-ea22b4d4235d',
-      likes: 8670, 
-      comments: 154,
-      caption: 'Morning workout routine 💪',
-      date: '2023-08-12'
-    },
-    { 
-      id: 'photo3', 
-      username: 'emma_rose', 
-      userImage: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
-      image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206',
-      likes: 7340, 
-      comments: 98,
-      caption: 'City explore day',
-      date: '2023-08-10'
-    },
-    { 
-      id: 'photo4', 
-      username: 'david_fox', 
-      userImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-      image: 'https://images.unsplash.com/photo-1477346611705-65d1883cee1e',
-      likes: 9850, 
-      comments: 176,
-      caption: 'Mountain views never disappoint',
-      date: '2023-08-08'
-    },
-    { 
-      id: 'photo5', 
-      username: 'mia_bella', 
-      userImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
-      image: 'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d',
-      likes: 11230, 
-      comments: 208,
-      caption: 'Coffee shop work day',
-      date: '2023-08-05'
-    },
-    { 
-      id: 'photo6', 
-      username: 'sophie_model', 
-      userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-      image: 'https://images.unsplash.com/photo-1504593811423-6dd665756598',
-      likes: 10540, 
-      comments: 187,
-      caption: 'Sunset moments',
-      date: '2023-08-02'
-    },
-  ]
-
-  const videos = [
-    { 
-      id: 'video1', 
-      username: 'sophie_model', 
-      userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-      thumbnail: 'https://images.unsplash.com/photo-1536240478700-b869070f9279',
-      duration: '2:45', 
-      views: 45600,
-      title: 'Summer fashion lookbook 2023',
-      date: '2023-08-14',
-      likes: 342,
-      comments: 56
-    },
-    { 
-      id: 'video2', 
-      username: 'alex_star', 
-      userImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-      thumbnail: 'https://images.unsplash.com/photo-1576633587382-13ddf37b1fc1',
-      duration: '8:12', 
-      views: 32800,
-      title: 'Full body workout routine',
-      date: '2023-08-11',
-      likes: 342,
-      comments: 56
-    },
-    { 
-      id: 'video3', 
-      username: 'emma_rose', 
-      userImage: 'https://images.unsplash.com/photo-1517841905240-472988babdf9',
-      thumbnail: 'https://images.unsplash.com/photo-1580554996018-ff8b408fc162',
-      duration: '4:37', 
-      views: 27400,
-      title: 'Paris vlog day 2',
-      date: '2023-08-09',
-      likes: 342,
-      comments: 56
-    },
-    { 
-      id: 'video4', 
-      username: 'david_fox', 
-      userImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-      thumbnail: 'https://images.unsplash.com/photo-1505765050516-f72dcac9c60e',
-      duration: '10:23', 
-      views: 38900,
-      title: 'Hiking the Grand Canyon',
-      date: '2023-08-07',
-      likes: 342,
-      comments: 56
-    },
-    { 
-      id: 'video5', 
-      username: 'mia_bella', 
-      userImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
-      thumbnail: 'https://images.unsplash.com/photo-1541832676-9b763f35c10f',
-      duration: '3:18', 
-      views: 41200,
-      title: 'Fashion week highlights',
-      date: '2023-08-04',
-      likes: 342,
-      comments: 56
-    },
-    { 
-      id: 'video6', 
-      username: 'sophie_model', 
-      userImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-      thumbnail: 'https://images.unsplash.com/photo-1581417478175-a9ef18f210c2',
-      duration: '5:42', 
-      views: 36700,
-      title: 'Day in my life: model edition',
-      date: '2023-08-01',
-      likes: 342,
-      comments: 56
-    },
-  ]
-
   // Initialize with videos by default and check for query params
   useEffect(() => {
     // Set initial results to videos when the component mounts
-    setSearchResults({ type: 'videos', data: initialVideos })
+    setSearchResults({ type: 'videos', data: initialVideos });
     
     // Check if there's a search query in the URL
     const queryParam = searchParams.get('q');
@@ -335,12 +252,12 @@ export default function SearchPage() {
         handleSearchWithQuery(queryParam);
       }, 100);
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
     handleSearchWithQuery(searchQuery);
-  }
+  };
 
   const handleSearchWithQuery = (query: string) => {
     if (!query.trim()) return;
@@ -355,56 +272,56 @@ export default function SearchPage() {
         case 'videos':
           results = videos.filter(video => 
             video.title.toLowerCase().includes(query.toLowerCase())
-          )
-          setSearchResults({ type: 'videos', data: results })
-          break
+          );
+          setSearchResults({ type: 'videos', data: results });
+          break;
         case 'photos':
           results = photos.filter(photo => 
             photo.caption?.toLowerCase().includes(query.toLowerCase())
-          )
-          setSearchResults({ type: 'photos', data: results })
-          break
+          );
+          setSearchResults({ type: 'photos', data: results });
+          break;
         case 'models':
           results = models.filter(model => 
             model.name.toLowerCase().includes(query.toLowerCase()) ||
             model.bio.toLowerCase().includes(query.toLowerCase())
-          )
-          setSearchResults({ type: 'models', data: results })
-          break
+          );
+          setSearchResults({ type: 'models', data: results });
+          break;
       }
       
-      setSearching(false)
-    }, 500)
-  }
+      setSearching(false);
+    }, 500);
+  };
 
   const handleTabChange = (tab: 'videos' | 'photos' | 'models') => {
-    setActiveTab(tab)
+    setActiveTab(tab);
     
     // Reset search results based on new tab
     switch (tab) {
       case 'videos':
-        setSearchResults({ type: 'videos', data: videos })
-        break
+        setSearchResults({ type: 'videos', data: videos });
+        break;
       case 'photos':
-        setSearchResults({ type: 'photos', data: photos })
-        break
+        setSearchResults({ type: 'photos', data: photos });
+        break;
       case 'models':
-        setSearchResults({ type: 'models', data: models })
-        break
+        setSearchResults({ type: 'models', data: models });
+        break;
     }
-  }
+  };
 
   const toggleLike = (id: string, type: 'videos' | 'photos' | 'models') => {
     setLikedItems(prev => 
       prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
-    )
-  }
+    );
+  };
 
   const toggleSave = (id: string, type: 'videos' | 'photos' | 'models') => {
     setSavedItems(prev => 
       prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
-    )
-  }
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -534,70 +451,67 @@ export default function SearchPage() {
               {searchResults.type === 'videos' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {searchResults.data.length > 0 ? (
-                    searchResults.data.map((video) => {
-                      const typedVideo = video as VideoType;
-                      return (
-                        <motion.div
-                          key={typedVideo.id}
-                          whileHover={{ y: -5 }}
-                          className="bg-gray-800 rounded-lg overflow-hidden shadow-lg"
-                        >
-                          <div className="relative">
-                            <img
-                              src={typedVideo.thumbnail}
-                              alt={typedVideo.title}
-                              className="w-full h-48 object-cover"
-                            />
-                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded text-xs text-white">
-                              {typedVideo.duration}
-                            </div>
+                    searchResults.data.map((video) => (
+                      <motion.div
+                        key={video.id}
+                        whileHover={{ y: -5 }}
+                        className="bg-gray-800 rounded-lg overflow-hidden shadow-lg"
+                      >
+                        <div className="relative">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-48 object-cover"
+                          />
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded text-xs text-white">
+                            {video.duration}
                           </div>
-                          <div className="p-4">
-                            <h3 className="text-white font-medium truncate">{typedVideo.title}</h3>
-                            <div className="mt-2 flex justify-between items-center">
-                              <div className="flex items-center">
-                                <img
-                                  src={typedVideo.userImage}
-                                  alt={typedVideo.username}
-                                  className="h-8 w-8 rounded-full mr-2 object-cover"
-                                />
-                                <span className="text-gray-300 text-sm">{typedVideo.username}</span>
-                              </div>
-                              <div className="text-gray-400 text-xs">{typedVideo.views} views</div>
+                        </div>
+                        <div className="p-4">
+                          <h3 className="text-white font-medium truncate">{video.title}</h3>
+                          <div className="mt-2 flex justify-between items-center">
+                            <div className="flex items-center">
+                              <img
+                                src={video.userImage}
+                                alt={video.username}
+                                className="h-8 w-8 rounded-full mr-2 object-cover"
+                              />
+                              <span className="text-gray-300 text-sm">{video.username}</span>
                             </div>
-                            <div className="mt-3 flex justify-between items-center">
-                              <div className="flex space-x-3">
-                                <button
-                                  onClick={() => toggleLike(typedVideo.id, 'videos')}
-                                  className="flex items-center text-gray-400 hover:text-red-500"
-                                >
-                                  {likedItems.includes(typedVideo.id) ? (
-                                    <HeartIconSolid className="h-5 w-5 text-red-500" />
-                                  ) : (
-                                    <HeartIcon className="h-5 w-5" />
-                                  )}
-                                  <span className="ml-1 text-xs">{typedVideo.likes}</span>
-                                </button>
-                                <button className="flex items-center text-gray-400 hover:text-gray-300">
-                                  <ChatBubbleLeftIcon className="h-5 w-5" />
-                                  <span className="ml-1 text-xs">{typedVideo.comments}</span>
-                                </button>
-                              </div>
+                            <div className="text-gray-400 text-xs">{video.views} views</div>
+                          </div>
+                          <div className="mt-3 flex justify-between items-center">
+                            <div className="flex space-x-3">
                               <button
-                                onClick={() => toggleSave(typedVideo.id, 'videos')}
-                                className="text-gray-400 hover:text-yellow-500"
+                                onClick={() => toggleLike(video.id, 'videos')}
+                                className="flex items-center text-gray-400 hover:text-red-500"
                               >
-                                {savedItems.includes(typedVideo.id) ? (
-                                  <BookmarkIconSolid className="h-5 w-5 text-yellow-500" />
+                                {likedItems.includes(video.id) ? (
+                                  <HeartIconSolid className="h-5 w-5 text-red-500" />
                                 ) : (
-                                  <BookmarkIcon className="h-5 w-5" />
+                                  <HeartIcon className="h-5 w-5" />
                                 )}
+                                <span className="ml-1 text-xs">{video.likes}</span>
+                              </button>
+                              <button className="flex items-center text-gray-400 hover:text-gray-300">
+                                <ChatBubbleLeftIcon className="h-5 w-5" />
+                                <span className="ml-1 text-xs">{video.comments}</span>
                               </button>
                             </div>
+                            <button
+                              onClick={() => toggleSave(video.id, 'videos')}
+                              className="text-gray-400 hover:text-yellow-500"
+                            >
+                              {savedItems.includes(video.id) ? (
+                                <BookmarkIconSolid className="h-5 w-5 text-yellow-500" />
+                              ) : (
+                                <BookmarkIcon className="h-5 w-5" />
+                              )}
+                            </button>
                           </div>
-                        </motion.div>
-                      );
-                    })
+                        </div>
+                      </motion.div>
+                    ))
                   ) : (
                     <div className="col-span-full text-center py-10">
                       <VideoCameraIcon className="h-16 w-16 mx-auto text-gray-600 mb-4" />
@@ -612,52 +526,49 @@ export default function SearchPage() {
               {searchResults.type === 'photos' && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {searchResults.data.length > 0 ? (
-                    searchResults.data.map((photo) => {
-                      const typedPhoto = photo as PhotoType;
-                      return (
-                        <motion.div
-                          key={typedPhoto.id}
-                          whileHover={{ scale: 1.03 }}
-                          className="group relative aspect-square rounded-lg overflow-hidden"
-                        >
-                          <img
-                            src={typedPhoto.image}
-                            alt={typedPhoto.caption}
-                            className="h-full w-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="absolute bottom-0 left-0 right-0 p-3">
-                              <p className="text-white text-sm font-medium line-clamp-1">{typedPhoto.caption}</p>
-                              <div className="flex justify-between items-center mt-2">
-                                <div className="flex space-x-2">
-                                  <button
-                                    onClick={() => toggleLike(typedPhoto.id, 'photos')}
-                                    className="flex items-center text-gray-300 hover:text-red-500"
-                                  >
-                                    {likedItems.includes(typedPhoto.id) ? (
-                                      <HeartIconSolid className="h-4 w-4 text-red-500" />
-                                    ) : (
-                                      <HeartIcon className="h-4 w-4" />
-                                    )}
-                                    <span className="ml-1 text-xs">{typedPhoto.likes}</span>
-                                  </button>
-                                </div>
+                    searchResults.data.map((photo) => (
+                      <motion.div
+                        key={photo.id}
+                        whileHover={{ scale: 1.03 }}
+                        className="group relative aspect-square rounded-lg overflow-hidden"
+                      >
+                        <img
+                          src={photo.image}
+                          alt={photo.caption}
+                          className="h-full w-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute bottom-0 left-0 right-0 p-3">
+                            <p className="text-white text-sm font-medium line-clamp-1">{photo.caption}</p>
+                            <div className="flex justify-between items-center mt-2">
+                              <div className="flex space-x-2">
                                 <button
-                                  onClick={() => toggleSave(typedPhoto.id, 'photos')}
-                                  className="text-gray-300 hover:text-yellow-500"
+                                  onClick={() => toggleLike(photo.id, 'photos')}
+                                  className="flex items-center text-gray-300 hover:text-red-500"
                                 >
-                                  {savedItems.includes(typedPhoto.id) ? (
-                                    <BookmarkIconSolid className="h-4 w-4 text-yellow-500" />
+                                  {likedItems.includes(photo.id) ? (
+                                    <HeartIconSolid className="h-4 w-4 text-red-500" />
                                   ) : (
-                                    <BookmarkIcon className="h-4 w-4" />
+                                    <HeartIcon className="h-4 w-4" />
                                   )}
+                                  <span className="ml-1 text-xs">{photo.likes}</span>
                                 </button>
                               </div>
+                              <button
+                                onClick={() => toggleSave(photo.id, 'photos')}
+                                className="text-gray-300 hover:text-yellow-500"
+                              >
+                                {savedItems.includes(photo.id) ? (
+                                  <BookmarkIconSolid className="h-4 w-4 text-yellow-500" />
+                                ) : (
+                                  <BookmarkIcon className="h-4 w-4" />
+                                )}
+                              </button>
                             </div>
                           </div>
-                        </motion.div>
-                      );
-                    })
+                        </div>
+                      </motion.div>
+                    ))
                   ) : (
                     <div className="col-span-full text-center py-10">
                       <PhotoIcon className="h-16 w-16 mx-auto text-gray-600 mb-4" />
@@ -672,43 +583,40 @@ export default function SearchPage() {
               {searchResults.type === 'models' && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {searchResults.data.length > 0 ? (
-                    searchResults.data.map((model) => {
-                      const typedModel = model as ModelType;
-                      return (
-                        <motion.div
-                          key={typedModel.id}
-                          whileHover={{ y: -5 }}
-                          className="bg-gray-800 rounded-lg p-4 text-center"
-                        >
-                          <Link href={`/profile/${typedModel.id}`} className="block">
-                            <img
-                              src={typedModel.profileImage}
-                              alt={typedModel.name}
-                              className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-full mx-auto mb-3"
-                            />
-                            <h3 className="text-white font-medium">{typedModel.name}</h3>
-                            {typedModel.isVerified && (
-                              <span className="inline-flex items-center text-blue-500 text-sm">
-                                <CheckBadgeIcon className="h-4 w-4 mr-1" />
-                                Verified
-                              </span>
-                            )}
-                            <p className="text-gray-400 text-sm mt-1 line-clamp-2">{typedModel.bio}</p>
-                            <div className="flex justify-center space-x-4 text-xs text-gray-400">
-                              <div>{typedModel.followers} followers</div>
-                              <div>{typedModel.postsCount} posts</div>
-                            </div>
-                            <motion.button 
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-sm py-1.5 px-4 rounded-full w-full"
-                            >
-                              Follow
-                            </motion.button>
-                          </Link>
-                        </motion.div>
-                      );
-                    })
+                    searchResults.data.map((model) => (
+                      <motion.div
+                        key={model.id}
+                        whileHover={{ y: -5 }}
+                        className="bg-gray-800 rounded-lg p-4 text-center"
+                      >
+                        <Link href={`/profile/${model.id}`} className="block">
+                          <img
+                            src={model.profileImage}
+                            alt={model.name}
+                            className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-full mx-auto mb-3"
+                          />
+                          <h3 className="text-white font-medium">{model.name}</h3>
+                          {model.isVerified && (
+                            <span className="inline-flex items-center text-blue-500 text-sm">
+                              <CheckBadgeIcon className="h-4 w-4 mr-1" />
+                              Verified
+                            </span>
+                          )}
+                          <p className="text-gray-400 text-sm mt-1 line-clamp-2">{model.bio}</p>
+                          <div className="flex justify-center space-x-4 text-xs text-gray-400">
+                            <div>{model.followers} followers</div>
+                            <div>{model.postsCount} posts</div>
+                          </div>
+                          <motion.button 
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="mt-3 bg-blue-600 hover:bg-blue-700 text-white text-sm py-1.5 px-4 rounded-full w-full"
+                          >
+                            Follow
+                          </motion.button>
+                        </Link>
+                      </motion.div>
+                    ))
                   ) : (
                     <div className="col-span-full text-center py-10">
                       <UserIcon className="h-16 w-16 mx-auto text-gray-600 mb-4" />
@@ -723,5 +631,29 @@ export default function SearchPage() {
         )}
       </div>
     </div>
-  )
+  );
+}
+
+// Main page component with Suspense boundary
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <h1 className="text-3xl font-bold text-white mb-8">Search</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-gray-800 rounded-lg overflow-hidden">
+              <div className="h-48 bg-gray-700 animate-pulse"></div>
+              <div className="p-4">
+                <div className="h-4 bg-gray-700 rounded animate-pulse mb-2"></div>
+                <div className="h-4 bg-gray-700 rounded animate-pulse w-2/3"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
+  );
 } 
