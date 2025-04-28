@@ -433,7 +433,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
         </aside>
         
         {/* Main content */}
-        <main className="w-full md:ml-64 p-4 md:p-6">
+        <main className="w-full md:ml-64 p-4 md:p-6 overflow-x-hidden">
           {children}
         </main>
       </div>

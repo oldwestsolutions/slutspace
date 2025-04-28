@@ -36,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} bg-gray-900 text-white h-full touch-action-manipulation ios-tap-highlight-transparent`}>
+      <body className={`${inter.className} bg-gray-900 text-white h-full touch-action-manipulation ios-tap-highlight-transparent overflow-x-hidden`}>
         <AuthProvider>
           {children}
         </AuthProvider>
