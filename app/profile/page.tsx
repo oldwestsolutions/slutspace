@@ -28,7 +28,8 @@ import {
   StarIcon,
   ClockIcon,
   AdjustmentsHorizontalIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline'
 import { CurrencyDollarIcon as CurrencyDollarIconSolid } from '@heroicons/react/24/solid'
 import Link from 'next/link'
@@ -37,7 +38,7 @@ import { motion } from 'framer-motion'
 export default function ProfilePage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [activeTab, setActiveTab] = useState('posts')
+  const [activeTab, setActiveTab] = useState<'photos' | 'videos' | 'favorites' | 'history' | 'messages' | 'wallet'>('photos')
   const [isFollowing, setIsFollowing] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [profileImage, setProfileImage] = useState<string | null>(null)
@@ -66,6 +67,12 @@ export default function ProfilePage() {
   })
   const [photoFilter, setPhotoFilter] = useState<'recent' | 'favorites' | 'all'>('recent')
   const [showAllPhotos, setShowAllPhotos] = useState(false)
+  const [viewingHistory, setViewingHistory] = useState<Array<{
+    id: string;
+    type: 'photo' | 'video';
+    url: string;
+    title: string;
+  }>>([])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -85,7 +92,7 @@ export default function ProfilePage() {
 
   const handleTabChange = (tab: string) => {
     setIsTabChanging(true)
-    setActiveTab(tab)
+    setActiveTab(tab as 'photos' | 'videos' | 'favorites' | 'history' | 'messages' | 'wallet')
     // Reset tab changing state after animation completes
     setTimeout(() => setIsTabChanging(false), 300)
   }
@@ -302,7 +309,7 @@ export default function ProfilePage() {
 
   const renderContentByTab = () => {
     switch (activeTab) {
-      case 'posts':
+      case 'photos':
         if (viewMode === 'albums' && !selectedAlbum) {
           return (
             <motion.div 
@@ -722,6 +729,43 @@ export default function ProfilePage() {
             </div>
           </motion.div>
         );
+      case 'history':
+        return (
+          <motion.div 
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Viewing History</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {viewingHistory.map((item) => (
+                <div key={item.id} className="relative group">
+                  {item.type === 'photo' ? (
+                    <img
+                      src={item.url}
+                      alt={item.title}
+                      className="w-full h-64 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <video
+                      src={item.url}
+                      className="w-full h-64 object-cover rounded-lg"
+                      controls
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 rounded-lg flex items-center justify-center">
+                    <button className="opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-200 text-white">
+                      <EyeIcon className="h-8 w-8" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
       case 'messages':
         return (
           <motion.div 
@@ -1005,9 +1049,9 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between mb-2">
             <div className="flex space-x-4 sm:space-x-8">
               <motion.button
-                onClick={() => handleTabChange('posts')}
+                onClick={() => handleTabChange('photos')}
                 className={`py-3 border-b-2 font-medium ${
-                  activeTab === 'posts'
+                  activeTab === 'photos'
                     ? 'border-purple-500 text-purple-500'
                     : 'border-transparent text-gray-400 hover:text-gray-300'
                 }`}
@@ -1049,9 +1093,24 @@ export default function ProfilePage() {
                   <span className="text-xs mt-1">Favorites</span>
                 </div>
               </motion.button>
+              <motion.button
+                onClick={() => handleTabChange('history')}
+                className={`py-3 border-b-2 font-medium ${
+                  activeTab === 'history'
+                    ? 'border-purple-500 text-purple-500'
+                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                }`}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="flex flex-col items-center">
+                  <EyeIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <span className="text-xs mt-1">History</span>
+                </div>
+              </motion.button>
             </div>
             
-            {(activeTab === 'posts' || activeTab === 'videos') && (
+            {(activeTab === 'photos' || activeTab === 'videos') && (
               <div className="flex space-x-2">
                 <motion.button 
                   onClick={() => setViewMode('grid')}

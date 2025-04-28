@@ -221,6 +221,8 @@ function SearchContent() {
   const [activeTab, setActiveTab] = useState<'videos' | 'photos' | 'models'>('videos');
   const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
+  const [sortOption, setSortOption] = useState<'rating' | 'newest' | 'views' | 'trending'>('rating');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [searchResults, setSearchResults] = useState<
     | { type: 'videos'; data: VideoType[] }
     | { type: 'photos'; data: PhotoType[] }
@@ -323,9 +325,39 @@ function SearchContent() {
     );
   };
 
+  const handleSortChange = (option: 'rating' | 'newest' | 'views' | 'trending') => {
+    setSortOption(option);
+    setShowSortDropdown(false);
+    
+    // Only sort if we have video results
+    if (searchResults.type === 'videos') {
+      const sortedVideos = [...searchResults.data].sort((a, b) => {
+        switch (option) {
+          case 'rating':
+            return b.likes - a.likes;
+          case 'newest':
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          case 'views':
+            return b.views - a.views;
+          case 'trending':
+            return (b.views / (new Date().getTime() - new Date(b.date).getTime())) - 
+                   (a.views / (new Date().getTime() - new Date(a.date).getTime()));
+          default:
+            return 0;
+        }
+      });
+      setSearchResults({ ...searchResults, data: sortedVideos });
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="text-2xl font-bold text-red-500 hover:text-red-400 transition-colors">
+            SlutSpace
+          </Link>
+        </div>
         <h1 className="text-3xl font-bold text-white mb-2">Search</h1>
         
         {/* Mobile Search UI */}
@@ -421,6 +453,41 @@ function SearchContent() {
               Models
             </button>
           </div>
+
+          {/* Sort Dropdown */}
+          {activeTab === 'videos' && (
+            <div className="relative">
+              <button
+                onClick={() => setShowSortDropdown(!showSortDropdown)}
+                className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
+              >
+                <span className="text-sm">Sort by: {sortOption.charAt(0).toUpperCase() + sortOption.slice(1)}</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {showSortDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
+                  <div className="py-1">
+                    {['rating', 'newest', 'views', 'trending'].map((option) => (
+                      <button
+                        key={option}
+                        onClick={() => handleSortChange(option as 'rating' | 'newest' | 'views' | 'trending')}
+                        className={`w-full text-left px-4 py-2 text-sm ${
+                          sortOption === option
+                            ? 'bg-blue-600 text-white'
+                            : 'text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       

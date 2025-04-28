@@ -8,6 +8,8 @@ import { allVideos } from '../utils/videoData'
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState<'rating' | 'newest' | 'views' | 'trending'>('rating');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const videosPerPage = 20; // 4 rows of 5 videos
   const totalPages = Math.ceil(allVideos.length / videosPerPage);
   
@@ -25,11 +27,78 @@ export default function Home() {
     }
   };
 
+  const handleSortChange = (option: 'rating' | 'newest' | 'views' | 'trending') => {
+    setSortOption(option);
+    setShowSortDropdown(false);
+    
+    // Sort the videos based on the selected option
+    const sortedVideos = [...allVideos].sort((a, b) => {
+      switch (option) {
+        case 'rating':
+          // Since we don't have likes, we'll use views as a proxy for rating
+          return parseInt(b.views.replace(/,/g, '')) - parseInt(a.views.replace(/,/g, ''));
+        case 'newest':
+          // Since we don't have date, we'll use posted time
+          const timeA = a.posted.includes('hour') ? 1 : a.posted.includes('day') ? 2 : 3;
+          const timeB = b.posted.includes('hour') ? 1 : b.posted.includes('day') ? 2 : 3;
+          return timeA - timeB;
+        case 'views':
+          return parseInt(b.views.replace(/,/g, '')) - parseInt(a.views.replace(/,/g, ''));
+        case 'trending':
+          // For trending, we'll combine views and recency
+          const viewsA = parseInt(a.views.replace(/,/g, ''));
+          const viewsB = parseInt(b.views.replace(/,/g, ''));
+          const timeWeightA = a.posted.includes('hour') ? 3 : a.posted.includes('day') ? 2 : 1;
+          const timeWeightB = b.posted.includes('hour') ? 3 : b.posted.includes('day') ? 2 : 1;
+          return (viewsB * timeWeightB) - (viewsA * timeWeightA);
+        default:
+          return 0;
+      }
+    });
+    
+    // Update the current page with sorted videos
+    const sortedCurrentVideos = sortedVideos.slice(indexOfFirstVideo, indexOfLastVideo);
+    allVideos.splice(indexOfFirstVideo, sortedCurrentVideos.length, ...sortedCurrentVideos);
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-white">For You</h1>
+          
+          {/* Sort Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              className="flex items-center space-x-1 text-gray-300 hover:text-white transition-colors"
+            >
+              <span className="text-sm">Sort by: {sortOption.charAt(0).toUpperCase() + sortOption.slice(1)}</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {showSortDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
+                <div className="py-1">
+                  {['rating', 'newest', 'views', 'trending'].map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => handleSortChange(option as 'rating' | 'newest' | 'views' | 'trending')}
+                      className={`w-full text-left px-4 py-2 text-sm ${
+                        sortOption === option
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      {option.charAt(0).toUpperCase() + option.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         
         {/* Grid of videos - 5 per row */}
@@ -122,6 +191,28 @@ export default function Home() {
             Next
           </button>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-12 py-6 border-t border-gray-700">
+          <div className="flex flex-wrap justify-between items-center text-sm">
+            <div className="flex gap-4">
+              <Link href="/community" className="text-gray-400 hover:text-white transition-colors">
+                Community
+              </Link>
+              <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
+                Contact Us
+              </Link>
+            </div>
+            <div className="flex gap-4">
+              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+                Terms and Conditions
+              </Link>
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
+        </footer>
       </div>
     </AppLayout>
   )

@@ -280,7 +280,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                   >
                     <span className="flex items-center">
                       <WalletIcon className="h-4 w-4 mr-2" />
-                      <span>Coinbase Wallet</span>
+                      <span>Wallet</span>
                     </span>
                   </Link>
                   <div className="border-t border-gray-700 mt-1 pt-1">

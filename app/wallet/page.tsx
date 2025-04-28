@@ -8,8 +8,18 @@ import {
   SparklesIcon, 
   StarIcon, 
   ArrowTrendingUpIcon,
-  ShoppingCartIcon
+  ShoppingCartIcon,
+  GiftIcon,
+  TrophyIcon,
+  ArrowLeftIcon,
+  CircleStackIcon,
+  ShieldCheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EyeIcon
 } from "@heroicons/react/24/solid";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 interface Coin {
   id: string;
@@ -31,12 +41,130 @@ interface NFT {
   price: number;
 }
 
+interface GiftingMerit {
+  level: string;
+  title: string;
+  description: string;
+  icon: string;
+  threshold: number;
+}
+
 export default function WalletPage() {
-  const [activeTab, setActiveTab] = useState("coins");
-  const [balance, setBalance] = useState({ usd: 2580.75, tokens: 15000 });
+  const [activeTab, setActiveTab] = useState("overview");
+  const [balance, setBalance] = useState({ 
+    coins: 150.75, 
+    usd: 2580.75 
+  });
+  const [giftingStats, setGiftingStats] = useState({
+    totalGifted: 5000,
+    giftsGiven: 150,
+    topGifterRank: 1,
+    meritLevel: "Diamond",
+    nextLevel: "Legendary",
+    progressToNext: 75 // percentage
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const [showGiftingModal, setShowGiftingModal] = useState(false);
+  const [showMeritModal, setShowMeritModal] = useState(false);
+  const [showBuyCoinsModal, setShowBuyCoinsModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedAmount, setSelectedAmount] = useState(1000);
+  const [customAmount, setCustomAmount] = useState('');
+  const [isCustomAmount, setIsCustomAmount] = useState(false);
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
+
+  const router = useRouter();
+
+  const meritLevels: GiftingMerit[] = [
+    {
+      level: "Bronze",
+      title: "Generous Beginner",
+      description: "Just starting your gifting journey",
+      icon: "🥉",
+      threshold: 100
+    },
+    {
+      level: "Silver",
+      title: "Notable Supporter",
+      description: "Making a positive impact",
+      icon: "🥈",
+      threshold: 500
+    },
+    {
+      level: "Gold",
+      title: "Elite Patron",
+      description: "A valued community member",
+      icon: "🥇",
+      threshold: 2000
+    },
+    {
+      level: "Platinum",
+      title: "Distinguished Benefactor",
+      description: "Setting the standard for generosity",
+      icon: "💎",
+      threshold: 5000
+    },
+    {
+      level: "Diamond",
+      title: "Legendary Philanthropist",
+      description: "The pinnacle of community support",
+      icon: "💎",
+      threshold: 10000
+    }
+  ];
+
+  const currentMeritLevel = meritLevels.find(level => level.level === giftingStats.meritLevel);
+  const nextMeritLevel = meritLevels.find(level => level.level === giftingStats.nextLevel);
+
+  const exchangeRates = [
+    { coins: 100, usd: 15.00 },
+    { coins: 500, usd: 70.00 },
+    { coins: 1000, usd: 130.00 },
+    { coins: 5000, usd: 600.00 },
+    { coins: 10000, usd: 1100.00 }
+  ];
+
+  const calculateCustomPrice = (coins: number) => {
+    // Base price per coin
+    const basePrice = 0.13;
+    // Volume discount for larger amounts
+    const discount = coins >= 5000 ? 0.12 : coins >= 1000 ? 0.11 : 0.13;
+    return coins * discount;
+  };
+
+  const handleAmountSelect = (coins: number) => {
+    setSelectedAmount(coins);
+    setIsCustomAmount(false);
+    setCustomAmount('');
+  };
+
+  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCustomAmount(value);
+    if (value) {
+      const coins = parseInt(value);
+      setSelectedAmount(coins);
+      setIsCustomAmount(true);
+    }
+  };
+
+  const getSelectedPrice = () => {
+    if (isCustomAmount && selectedAmount) {
+      return calculateCustomPrice(selectedAmount);
+    }
+    return exchangeRates.find(rate => rate.coins === selectedAmount)?.usd || 0;
+  };
+
+  const handleNextLevel = () => {
+    setCurrentLevelIndex((prev) => (prev + 1) % meritLevels.length);
+  };
+
+  const handlePrevLevel = () => {
+    setCurrentLevelIndex((prev) => (prev - 1 + meritLevels.length) % meritLevels.length);
+  };
 
   useEffect(() => {
     // Simulate loading
@@ -220,324 +348,437 @@ export default function WalletPage() {
 
       {/* Header */}
       <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+          >
+            <ArrowLeftIcon className="h-5 w-5 mr-2" />
+            Back
+          </button>
+        </div>
         <div className="bg-slate-800 rounded-xl p-6 mb-8 shadow-xl border border-slate-700 overflow-hidden relative">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url(/coin-pattern.svg)', backgroundSize: '200px' }}></div>
           <div className="relative z-10">
             <h1 className="text-3xl font-bold mb-4">Your Wallet</h1>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-r from-purple-900 to-indigo-800 rounded-lg p-5 shadow-lg border border-purple-700 transition duration-300 hover:shadow-purple-900/30 hover:shadow-xl">
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Coin Balance */}
+              <motion.div 
+                className="bg-gradient-to-r from-purple-900 to-indigo-800 rounded-lg p-5 shadow-lg border border-purple-700 transition duration-300 hover:shadow-purple-900/30 hover:shadow-xl cursor-pointer"
+                onClick={() => setShowBalanceModal(true)}
+                whileHover={{ scale: 1.02 }}
+              >
                 <div className="flex items-center mb-2">
-                  <CurrencyDollarIcon className="h-6 w-6 text-purple-300 mr-2" />
-                  <h2 className="text-xl font-semibold">Total Balance</h2>
+                  <CircleStackIcon className="h-6 w-6 text-purple-300 mr-2" />
+                  <h2 className="text-xl font-semibold">Coin Balance</h2>
                 </div>
-                <p className="text-3xl font-bold mb-1">${balance.usd.toLocaleString()}</p>
-                <div className="flex items-center text-green-400">
-                  <ArrowTrendingUpIcon className="h-4 w-4 mr-1" />
-                  <span>+5.7% from last week</span>
+                <div className="flex items-center">
+                  <p className="text-3xl font-bold mb-1">{balance.coins.toLocaleString()}</p>
+                  <CircleStackIcon className="h-6 w-6 text-purple-300 ml-2" />
                 </div>
-              </div>
-              <div className="bg-gradient-to-r from-indigo-900 to-blue-800 rounded-lg p-5 shadow-lg border border-indigo-700 transition duration-300 hover:shadow-indigo-900/30 hover:shadow-xl">
+                <p className="text-gray-300">≈ ${balance.usd.toLocaleString()}</p>
+              </motion.div>
+
+              {/* Merit Level */}
+              <motion.div 
+                className="bg-gradient-to-r from-blue-900 to-cyan-800 rounded-lg p-5 shadow-lg border border-blue-700 transition duration-300 hover:shadow-blue-900/30 hover:shadow-xl cursor-pointer"
+                onClick={() => setShowMeritModal(true)}
+                whileHover={{ scale: 1.02 }}
+              >
                 <div className="flex items-center mb-2">
-                  <SparklesIcon className="h-6 w-6 text-indigo-300 mr-2" />
-                  <h2 className="text-xl font-semibold">Token Balance</h2>
+                  <TrophyIcon className="h-6 w-6 text-blue-300 mr-2" />
+                  <h2 className="text-xl font-semibold">Merit Level</h2>
                 </div>
-                <p className="text-3xl font-bold mb-1">{balance.tokens.toLocaleString()} SLUT</p>
-                <div className="flex items-center text-blue-300">
-                  <span>Available for tipping and purchases</span>
+                <div className="flex items-center">
+                  <span className="text-3xl mr-2">{currentMeritLevel?.icon}</span>
+                  <div>
+                    <p className="text-xl font-bold">{giftingStats.meritLevel}</p>
+                    <p className="text-gray-300">Next: {giftingStats.nextLevel}</p>
+                  </div>
                 </div>
-              </div>
+                <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="bg-blue-500 h-2 rounded-full" 
+                    style={{ width: `${giftingStats.progressToNext}%` }}
+                  ></div>
+                </div>
+              </motion.div>
+
+              {/* Connection Status */}
+              <motion.div 
+                className="bg-gradient-to-r from-emerald-900 to-green-800 rounded-lg p-5 shadow-lg border border-emerald-700 transition duration-300 hover:shadow-emerald-900/30 hover:shadow-xl"
+                whileHover={{ scale: 1.02 }}
+              >
+                <div className="flex items-center mb-2">
+                  <ShieldCheckIcon className="h-6 w-6 text-emerald-300 mr-2" />
+                  <h2 className="text-xl font-semibold">Wallet Connection</h2>
+                </div>
+                <div className="flex items-center space-x-2 mb-2">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                  <p className="text-emerald-300">Connected to Coinbase Custodial</p>
+                </div>
+                <p className="text-gray-300 text-sm">Your funds are securely managed by Coinbase</p>
+              </motion.div>
             </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <button className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg flex flex-col items-center transition duration-300 border border-slate-700 shadow-md">
-            <div className="rounded-full bg-blue-900/50 p-3 mb-2">
-              <ArrowsRightLeftIcon className="h-6 w-6 text-blue-400" />
-            </div>
-            <span>Exchange</span>
-          </button>
-          <button className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg flex flex-col items-center transition duration-300 border border-slate-700 shadow-md">
-            <div className="rounded-full bg-purple-900/50 p-3 mb-2">
-              <ShoppingCartIcon className="h-6 w-6 text-purple-400" />
-            </div>
-            <span>Buy</span>
-          </button>
-          <button className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg flex flex-col items-center transition duration-300 border border-slate-700 shadow-md">
-            <div className="rounded-full bg-green-900/50 p-3 mb-2">
-              <StarIcon className="h-6 w-6 text-green-400" />
-            </div>
-            <span>Earn</span>
-          </button>
-          <button className="bg-slate-800 hover:bg-slate-700 p-4 rounded-lg flex flex-col items-center transition duration-300 border border-slate-700 shadow-md">
-            <div className="rounded-full bg-red-900/50 p-3 mb-2">
-              <FireIcon className="h-6 w-6 text-red-400" />
-            </div>
-            <span>Trending</span>
-          </button>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex space-x-1 mb-6 bg-slate-800 p-1 rounded-lg border border-slate-700 max-w-md">
-          <button
-            onClick={() => setActiveTab("coins")}
-            className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition ${
-              activeTab === "coins" 
-                ? "bg-indigo-600 text-white" 
-                : "hover:bg-slate-700 text-slate-300"
-            }`}
+        {/* Balance Modal */}
+        {showBalanceModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            Coins
-          </button>
-          <button
-            onClick={() => setActiveTab("nfts")}
-            className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition ${
-              activeTab === "nfts" 
-                ? "bg-indigo-600 text-white" 
-                : "hover:bg-slate-700 text-slate-300"
-            }`}
-          >
-            NFTs
-          </button>
-          <button
-            onClick={() => setActiveTab("transactions")}
-            className={`flex-1 py-2 px-4 rounded-md font-medium text-sm transition ${
-              activeTab === "transactions" 
-                ? "bg-indigo-600 text-white" 
-                : "hover:bg-slate-700 text-slate-300"
-            }`}
-          >
-            History
-          </button>
-        </div>
-
-        {/* Featured Section */}
-        {activeTab === "coins" && (
-          <>
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">Featured Coins</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {featuredCoins.map((coin) => (
-                  <div 
-                    key={coin.id}
-                    className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-5 border border-slate-700 shadow-lg hover:shadow-xl transition duration-300 relative overflow-hidden group"
-                  >
-                    <div className="absolute top-0 right-0 bg-gradient-to-bl from-indigo-700 to-purple-700 px-3 py-1 text-xs font-bold rounded-bl-lg">Featured</div>
-                    <div className="flex items-center mb-4">
-                      <div className="relative w-12 h-12 mr-4 rounded-full bg-slate-700 flex items-center justify-center">
-                        {coin.logo ? (
-                          <Image src={coin.logo} alt={coin.name} width={40} height={40} className="rounded-full" />
-                        ) : (
-                          <span className="text-xl font-bold">{coin.symbol.charAt(0)}</span>
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold">{coin.name}</h3>
-                        <p className="text-slate-400">{coin.symbol}</p>
-                      </div>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-2xl font-bold">${coin.priceUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}</p>
-                      <p className={`inline-flex items-center ${coin.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                        <ArrowTrendingUpIcon className={`h-4 w-4 mr-1 ${coin.change24h < 0 ? 'rotate-180' : ''}`} />
-                        {coin.change24h > 0 ? '+' : ''}{coin.change24h}%
-                      </p>
-                    </div>
-                    <div className="flex justify-center space-x-2">
-                      <button 
-                        onClick={() => handleBuy(coin.name, coin.priceUSD)}
-                        className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-medium text-sm transition duration-300 w-full"
-                      >
-                        Buy
-                      </button>
-                    </div>
-                  </div>
-                ))}
+            <motion.div 
+              className="bg-slate-800 rounded-xl w-full max-w-md p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">Coin Balance Details</h2>
+                <button 
+                  onClick={() => setShowBalanceModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-            </div>
-
-            {/* All Coins */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">All Coins</h2>
-              <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
-                    <thead className="bg-slate-900">
-                      <tr>
-                        <th className="px-6 py-4 font-medium">Coin</th>
-                        <th className="px-6 py-4 font-medium">Price</th>
-                        <th className="px-6 py-4 font-medium">24h Change</th>
-                        <th className="px-6 py-4 font-medium">Market Cap</th>
-                        <th className="px-6 py-4 font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-700">
-                      {coins.map((coin) => (
-                        <tr key={coin.id} className="hover:bg-slate-750 transition duration-150">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center">
-                              <div className="relative w-8 h-8 mr-3 rounded-full bg-slate-700 flex items-center justify-center">
-                                {coin.logo ? (
-                                  <Image src={coin.logo} alt={coin.name} width={24} height={24} className="rounded-full" />
-                                ) : (
-                                  <span className="text-sm font-bold">{coin.symbol.charAt(0)}</span>
-                                )}
-                              </div>
-                              <div>
-                                <div className="font-medium">{coin.name}</div>
-                                <div className="text-slate-400">{coin.symbol}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 font-medium">
-                            ${coin.priceUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
-                          </td>
-                          <td className={`px-6 py-4 font-medium ${coin.change24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                            <div className="flex items-center">
-                              <ArrowTrendingUpIcon className={`h-4 w-4 mr-1 ${coin.change24h < 0 ? 'rotate-180' : ''}`} />
-                              {coin.change24h > 0 ? '+' : ''}{coin.change24h}%
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">{coin.marketCap}</td>
-                          <td className="px-6 py-4">
-                            <button 
-                              onClick={() => handleBuy(coin.name, coin.priceUSD)}
-                              className="bg-indigo-600 hover:bg-indigo-700 px-3 py-1 rounded text-xs font-medium transition duration-200"
-                            >
-                              Buy
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <div className="space-y-4">
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-gray-400">Available Balance</p>
+                  <div className="flex items-center">
+                    <p className="text-3xl font-bold">{balance.coins.toLocaleString()}</p>
+                    <CircleStackIcon className="h-6 w-6 text-purple-300 ml-2" />
+                  </div>
+                  <p className="text-gray-300">≈ ${balance.usd.toLocaleString()}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300"
+                    onClick={() => {
+                      setShowBalanceModal(false);
+                      setShowBuyCoinsModal(true);
+                    }}
+                  >
+                    <ShoppingCartIcon className="h-5 w-5 mr-2" />
+                    Buy Coins
+                  </button>
+                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                    <ArrowsRightLeftIcon className="h-5 w-5 mr-2" />
+                    Exchange
+                  </button>
                 </div>
               </div>
-            </div>
-          </>
+            </motion.div>
+          </motion.div>
         )}
 
-        {/* NFTs Tab */}
-        {activeTab === "nfts" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Your NFT Collection</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
-              {nfts.map((nft) => (
-                <div 
-                  key={nft.id}
-                  className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 shadow-lg hover:shadow-xl transition duration-300 group"
+        {/* Gifting Stats Modal */}
+        {showGiftingModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-slate-800 rounded-xl w-full max-w-md p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">Gifting Statistics</h2>
+                <button 
+                  onClick={() => setShowGiftingModal(false)}
+                  className="text-gray-400 hover:text-white"
                 >
-                  <div className="relative aspect-square bg-slate-900">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/90 z-10"></div>
-                    <Image 
-                      src={nft.image || "https://via.placeholder.com/400"} 
-                      alt={nft.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition duration-500"
-                    />
-                    <div className={`absolute top-2 right-2 z-20 px-2 py-1 rounded text-xs font-bold
-                      ${nft.rarity === 'Common' ? 'bg-slate-600' : 
-                        nft.rarity === 'Rare' ? 'bg-blue-600' : 
-                        nft.rarity === 'Epic' ? 'bg-purple-600' : 
-                        nft.rarity === 'Legendary' ? 'bg-yellow-600' : 'bg-pink-600'}`
-                    }>
-                      {nft.rarity}
-                    </div>
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-gray-400">Total Gifts Given</p>
+                  <p className="text-3xl font-bold">{giftingStats.giftsGiven}</p>
+                </div>
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-gray-400">Total Amount Gifted</p>
+                  <div className="flex items-center">
+                    <p className="text-3xl font-bold">{giftingStats.totalGifted.toLocaleString()}</p>
+                    <CircleStackIcon className="h-6 w-6 text-indigo-300 ml-2" />
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold truncate">{nft.name}</h3>
-                    <p className="text-lg font-bold mt-2">{nft.price} ETH</p>
+                </div>
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-gray-400">Gifter Rank</p>
+                  <p className="text-3xl font-bold">Top {giftingStats.topGifterRank}%</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Merit Level Modal */}
+        {showMeritModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-slate-800 rounded-xl w-full max-w-2xl p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Merit Level Details</h2>
+                <button 
+                  onClick={() => setShowMeritModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Current Level Section */}
+                <div className="bg-slate-700 rounded-lg p-4 border border-purple-500">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <span className="text-3xl mr-2">{currentMeritLevel?.icon}</span>
+                      <div>
+                        <p className="text-xl font-bold">{currentMeritLevel?.level}</p>
+                        <p className="text-gray-300">{currentMeritLevel?.title}</p>
+                      </div>
+                    </div>
                     <button 
-                      onClick={() => handleBuy(nft.name, nft.price)}
-                      className="mt-3 w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-4 py-2 rounded-lg font-medium transition duration-300"
+                      className="bg-purple-600/50 hover:bg-purple-600/70 text-white text-sm font-medium py-2 px-4 rounded-lg transition duration-300 flex items-center"
+                      onClick={() => setCurrentLevelIndex(meritLevels.findIndex(level => level.level === giftingStats.meritLevel))}
                     >
-                      Buy Now
+                      <EyeIcon className="h-4 w-4 mr-2" />
+                      View All Levels
                     </button>
                   </div>
+                  <div className="bg-purple-500/10 rounded-lg p-3">
+                    <p className="text-purple-300 text-sm font-medium mb-2">Current Level</p>
+                    <p className="text-gray-400">{currentMeritLevel?.description}</p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                {/* Progress Section */}
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-gray-400 mb-2">Progress to Next Level</p>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm">{giftingStats.meritLevel}</span>
+                    <span className="text-sm">{giftingStats.nextLevel}</span>
+                  </div>
+                  <div className="w-full bg-gray-600 rounded-full h-2">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full" 
+                      style={{ width: `${giftingStats.progressToNext}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-gray-300 text-sm mt-2">
+                    0 coins needed for {giftingStats.nextLevel}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
 
-        {/* Transactions Tab */}
-        {activeTab === "transactions" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Transaction History</h2>
-            <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg mb-10">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="bg-slate-900">
-                    <tr>
-                      <th className="px-6 py-4 font-medium">Type</th>
-                      <th className="px-6 py-4 font-medium">Asset</th>
-                      <th className="px-6 py-4 font-medium">Amount</th>
-                      <th className="px-6 py-4 font-medium">Date</th>
-                      <th className="px-6 py-4 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-700">
-                    <tr className="hover:bg-slate-750">
-                      <td className="px-6 py-4">
-                        <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-medium">Buy</span>
-                      </td>
-                      <td className="px-6 py-4">SlutCoin (SLUT)</td>
-                      <td className="px-6 py-4 font-medium">1,500 SLUT</td>
-                      <td className="px-6 py-4">May 15, 2023</td>
-                      <td className="px-6 py-4">
-                        <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-medium">Completed</span>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-750">
-                      <td className="px-6 py-4">
-                        <span className="bg-blue-900/30 text-blue-400 px-2 py-1 rounded text-xs font-medium">Tip</span>
-                      </td>
-                      <td className="px-6 py-4">SlutCoin (SLUT)</td>
-                      <td className="px-6 py-4 font-medium">50 SLUT</td>
-                      <td className="px-6 py-4">May 12, 2023</td>
-                      <td className="px-6 py-4">
-                        <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-medium">Completed</span>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-750">
-                      <td className="px-6 py-4">
-                        <span className="bg-purple-900/30 text-purple-400 px-2 py-1 rounded text-xs font-medium">NFT</span>
-                      </td>
-                      <td className="px-6 py-4">Digital Dreams #42</td>
-                      <td className="px-6 py-4 font-medium">1.2 ETH</td>
-                      <td className="px-6 py-4">May 10, 2023</td>
-                      <td className="px-6 py-4">
-                        <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-medium">Completed</span>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-750">
-                      <td className="px-6 py-4">
-                        <span className="bg-yellow-900/30 text-yellow-400 px-2 py-1 rounded text-xs font-medium">Exchange</span>
-                      </td>
-                      <td className="px-6 py-4">ETH → SLUT</td>
-                      <td className="px-6 py-4 font-medium">0.5 ETH → 13,500 SLUT</td>
-                      <td className="px-6 py-4">May 5, 2023</td>
-                      <td className="px-6 py-4">
-                        <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-medium">Completed</span>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-750">
-                      <td className="px-6 py-4">
-                        <span className="bg-red-900/30 text-red-400 px-2 py-1 rounded text-xs font-medium">Sell</span>
-                      </td>
-                      <td className="px-6 py-4">Bitcoin (BTC)</td>
-                      <td className="px-6 py-4 font-medium">0.05 BTC</td>
-                      <td className="px-6 py-4">May 1, 2023</td>
-                      <td className="px-6 py-4">
-                        <span className="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-medium">Completed</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+        {/* Buy Coins Modal */}
+        {showBuyCoinsModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-slate-800 rounded-xl w-full max-w-2xl p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Buy Coins</h2>
+                <button 
+                  onClick={() => setShowBuyCoinsModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-            </div>
-          </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Exchange Rates Table */}
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold mb-4">Exchange Rates</h3>
+                  <div className="space-y-2">
+                    {exchangeRates.map((rate, index) => (
+                      <div 
+                        key={index}
+                        className={`flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
+                          selectedAmount === rate.coins && !isCustomAmount 
+                            ? 'bg-purple-600/30 border border-purple-500' 
+                            : 'bg-slate-600/50 hover:bg-slate-600/70'
+                        }`}
+                        onClick={() => handleAmountSelect(rate.coins)}
+                      >
+                        <div className="flex items-center">
+                          <CircleStackIcon className="h-5 w-5 text-purple-300 mr-2" />
+                          <span className="font-medium">{rate.coins.toLocaleString()} coins</span>
+                        </div>
+                        <span className="text-gray-300">${rate.usd.toFixed(2)}</span>
+                      </div>
+                    ))}
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-400 mb-2">Custom Amount</label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="number"
+                          value={customAmount}
+                          onChange={handleCustomAmountChange}
+                          placeholder="Enter amount"
+                          className="flex-1 bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <span className="text-gray-300">coins</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Information */}
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold mb-4">Payment Details</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">Selected Amount</span>
+                      <div className="flex items-center">
+                        <span className="font-medium">{selectedAmount.toLocaleString()}</span>
+                        <CircleStackIcon className="h-5 w-5 text-purple-300 ml-1" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">Total Cost</span>
+                      <span className="font-medium">${getSelectedPrice().toFixed(2)}</span>
+                    </div>
+                    <div className="pt-4">
+                      <button 
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300"
+                        onClick={() => {
+                          setShowBuyCoinsModal(false);
+                          setShowPaymentModal(true);
+                        }}
+                      >
+                        <ShoppingCartIcon className="h-5 w-5 mr-2" />
+                        Proceed to Payment
+                      </button>
+                    </div>
+                    <div className="text-center text-sm text-gray-400">
+                      <p>Powered by Coinbase</p>
+                      <p className="mt-1">Secure payment processing</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Payment Modal */}
+        {showPaymentModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-slate-800 rounded-xl w-full max-w-md p-6"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Complete Payment</h2>
+                <button 
+                  onClick={() => setShowPaymentModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-gray-400">Purchasing</p>
+                      <div className="flex items-center">
+                        <span className="text-xl font-bold">{selectedAmount.toLocaleString()}</span>
+                        <CircleStackIcon className="h-5 w-5 text-purple-300 ml-1" />
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-400">Total</p>
+                      <p className="text-xl font-bold">${getSelectedPrice().toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="border-t border-slate-600 pt-4">
+                    <p className="text-sm text-gray-400 mb-2">Payment Method</p>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-1 bg-slate-600 rounded-lg p-3 flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                            <CurrencyDollarIcon className="h-4 w-4 text-white" />
+                          </div>
+                          <span className="ml-3">Coinbase Wallet</span>
+                        </div>
+                        <span className="text-green-400">Connected</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex space-x-4">
+                  <button 
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300"
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      setShowBuyCoinsModal(true);
+                    }}
+                  >
+                    <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                    Back
+                  </button>
+                  <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg flex items-center justify-center transition duration-300">
+                    Confirm Payment
+                  </button>
+                </div>
+
+                <div className="text-center text-sm text-gray-400">
+                  <p>By proceeding, you agree to our Terms of Service</p>
+                  <p className="mt-1">Your payment will be processed securely by Coinbase</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </div>
     </div>
