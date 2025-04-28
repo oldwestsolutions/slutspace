@@ -109,13 +109,27 @@ export default function Home() {
               <div className="group">
                 <Link href={`/video/${video.id}`}>
                   <div className="relative w-full aspect-video">
-                    <Image 
-                      src={video.thumbnail}
-                      alt={video.title}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      priority={video.id <= 5}
-                    />
+                    {video.thumbnail.includes('dragon1.png') || video.thumbnail.includes('dragon4.jpg') || video.thumbnail.includes('dragon.png') || video.thumbnail.includes('dragon10.png') ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                        <Image 
+                          src={video.thumbnail}
+                          alt={video.title}
+                          width={120}
+                          height={120}
+                          style={{ objectFit: 'contain' }}
+                          className="max-h-[80%] max-w-[80%]"
+                          priority={video.id <= 5}
+                        />
+                      </div>
+                    ) : (
+                      <Image 
+                        src={video.thumbnail}
+                        alt={video.title}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        priority={video.id <= 5}
+                      />
+                    )}
                     <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded z-10">
                       {video.duration}
                     </div>

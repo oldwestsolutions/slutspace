@@ -46,7 +46,7 @@ export const videos = [
     channel: 'FrontendMaster',
     views: '187K views',
     posted: '1 month ago',
-    thumbnail: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon3.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '22:10'
   },
@@ -56,7 +56,7 @@ export const videos = [
     channel: 'TypeMaster',
     views: '432K views',
     posted: '2 months ago',
-    thumbnail: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon4.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '1:02:34'
   },
@@ -66,7 +66,7 @@ export const videos = [
     channel: 'BackendDev',
     views: '198K views',
     posted: '3 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1558898479-33c0057a5d12?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon.png',
     channelIcon: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '32:45'
   },
@@ -86,7 +86,7 @@ export const videos = [
     channel: 'AIExplorer',
     views: '276K views',
     posted: '1 week ago',
-    thumbnail: 'https://images.unsplash.com/photo-1597586124394-fbd6ef244026?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon1.png',
     channelIcon: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '28:12'
   },
@@ -96,7 +96,7 @@ export const videos = [
     channel: 'CryptoExplorer',
     views: '423K views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon10.png',
     channelIcon: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '34:56'
   },
@@ -146,7 +146,7 @@ export const videos = [
     channel: 'MERNMaster',
     views: '543K views',
     posted: '2 months ago',
-    thumbnail: 'https://images.unsplash.com/photo-1523824921871-d6f1a15151f1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon11.jpg',
     channelIcon: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '52:14'
   },
