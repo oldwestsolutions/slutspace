@@ -9,6 +9,7 @@ import AppLayout from '../components/AppLayout'
 export default function MusicPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [hoveredTrack, setHoveredTrack] = useState<number | null>(null);
+  const [hasListeningHistory, setHasListeningHistory] = useState(false);
   
   const songs = [
     {
@@ -353,50 +354,81 @@ export default function MusicPage() {
     : playlists.filter(playlist => playlist.category === activeCategory);
 
   // Get recently played songs (for demonstration - using first 4 songs)
-  const recentlyPlayed = songs.slice(0, 4);
+  const recentlyPlayed = hasListeningHistory ? songs.slice(0, 4) : [];
 
   return (
     <AppLayout>
       <div className="bg-gradient-to-b from-gray-900 to-black text-white min-h-screen">
-        {/* Hero Section */}
+        {/* Hero Section - Cute Purple Theme */}
         <div className="relative mb-12">
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 via-purple-900/30 to-black"></div>
-          <div className="w-full h-64 md:h-80 overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
-              alt="Music Banner"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg">MUSIC</h1>
-            <p className="text-gray-200 text-lg md:text-xl max-w-2xl drop-shadow-md">Discover the latest tracks and curated playlists.</p>
+          <div className="w-full h-64 md:h-80 overflow-hidden bg-purple-400">
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-500 to-purple-600 z-0"></div>
+            
+            {/* Decorative elements */}
+            <div className="absolute inset-0 z-10 overflow-hidden">
+              {/* Stars */}
+              <div className="absolute top-5 left-10 w-6 h-6 text-yellow-300 animate-pulse">★</div>
+              <div className="absolute top-20 right-20 w-8 h-8 text-yellow-300 animate-pulse" style={{ animationDelay: '0.5s' }}>★</div>
+              <div className="absolute bottom-10 left-1/4 w-4 h-4 text-yellow-300 animate-pulse" style={{ animationDelay: '1s' }}>★</div>
+              
+              {/* Hearts */}
+              <div className="absolute top-12 left-1/3 w-6 h-6 text-pink-400 animate-pulse" style={{ animationDelay: '0.7s' }}>❤</div>
+              <div className="absolute bottom-16 right-1/4 w-8 h-8 text-pink-400 animate-pulse" style={{ animationDelay: '1.2s' }}>❤</div>
+              
+              {/* Sparkles */}
+              <div className="absolute top-1/3 right-10 w-4 h-4 text-white animate-pulse" style={{ animationDelay: '0.3s' }}>✨</div>
+              <div className="absolute bottom-5 left-1/2 w-4 h-4 text-white animate-pulse" style={{ animationDelay: '0.8s' }}>✨</div>
+              
+              {/* Moon */}
+              <div className="absolute top-12 right-1/3 w-16 h-16 rounded-full bg-yellow-300 flex items-center justify-center">
+                <div className="text-yellow-500 text-2xl rotate-90">◡</div>
+              </div>
+            </div>
+            
+            {/* Title area - positioned at bottom left */}
+            <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full z-20">
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 drop-shadow-lg" style={{ textShadow: '3px 3px 0 #5B21B6' }}>
+                MUSIC
+              </h1>
+              <div className="flex items-center">
+                <span className="text-pink-200 text-xl mr-2">♫</span>
+                <p className="text-white text-lg md:text-xl">Discover the latest tracks</p>
+              </div>
+            </div>
           </div>
         </div>
         
         {/* Recently Played - Small Row at Top */}
         <div className="mb-8 px-6">
           <h2 className="text-lg font-bold mb-4">Recently Played</h2>
-          <div className="flex overflow-x-auto space-x-4 pb-2 no-scrollbar">
-            {recentlyPlayed.map(song => (
-              <div key={`recent-${song.id}`} className="flex-shrink-0 w-40 group cursor-pointer">
-                <div className="relative w-40 h-40 mb-2">
-                  <img 
-                    src={song.thumbnail} 
-                    alt={song.title} 
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                    <button className="bg-white rounded-full p-2.5 hover:scale-110 transition-transform">
-                      <PlayIcon className="h-5 w-5 text-black" />
-                    </button>
+          {hasListeningHistory ? (
+            <div className="flex overflow-x-auto space-x-4 pb-2 no-scrollbar">
+              {recentlyPlayed.map(song => (
+                <div key={`recent-${song.id}`} className="flex-shrink-0 w-40 group cursor-pointer">
+                  <div className="relative w-40 h-40 mb-2">
+                    <img 
+                      src={song.thumbnail} 
+                      alt={song.title} 
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <button className="bg-white rounded-full p-2.5 hover:scale-110 transition-transform">
+                        <PlayIcon className="h-5 w-5 text-black" />
+                      </button>
+                    </div>
                   </div>
+                  <h3 className="text-sm font-medium truncate">{song.title}</h3>
+                  <p className="text-gray-400 text-xs truncate">{song.artist}</p>
                 </div>
-                <h3 className="text-sm font-medium truncate">{song.title}</h3>
-                <p className="text-gray-400 text-xs truncate">{song.artist}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-800/50 rounded-lg p-8 text-center">
+              <MusicalNoteIcon className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400 mb-2">No listening history yet</p>
+              <p className="text-gray-500 text-sm">Play some music to create your listening history</p>
+            </div>
+          )}
         </div>
         
         {/* Category Navigation - Tidal Style */}
