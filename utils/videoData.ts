@@ -76,7 +76,7 @@ export const videos = [
     channel: 'DevOpsMaster',
     views: '345K views',
     posted: '2 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon31.jpeg',
     channelIcon: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '45:21'
   },
@@ -106,7 +106,7 @@ export const videos = [
     channel: 'APIExpert',
     views: '198K views',
     posted: '2 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon22.jpeg',
     channelIcon: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '16:42'
   },
@@ -116,7 +116,7 @@ export const videos = [
     channel: 'SecureCode',
     views: '324K views',
     posted: '1 month ago',
-    thumbnail: 'https://images.unsplash.com/photo-1596075780750-81249df16d19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon24.jpeg',
     channelIcon: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '42:18'
   },
@@ -126,7 +126,7 @@ export const videos = [
     channel: 'ReactMaster',
     views: '245K views',
     posted: '2 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon30.jpeg',
     channelIcon: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '19:27'
   },
@@ -136,7 +136,7 @@ export const videos = [
     channel: 'CSSWizard',
     views: '167K views',
     posted: '4 days ago',
-    thumbnail: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon25.png',
     channelIcon: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '14:53'
   },
@@ -156,7 +156,7 @@ export const videos = [
     channel: 'GitPro',
     views: '321K views',
     posted: '3 weeks ago',
-    thumbnail: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    thumbnail: '/images/dragon26.png',
     channelIcon: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
     duration: '26:38'
   }
