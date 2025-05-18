@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { SparklesIcon, UserIcon, ChatBubbleLeftIcon, HandThumbUpIcon, XMarkIcon, HeartIcon, CheckIcon } from '@heroicons/react/24/outline'
 import AppLayout from '../components/AppLayout'
 
@@ -195,70 +196,57 @@ export default function FantasyPage() {
 
   return (
     <AppLayout userPreference={selectedPreference}>
-      <div>
-        {/* Toast Notification */}
-        {showToast && (
-          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-fadeIn">
-            <div className={`flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg ${
-              selectedPreference === 'submissive' 
-                ? 'bg-purple-600 text-white' 
-                : selectedPreference === 'dominant' 
-                  ? 'bg-red-600 text-white' 
-                  : 'bg-gray-800 text-white'
-            }`}>
-              <CheckIcon className="h-5 w-5" />
-              <span className="text-sm font-medium">{toastMessage}</span>
+      <div className="min-h-screen bg-gray-900">
+        {/* Hero Section */}
+        <Link href="/for-you/feed/1" className="block">
+          <div className="relative h-[60vh] min-h-[500px] cursor-pointer group">
+            <Image
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
+              alt="Featured Story"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent group-hover:opacity-75 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 flex items-end">
+              <div className="container mx-auto px-4 pb-12">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 group-hover:translate-y-[-8px] transition-transform duration-300">For You</h1>
+              </div>
             </div>
           </div>
-        )}
+        </Link>
 
-        <div className="flex items-center mb-6">
-          <SparklesIcon className="h-6 w-6 text-purple-500 mr-2" />
-          <h1 className="text-2xl font-bold text-white">For You</h1>
-        </div>
-
-        {/* Featured Story Banner */}
-        <div className="mb-10">
-          <div className="relative rounded-xl overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" 
-              alt="Featured Story" 
-              className="w-full h-96 object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
-          </div>
-        </div>
-        
         {/* Stories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {getFilteredStories().map((story) => (
-            <Link 
-              href={`/fantasy/${story.id}`}
-              key={story.id}
-              className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300"
-            >
-              <div className="relative h-48">
-                <img 
-                  src={story.coverImage} 
-                  alt={story.title} 
-                  className="w-full h-full object-cover"
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {getFilteredStories().map((story) => (
+              <Link 
+                key={story.id}
+                href={`/for-you/feed/${story.id}`}
+                className="group relative aspect-[3/4] rounded-lg overflow-hidden bg-gray-800 hover:scale-[1.02] transition-transform duration-300"
+              >
+                <Image
+                  src={story.coverImage}
+                  alt={story.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-70"></div>
-              </div>
-              <div className="p-4">
-                <div className="flex flex-wrap gap-2">
-                  {story.tags.map((tag, index) => (
-                    <span 
-                      key={index} 
-                      className="bg-gray-700 text-gray-300 text-xs px-2 py-1 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="flex flex-wrap gap-2">
+                    {story.tags.map((tag) => (
+                      <span 
+                        key={tag}
+                        className="px-2 py-1 bg-gray-800/80 backdrop-blur-sm text-gray-300 text-sm rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </AppLayout>
