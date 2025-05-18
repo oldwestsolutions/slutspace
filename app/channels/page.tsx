@@ -340,44 +340,62 @@ export default function ChannelsPage() {
         {/* Channels Grid - 5 columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
           {channels.map((channel) => (
-            <div 
+            <Link 
+              href={`/channel/${channel.id}`}
               key={channel.id} 
-              className="bg-gray-800 rounded-lg overflow-hidden transition-all duration-300 h-full shadow-md hover:shadow-xl"
+              className={`block bg-gray-800 rounded-lg overflow-hidden transition-all duration-300 h-full shadow-md hover:shadow-xl hover:scale-105 ${
+                channel.id > 4 ? 'relative' : ''
+              }`}
               onMouseEnter={() => setHoveredChannel(channel.id)}
               onMouseLeave={() => setHoveredChannel(null)}
             >
+              {channel.id > 4 && (
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-10">
+                  <div className="text-center">
+                    <p className="text-white font-medium mb-1">Coming Soon</p>
+                    <p className="text-gray-400 text-sm">This channel will be available soon</p>
+                  </div>
+                </div>
+              )}
               <div className="p-4 flex flex-col h-full">
-                <div className="flex items-start mb-3">
+                <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden">
                   <img 
                     src={channel.avatar} 
                     alt={channel.name} 
-                    className={`w-12 h-12 rounded-full mr-3 border-2 ${hoveredChannel === channel.id ? 'border-blue-500' : 'border-transparent'} transition-all duration-300`}
+                    className="w-full h-full object-cover"
                   />
-                  <div className="min-w-0">
-                    <div className="flex items-center">
-                      <h3 className="text-white font-medium text-sm truncate mr-1">{channel.name}</h3>
-                      {channel.isVerified && (
-                        <CheckBadgeIcon className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                      )}
-                    </div>
-                    <p className="text-gray-400 text-xs">{channel.subscribers}</p>
-                    <p className="text-gray-400 text-xs">{channel.videos} videos</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-2 left-2 flex items-center">
+                    <h3 className="text-white font-medium text-sm mr-1">{channel.name}</h3>
+                    {channel.isVerified && (
+                      <CheckBadgeIcon className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                    )}
                   </div>
                 </div>
-                <p className="text-gray-300 text-xs mb-4 line-clamp-2 flex-grow">{channel.description}</p>
-                <div className="flex justify-between mt-auto">
-                  <Link 
-                    href={`/channel/${channel.id}`}
-                    className="text-blue-500 hover:text-blue-400 text-xs font-medium transition-colors"
+                <div className="text-gray-400 text-xs mb-4">
+                  <p>{channel.subscribers}</p>
+                  <p>{channel.videos} videos</p>
+                </div>
+                <div className="flex justify-center mt-auto">
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // Handle subscribe action
+                    }}
+                    className={`${
+                      channel.id > 4 
+                        ? 'bg-gray-600 cursor-not-allowed' 
+                        : hoveredChannel === channel.id 
+                          ? 'bg-red-500' 
+                          : 'bg-red-600'
+                    } hover:bg-red-700 text-white rounded-full text-xs px-3 py-1 transition-colors`}
+                    disabled={channel.id > 4}
                   >
-                    View Channel
-                  </Link>
-                  <button className={`${hoveredChannel === channel.id ? 'bg-red-500' : 'bg-red-600'} hover:bg-red-700 text-white rounded-full text-xs px-3 py-1 transition-colors`}>
                     Subscribe
                   </button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

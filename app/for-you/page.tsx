@@ -167,6 +167,20 @@ export default function FantasyPage() {
       likes: 3987,
       comments: 465,
       date: '2 months ago'
+    },
+    {
+      id: 9,
+      title: "The Last Dragon",
+      author: 'DragonHeart',
+      authorImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      coverImage: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      preview: 'In a world where dragons were thought to be extinct, a young girl discovers an egg that could change everything...',
+      category: 'fantasy',
+      tags: ['Dragons', 'Adventure', 'Magic'],
+      views: 19800,
+      likes: 3654,
+      comments: 432,
+      date: '3 months ago'
     }
   ];
 
@@ -200,7 +214,7 @@ export default function FantasyPage() {
 
         <div className="flex items-center mb-6">
           <SparklesIcon className="h-6 w-6 text-purple-500 mr-2" />
-          <h1 className="text-2xl font-bold text-white">Fantasy Stories</h1>
+          <h1 className="text-2xl font-bold text-white">For You</h1>
         </div>
 
         {/* Featured Story Banner */}
@@ -212,149 +226,17 @@ export default function FantasyPage() {
               className="w-full h-96 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
-            <div className="absolute bottom-0 left-0 p-8">
-              <div className="flex items-center mb-4">
-                <img 
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
-                  alt="Author" 
-                  className="w-10 h-10 rounded-full border-2 border-purple-500"
-                />
-                <p className="text-white text-sm ml-2">ElvenWriter</p>
-                <span className="mx-2 text-gray-400">•</span>
-                <p className="text-gray-400 text-sm">Featured Story</p>
-              </div>
-              <h2 className="text-4xl font-bold text-white mb-3">The Heart&apos;s Surrender</h2>
-              <p className="text-gray-300 mb-6 max-w-2xl">Select your preference below to personalize your experience. Choosing &quot;Submissive&quot; or &quot;Dominant&quot; will customize your content recommendations and match you with compatible partners. Your preference will appear in the header for easy access and can be toggled off at any time.</p>
-              <div className="flex space-x-4">
-                <button 
-                  onClick={() => handlePreferenceClick('submissive')}
-                  className={`bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all transform ${
-                    selectedPreference === 'submissive' 
-                      ? 'ring-2 ring-white bg-purple-700' 
-                      : ''
-                  } ${
-                    isButtonAnimating && selectedPreference === 'submissive' 
-                      ? 'scale-90 bg-purple-800 ring-4 ring-purple-400 ring-opacity-50 shadow-lg shadow-purple-600/50' 
-                      : 'hover:shadow-md hover:shadow-purple-600/30'
-                  }`}
-                >
-                  <span className="flex items-center">
-                    <HeartIcon className={`h-5 w-5 mr-2 ${isButtonAnimating && selectedPreference === 'submissive' ? 'animate-ping' : ''}`} />
-                    Submissive
-                  </span>
-                </button>
-                <button 
-                  onClick={() => handlePreferenceClick('dominant')}
-                  className={`bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-all transform ${
-                    selectedPreference === 'dominant' 
-                      ? 'ring-2 ring-white bg-red-700' 
-                      : ''
-                  } ${
-                    isButtonAnimating && selectedPreference === 'dominant' 
-                      ? 'scale-90 bg-red-800 ring-4 ring-red-400 ring-opacity-50 shadow-lg shadow-red-600/50' 
-                      : 'hover:shadow-md hover:shadow-gray-500/30 hover:bg-red-700'
-                  }`}
-                >
-                  <span className="flex items-center">
-                    <HeartIcon className={`h-5 w-5 mr-2 ${isButtonAnimating && selectedPreference === 'dominant' ? 'animate-ping' : ''}`} />
-                    Dominant
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Category Filter */}
-        <div className="overflow-x-auto whitespace-nowrap mb-8 pb-2 scrollbar-hide">
-          <div className="inline-flex space-x-2">
-            <button
-              onClick={() => setActiveCategory('trending')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'trending' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Trending
-            </button>
-            <button
-              onClick={() => setActiveCategory('romance')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'romance' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Romance
-            </button>
-            <button
-              onClick={() => setActiveCategory('dragons')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'dragons' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Dragons
-            </button>
-            <button
-              onClick={() => setActiveCategory('magic')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'magic' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Magic
-            </button>
-            <button
-              onClick={() => setActiveCategory('medieval')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'medieval' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Medieval
-            </button>
-            <button
-              onClick={() => setActiveCategory('witches')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'witches' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Witches
-            </button>
-            <button
-              onClick={() => setActiveCategory('scifi')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'scifi' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Sci-Fi
-            </button>
-            <button
-              onClick={() => setActiveCategory('paranormal')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                activeCategory === 'paranormal' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              Paranormal
-            </button>
           </div>
         </div>
         
         {/* Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {getFilteredStories().map((story) => (
-            <div key={story.id} className="bg-gray-800 rounded-lg overflow-hidden">
+            <Link 
+              href={`/fantasy/${story.id}`}
+              key={story.id}
+              className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-all duration-300"
+            >
               <div className="relative h-48">
                 <img 
                   src={story.coverImage} 
@@ -362,21 +244,9 @@ export default function FantasyPage() {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-70"></div>
-                <div className="absolute bottom-0 left-0 p-4">
-                  <h3 className="text-white font-bold text-lg">{story.title}</h3>
-                  <div className="flex items-center mt-1">
-                    <img 
-                      src={story.authorImage} 
-                      alt={story.author} 
-                      className="w-6 h-6 rounded-full mr-2"
-                    />
-                    <p className="text-gray-300 text-sm">{story.author}</p>
-                  </div>
-                </div>
               </div>
               <div className="p-4">
-                <p className="text-gray-300 text-sm mb-4 line-clamp-3">{story.preview}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2">
                   {story.tags.map((tag, index) => (
                     <span 
                       key={index} 
@@ -386,41 +256,9 @@ export default function FantasyPage() {
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center justify-between text-gray-400 text-xs">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center">
-                      <UserIcon className="h-4 w-4 mr-1" />
-                      <span>{(story.views / 1000).toFixed(1)}K</span>
-                    </div>
-                    <div className="flex items-center">
-                      <HandThumbUpIcon className="h-4 w-4 mr-1" />
-                      <span>{(story.likes / 1000).toFixed(1)}K</span>
-                    </div>
-                    <div className="flex items-center">
-                      <ChatBubbleLeftIcon className="h-4 w-4 mr-1" />
-                      <span>{story.comments}</span>
-                    </div>
-                  </div>
-                  <span>{story.date}</span>
-                </div>
-                <Link 
-                  href={`/fantasy/${story.id}`}
-                  className="mt-4 block bg-purple-600 hover:bg-purple-700 text-white text-center rounded-lg py-2 font-medium transition-colors"
-                >
-                  Read Story
-                </Link>
               </div>
-            </div>
+            </Link>
           ))}
-        </div>
-        
-        {/* Write Your Own CTA */}
-        <div className="mt-12 bg-gradient-to-r from-purple-800 to-blue-700 rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">Have a story to tell?</h2>
-          <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Share your fantasy worlds with our community of readers and writers.</p>
-          <button className="bg-white text-purple-700 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium transition-colors">
-            Start Writing
-          </button>
         </div>
       </div>
     </AppLayout>

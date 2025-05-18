@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
+import { ArrowTopRightOnSquareIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -57,6 +57,15 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Back button */}
+        <button
+          onClick={() => router.back()}
+          className="flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          <span>Back</span>
+        </button>
+
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-red-500 mb-2">SlutSpace</h1>
           <p className="text-gray-400">Create your account to get started.</p>

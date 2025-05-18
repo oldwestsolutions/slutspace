@@ -23,10 +23,15 @@ import {
   EllipsisHorizontalIcon,
   ShareIcon,
   HandThumbUpIcon,
-  PuzzlePieceIcon
+  PuzzlePieceIcon,
+  ArrowLeftIcon,
+  ChatBubbleLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useAnimation } from 'framer-motion'
 import Link from 'next/link'
 
 // Define Icon type for component icons
@@ -44,6 +49,8 @@ interface Message {
   giftColor: string;
   giftName: string;
   giftValue: number;
+  isGifter?: boolean;
+  gifterLevel?: 'bronze' | 'silver' | 'gold' | 'diamond';
 }
 
 // Define Gift interface
@@ -52,8 +59,16 @@ interface Gift {
   name: string;
   price: number;
   icon: IconType;
-  category: string;
   color: string;
+}
+
+interface StreamInfo {
+  streamer: string;
+  isVerified: boolean;
+  profileImage: string;
+  hasLiveNFT: boolean;
+  followers: string;
+  isDancing: boolean;
 }
 
 export default function LivePage({ params }: { params: { id: string } }) {
@@ -65,13 +80,15 @@ export default function LivePage({ params }: { params: { id: string } }) {
   const [likeCount, setLikeCount] = useState(1245)
   const [floatingHearts, setFloatingHearts] = useState<{id: number, x: number, y: number}[]>([])
   const [message, setMessage] = useState('')
+  const [charCount, setCharCount] = useState(0)
+  const MAX_CHARS = 120
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, user: 'Sophie', text: 'Hey everyone!', time: '2 min ago', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
+    { id: 1, user: 'Sophie', text: 'Hey everyone!', time: '2 min ago', userColor: 'text-pink-400', isGift: false, giftColor: '', giftName: '', giftValue: 0, isGifter: true, gifterLevel: 'gold' },
     { id: 2, user: 'Mike', text: 'Love this stream!', time: '1 min ago', userColor: 'text-blue-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-    { id: 3, user: 'Jen23', text: 'Where did you get that shirt?', time: '1 min ago', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-    { id: 4, user: 'Taylor', text: 'Just gifted you a rocket!', time: '45 sec ago', userColor: 'text-green-400', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100 },
+    { id: 3, user: 'Jen23', text: 'Where did you get that shirt?', time: '1 min ago', userColor: 'text-purple-400', isGift: false, giftColor: '', giftName: '', giftValue: 0, isGifter: true, gifterLevel: 'silver' },
+    { id: 4, user: 'Taylor', text: 'Just gifted you a rocket!', time: '45 sec ago', userColor: 'text-green-400', isGift: true, giftIcon: RocketLaunchIcon, giftColor: 'text-red-500', giftName: 'Rocket', giftValue: 100, isGifter: true, gifterLevel: 'diamond' },
     { id: 5, user: 'Chris', text: 'Your makeup looks great today', time: '30 sec ago', userColor: 'text-yellow-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 },
-    { id: 6, user: 'Alex', text: 'Just sent you a star!', time: '20 sec ago', userColor: 'text-orange-400', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50 },
+    { id: 6, user: 'Alex', text: 'Just sent you a star!', time: '20 sec ago', userColor: 'text-orange-400', isGift: true, giftIcon: StarIcon, giftColor: 'text-yellow-500', giftName: 'Star', giftValue: 50, isGifter: true, gifterLevel: 'bronze' },
     { id: 7, user: 'Brooklyn', text: "What's your favorite song right now?", time: '10 sec ago', userColor: 'text-indigo-400', isGift: false, giftColor: '', giftName: '', giftValue: 0 }
   ])
   const [showGiftMenu, setShowGiftMenu] = useState(false)
@@ -79,34 +96,149 @@ export default function LivePage({ params }: { params: { id: string } }) {
   const [floatingGifts, setFloatingGifts] = useState<{id: number, gift: any, x: number, y: number}[]>([])
   const [showShare, setShowShare] = useState(false)
   const [viewers, setViewers] = useState(1289)
-  const [streamInfo, setStreamInfo] = useState({
-    title: "Friday Night Vibes",
+  const [currentGiftPage, setCurrentGiftPage] = useState(1)
+  const giftsPerPage = 6
+  const [hasNewMessage, setHasNewMessage] = useState(false)
+  const [walletBalance, setWalletBalance] = useState(1000)
+  const [showWalletModal, setShowWalletModal] = useState(false)
+  const [showBankingModal, setShowBankingModal] = useState(false)
+  const [selectedPackage, setSelectedPackage] = useState<{amount: number, price: number} | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto' | null>(null)
+  const [reloadAmount, setReloadAmount] = useState('')
+  const [showGiftList, setShowGiftList] = useState(false)
+  const [showTipMenu, setShowTipMenu] = useState(true)
+  const [selectedGift, setSelectedGift] = useState<Gift | null>(null)
+  const [splashAnimation, setSplashAnimation] = useState<{x: number, y: number} | null>(null)
+  const [sendingGift, setSendingGift] = useState<Gift | null>(null)
+  const controls = useAnimation()
+  const [isExiting, setIsExiting] = useState(false)
+
+  const [streamInfo, setStreamInfo] = useState<StreamInfo>({
     streamer: params.id,
     isVerified: true,
     profileImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
     hasLiveNFT: true,
     followers: "45.2K",
-    isDancing: true,
-    musicPlaying: "As It Was - Harry Styles"
+    isDancing: true
   })
 
-  const giftCategories = [
-    { id: 'popular', name: 'Popular' },
-    { id: 'economy', name: 'Economy' },
-    { id: 'premium', name: 'Premium' },
-    { id: 'exclusive', name: 'Exclusive' }
-  ]
+  const [userProfile] = useState({
+    image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+    name: "You"
+  })
 
   const gifts = [
-    { id: 1, name: 'Heart', price: 5, icon: HeartIcon, category: 'economy', color: 'text-red-500' },
-    { id: 2, name: 'Fire', price: 10, icon: FireIcon, category: 'economy', color: 'text-orange-500' },
-    { id: 3, name: 'Star', price: 50, icon: StarIcon, category: 'popular', color: 'text-yellow-500' },
-    { id: 4, name: 'Rocket', price: 100, icon: RocketLaunchIcon, category: 'popular', color: 'text-red-500' },
-    { id: 5, name: 'Sparkles', price: 25, icon: SparklesIcon, category: 'economy', color: 'text-purple-400' },
-    { id: 6, name: 'Dollar', price: 200, icon: CurrencyDollarIcon, category: 'premium', color: 'text-green-500' },
-    { id: 7, name: 'Wave', price: 15, icon: HandRaisedIcon, category: 'economy', color: 'text-blue-400' },
-    { id: 8, name: 'Music', price: 30, icon: MusicalNoteIcon, category: 'popular', color: 'text-pink-500' },
-    { id: 9, name: 'Puzzle', price: 40, icon: PuzzlePieceIcon, category: 'premium', color: 'text-indigo-500' }
+    // Basic Gifts (1-50 coins)
+    { id: 1, name: 'Heart', price: 5, icon: HeartIcon, color: 'text-red-500' },
+    { id: 2, name: 'Fire', price: 10, icon: FireIcon, color: 'text-orange-500' },
+    { id: 3, name: 'Wave', price: 15, icon: HandRaisedIcon, color: 'text-blue-400' },
+    { id: 4, name: 'Sparkles', price: 25, icon: SparklesIcon, color: 'text-purple-400' },
+    { id: 5, name: 'Music', price: 30, icon: MusicalNoteIcon, color: 'text-pink-500' },
+    { id: 6, name: 'Star', price: 50, icon: StarIcon, color: 'text-yellow-500' },
+    
+    // Premium Gifts (51-200 coins)
+    { id: 7, name: 'Puzzle', price: 75, icon: PuzzlePieceIcon, color: 'text-indigo-500' },
+    { id: 8, name: 'Rocket', price: 100, icon: RocketLaunchIcon, color: 'text-red-500' },
+    { id: 9, name: 'Dollar', price: 150, icon: CurrencyDollarIcon, color: 'text-green-500' },
+    { id: 10, name: 'Crown', price: 200, icon: SparklesIcon, color: 'text-yellow-500' },
+    
+    // Luxury Gifts (201-500 coins)
+    { id: 11, name: 'Diamond', price: 250, icon: SparklesIcon, color: 'text-blue-400' },
+    { id: 12, name: 'Castle', price: 300, icon: PuzzlePieceIcon, color: 'text-purple-500' },
+    { id: 13, name: 'Dragon', price: 350, icon: FireIcon, color: 'text-red-600' },
+    { id: 14, name: 'Unicorn', price: 400, icon: SparklesIcon, color: 'text-pink-400' },
+    { id: 15, name: 'Phoenix', price: 500, icon: FireIcon, color: 'text-orange-600' },
+    
+    // Special Gifts (501-1000 coins)
+    { id: 16, name: 'Galaxy', price: 600, icon: SparklesIcon, color: 'text-indigo-600' },
+    { id: 17, name: 'Rainbow', price: 700, icon: SparklesIcon, color: 'text-pink-500' },
+    { id: 18, name: 'Meteor', price: 800, icon: FireIcon, color: 'text-orange-500' },
+    { id: 19, name: 'Comet', price: 900, icon: SparklesIcon, color: 'text-blue-500' },
+    { id: 20, name: 'Supernova', price: 1000, icon: FireIcon, color: 'text-red-500' },
+    
+    // Legendary Gifts (1001-2000 coins)
+    { id: 21, name: 'Cosmic', price: 1200, icon: SparklesIcon, color: 'text-purple-600' },
+    { id: 22, name: 'Celestial', price: 1400, icon: StarIcon, color: 'text-blue-600' },
+    { id: 23, name: 'Eternal', price: 1600, icon: SparklesIcon, color: 'text-pink-600' },
+    { id: 24, name: 'Infinite', price: 1800, icon: SparklesIcon, color: 'text-indigo-500' },
+    { id: 25, name: 'Immortal', price: 2000, icon: FireIcon, color: 'text-red-600' },
+    
+    // Mythical Gifts (2001-5000 coins)
+    { id: 26, name: 'Titan', price: 2500, icon: FireIcon, color: 'text-orange-600' },
+    { id: 27, name: 'Olympus', price: 3000, icon: SparklesIcon, color: 'text-yellow-500' },
+    { id: 28, name: 'Atlantis', price: 3500, icon: SparklesIcon, color: 'text-blue-500' },
+    { id: 29, name: 'Avalon', price: 4000, icon: SparklesIcon, color: 'text-green-500' },
+    { id: 30, name: 'Valhalla', price: 5000, icon: FireIcon, color: 'text-red-600' },
+    
+    // Divine Gifts (5001-10000 coins)
+    { id: 31, name: 'Divine', price: 6000, icon: SparklesIcon, color: 'text-yellow-600' },
+    { id: 32, name: 'Celestial', price: 7000, icon: StarIcon, color: 'text-blue-600' },
+    { id: 33, name: 'Ethereal', price: 8000, icon: SparklesIcon, color: 'text-purple-600' },
+    { id: 34, name: 'Mystical', price: 9000, icon: SparklesIcon, color: 'text-pink-600' },
+    { id: 35, name: 'Transcendent', price: 10000, icon: FireIcon, color: 'text-red-600' },
+    
+    // Ultimate Gifts (10001-50000 coins)
+    { id: 36, name: 'Infinity', price: 15000, icon: SparklesIcon, color: 'text-indigo-600' },
+    { id: 37, name: 'Eternity', price: 20000, icon: SparklesIcon, color: 'text-purple-600' },
+    { id: 38, name: 'Omnipotent', price: 30000, icon: FireIcon, color: 'text-red-600' },
+    { id: 39, name: 'Absolute', price: 50000, icon: SparklesIcon, color: 'text-yellow-600' },
+    
+    // Supreme Gifts (50001-100000 coins)
+    { id: 40, name: 'Supreme', price: 75000, icon: FireIcon, color: 'text-red-600' },
+    { id: 41, name: 'Paradise', price: 100000, icon: SparklesIcon, color: 'text-pink-600' },
+    
+    // Royal Gifts (100001-500000 coins)
+    { id: 42, name: 'Emperor', price: 150000, icon: FireIcon, color: 'text-red-600' },
+    { id: 43, name: 'Empress', price: 200000, icon: SparklesIcon, color: 'text-pink-600' },
+    { id: 44, name: 'Kingdom', price: 300000, icon: SparklesIcon, color: 'text-purple-600' },
+    { id: 45, name: 'Dynasty', price: 500000, icon: FireIcon, color: 'text-red-600' },
+    
+    // Mythical Gifts (500001-1000000 coins)
+    { id: 46, name: 'Creation', price: 600000, icon: SparklesIcon, color: 'text-blue-600' },
+    { id: 47, name: 'Genesis', price: 750000, icon: FireIcon, color: 'text-orange-600' },
+    { id: 48, name: 'Destiny', price: 1000000, icon: SparklesIcon, color: 'text-purple-600' },
+    
+    // Legendary Gifts (1000001-5000000 coins)
+    { id: 49, name: 'Universe', price: 2000000, icon: SparklesIcon, color: 'text-indigo-600' },
+    { id: 50, name: 'Multiverse', price: 3000000, icon: FireIcon, color: 'text-red-600' },
+    { id: 51, name: 'Omniverse', price: 5000000, icon: SparklesIcon, color: 'text-purple-600' },
+    
+    // Divine Gifts (5000001-10000000 coins)
+    { id: 52, name: 'Godhood', price: 6000000, icon: FireIcon, color: 'text-red-600' },
+    { id: 53, name: 'Deity', price: 7500000, icon: SparklesIcon, color: 'text-yellow-600' },
+    { id: 54, name: 'Divinity', price: 10000000, icon: SparklesIcon, color: 'text-blue-600' },
+    
+    // Ultimate Gifts (10000001+ coins)
+    { id: 55, name: 'Reality', price: 15000000, icon: FireIcon, color: 'text-red-600' },
+    { id: 56, name: 'Existence', price: 25000000, icon: SparklesIcon, color: 'text-purple-600' },
+    { id: 57, name: 'Cosmos', price: 50000000, icon: SparklesIcon, color: 'text-indigo-600' },
+    { id: 58, name: 'Infinity', price: 75000000, icon: FireIcon, color: 'text-red-600' },
+    { id: 59, name: 'Eternity', price: 100000000, icon: SparklesIcon, color: 'text-purple-600' },
+    { id: 60, name: 'Supreme', price: 1000000000, icon: FireIcon, color: 'text-red-600' }
+  ]
+
+  // Calculate pagination
+  const totalGiftPages = Math.ceil(gifts.length / giftsPerPage)
+  const startIndex = (currentGiftPage - 1) * giftsPerPage
+  const endIndex = startIndex + giftsPerPage
+  const currentGifts = gifts.slice(startIndex, endIndex)
+
+  const tipOptions = [
+    { id: 1, amount: 50, label: 'Quick Tip' },
+    { id: 2, amount: 100, label: 'Nice Tip' },
+    { id: 3, amount: 200, label: 'Sweet Tip' },
+    { id: 4, amount: 500, label: 'Amazing Tip' },
+    { id: 5, amount: 1000, label: 'Epic Tip' },
+    { id: 6, amount: 2000, label: 'Legendary Tip' }
+  ]
+
+  const tokenPackages = [
+    { id: 1, amount: 100, price: 0.99 },
+    { id: 2, amount: 500, price: 4.99 },
+    { id: 3, amount: 1000, price: 9.99 },
+    { id: 4, amount: 2000, price: 19.99 },
+    { id: 5, amount: 5000, price: 49.99 },
+    { id: 6, amount: 10000, price: 99.99 }
   ]
 
   useEffect(() => {
@@ -158,6 +290,32 @@ export default function LivePage({ params }: { params: { id: string } }) {
     
     return () => clearInterval(interval);
   }, []); // Empty dependency array
+
+  // Simulate new messages and notifications
+  useEffect(() => {
+    if (showGiftMenu) {
+      const interval = setInterval(() => {
+        // Randomly trigger notification
+        if (Math.random() > 0.7) {
+          setHasNewMessage(true)
+          // Reset notification after 3 seconds
+          setTimeout(() => {
+            setHasNewMessage(false)
+          }, 3000)
+        }
+      }, 5000) // Check every 5 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [showGiftMenu])
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMessage = e.target.value
+    if (newMessage.length <= MAX_CHARS) {
+      setMessage(newMessage)
+      setCharCount(newMessage.length)
+    }
+  }
 
   const handleSendMessage = () => {
     if (message.trim() === '') return
@@ -257,83 +415,328 @@ export default function LivePage({ params }: { params: { id: string } }) {
     }
   }
 
-  const filteredGifts = gifts.filter(gift => 
-    selectedGiftCategory === 'popular' ? true : gift.category === selectedGiftCategory
-  );
+  const handleReloadWallet = () => {
+    const amount = parseInt(reloadAmount)
+    if (!isNaN(amount) && amount > 0) {
+      setWalletBalance(prev => prev + amount)
+      setShowWalletModal(false)
+      setReloadAmount('')
+    }
+  }
+
+  const handleGiftClick = (gift: Gift, event: React.MouseEvent) => {
+    if (!selectedGift) {
+      // First click - select the gift
+      setSelectedGift(gift)
+    } else if (selectedGift.id === gift.id) {
+      // Second click on same gift - send it
+      const rect = event.currentTarget.getBoundingClientRect()
+      const x = event.clientX - rect.left
+      const y = event.clientY - rect.top
+      setSplashAnimation({ x, y })
+      setSendingGift(gift)
+      
+      // Send the gift
+      handleSendGift(gift)
+      
+      // Reset selection and animation after a delay
+      setTimeout(() => {
+        setSelectedGift(null)
+        setSplashAnimation(null)
+        setSendingGift(null)
+      }, 1000)
+    } else {
+      // Clicked different gift - switch selection
+      setSelectedGift(gift)
+    }
+  }
+
+  const handleTipClick = (amount: number) => {
+    // Handle tip sending
+    const newMessage: Message = {
+      id: Date.now(),
+      user: 'You',
+      text: `Just sent a ${amount} coin tip!`,
+      time: 'Just now',
+      userColor: 'text-blue-500',
+      isGift: false,
+      giftColor: '',
+      giftName: '',
+      giftValue: 0
+    }
+    setMessages(prev => [...prev, newMessage])
+  }
+
+  const handlePackageSelect = (pkg: {amount: number, price: number}) => {
+    setSelectedPackage(pkg)
+    setShowBankingModal(true)
+  }
+
+  const handlePaymentComplete = () => {
+    if (selectedPackage) {
+      setWalletBalance(prev => prev + selectedPackage.amount)
+      setShowBankingModal(false)
+      setShowWalletModal(false)
+      setSelectedPackage(null)
+      setPaymentMethod(null)
+    }
+  }
+
+  // Page transition variants
+  const pageVariants = {
+    initial: {
+      opacity: 0,
+      y: 20
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -20,
+      transition: {
+        duration: 0.3,
+        ease: "easeIn"
+      }
+    }
+  }
+
+  // Action transition variants
+  const actionVariants = {
+    initial: { scale: 0.95, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    exit: { scale: 0.95, opacity: 0 },
+    hover: { scale: 1.05 },
+    tap: { scale: 0.95 }
+  }
+
+  // Message transition variants
+  const messageVariants = {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 20 }
+  }
+
+  // Gift transition variants
+  const giftVariants = {
+    initial: { scale: 0.8, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    exit: { scale: 0.8, opacity: 0 },
+    hover: { scale: 1.1 },
+    tap: { scale: 0.9 }
+  }
+
+  // Modal transition variants
+  const modalVariants = {
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.9 }
+  }
+
+  const handleBack = async () => {
+    setIsExiting(true)
+    await controls.start({
+      opacity: 0,
+      y: -20,
+      transition: {
+        duration: 0.3,
+        ease: "easeIn"
+      }
+    })
+    router.back()
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Floating hearts animation */}
-      <AnimatePresence>
-        {floatingHearts.map(heart => (
           <motion.div
-            key={heart.id}
-            className="fixed z-50 pointer-events-none"
-            initial={{ 
-              bottom: "10%", 
-              left: `${heart.x}%`, 
-              opacity: 0,
-              scale: 0.5
-            }}
-            animate={{ 
-              bottom: "90%", 
-              opacity: [0, 1, 1, 0],
-              scale: [0.5, 1, 1.2, 1],
-              rotate: Math.random() * 60 - 30
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 3, ease: "easeOut" }}
+      className="h-screen flex flex-col overflow-hidden"
+      initial="initial"
+      animate={isExiting ? controls : "animate"}
+      exit="exit"
+      variants={pageVariants}
+    >
+      {/* Main content area */}
+      <motion.div 
+        ref={streamRef} 
+        className={`${isFullscreen ? 'fixed inset-0 z-50' : 'flex-1'} bg-gradient-to-br from-gray-900 to-black relative overflow-hidden`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Back button */}
+        <motion.button
+          onClick={handleBack}
+          className="absolute top-4 left-4 z-10 bg-black/40 backdrop-blur-sm p-2 rounded-full hover:bg-gray-800 transition-colors"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <motion.div
+            animate={isExiting ? { rotate: -180 } : { rotate: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <HeartSolidIcon className="h-8 w-8 text-red-500" />
+            <ArrowLeftIcon className="h-5 w-5 text-white" />
           </motion.div>
-        ))}
-      </AnimatePresence>
+        </motion.button>
 
-      {/* Floating gifts animation */}
-      <AnimatePresence>
-        {floatingGifts.map(item => {
-          const GiftIcon = item.gift;
-          return (
+        {/* Placeholder for stream */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* Pink Star */}
+          <motion.div
+            animate={{
+              scale: [1, 1.15, 1],
+              opacity: [0.4, 0.8, 0.4],
+            }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="relative mr-8"
+          >
+            <StarIcon className="w-16 h-16 text-pink-500/70" />
             <motion.div
-              key={item.id}
-              className="fixed z-50 pointer-events-none"
-              initial={{ 
-                bottom: "20%", 
-                left: `${item.x}%`, 
-                opacity: 0,
-                scale: 0.5
+            animate={{ 
+                scale: [1, 1.4, 1],
+                opacity: [0.05, 0.3, 0.05],
               }}
-              animate={{ 
-                bottom: "80%", 
-                opacity: [0, 1, 1, 0],
-                scale: [0.5, 1.5, 1.5, 1],
-                rotate: Math.random() * 60 - 30
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.1
               }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 3, ease: "easeOut" }}
+              className="absolute inset-0"
+          >
+              <StarIcon className="w-16 h-16 text-pink-400/50 blur-[0.5px]" />
+          </motion.div>
+            <motion.div
+              animate={{
+                scale: [1, 1.6, 1],
+                opacity: [0.02, 0.2, 0.02],
+              }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.2
+              }}
+              className="absolute inset-0"
             >
-              <div className="bg-gradient-to-tr from-purple-600/80 to-pink-600/80 backdrop-blur-sm p-2 rounded-full">
-                <GiftIcon className="h-10 w-10 text-white" />
-              </div>
+              <StarIcon className="w-16 h-16 text-pink-300/40 blur-[1px]" />
             </motion.div>
-          );
-        })}
-      </AnimatePresence>
+          </motion.div>
 
-      {/* Main layout */}
-      <div className="h-screen flex flex-col lg:flex-row">
-        {/* Left side - Video Stream */}
-        <div ref={streamRef} className={`${isFullscreen ? 'fixed inset-0 z-50' : 'lg:w-3/4'} h-full bg-gradient-to-br from-gray-900 to-black relative overflow-hidden`}>
-          {/* Placeholder for stream */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-20 h-20 rounded-full border-4 border-t-transparent border-pink-500 animate-spin"></div>
+          {/* Blue Star */}
+            <motion.div
+            animate={{ 
+              scale: [1, 1.15, 1],
+              opacity: [0.4, 0.8, 0.4],
+            }}
+            transition={{
+              duration: 2.3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="relative"
+          >
+            <StarIcon className="w-24 h-24 text-sky-500/70" />
+            <motion.div
+              animate={{ 
+                scale: [1, 1.4, 1],
+                opacity: [0.05, 0.3, 0.05],
+              }}
+              transition={{
+                duration: 1.9,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.15
+              }}
+              className="absolute inset-0"
+            >
+              <StarIcon className="w-24 h-24 text-sky-400/50 blur-[0.5px]" />
+            </motion.div>
+            <motion.div
+              animate={{
+                scale: [1, 1.6, 1],
+                opacity: [0.02, 0.2, 0.02],
+              }}
+              transition={{
+                duration: 1.7,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.25
+              }}
+              className="absolute inset-0"
+            >
+              <StarIcon className="w-24 h-24 text-sky-300/40 blur-[1px]" />
+            </motion.div>
+          </motion.div>
+
+          {/* Yellow Star */}
+          <motion.div
+            animate={{
+              scale: [1, 1.15, 1],
+              opacity: [0.4, 0.8, 0.4],
+            }}
+            transition={{
+              duration: 2.4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="relative ml-8"
+          >
+            <StarIcon className="w-20 h-20 text-amber-500/70" />
+            <motion.div
+              animate={{
+                scale: [1, 1.4, 1],
+                opacity: [0.05, 0.3, 0.05],
+              }}
+              transition={{
+                duration: 2.1,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.12
+              }}
+              className="absolute inset-0"
+            >
+              <StarIcon className="w-20 h-20 text-amber-400/50 blur-[0.5px]" />
+            </motion.div>
+            <motion.div
+              animate={{ 
+                scale: [1, 1.6, 1],
+                opacity: [0.02, 0.2, 0.02],
+              }}
+              transition={{
+                duration: 1.9,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.22
+              }}
+              className="absolute inset-0"
+            >
+              <StarIcon className="w-20 h-20 text-amber-300/40 blur-[1px]" />
+            </motion.div>
+          </motion.div>
           </div>
 
           {/* Video overlay controls and info */}
-          <div className="absolute inset-0 flex flex-col justify-between p-4">
+        <motion.div 
+          className="absolute inset-0 flex flex-col justify-between p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
             {/* Top row - Stream info & viewer count */}
             <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-3 bg-black/40 backdrop-blur-sm px-3 py-2 rounded-full">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 bg-black/40 backdrop-blur-sm px-3 py-2 rounded-full ml-16">
                 <div className="relative">
                   <img 
                     src={streamInfo.profileImage} 
@@ -352,14 +755,21 @@ export default function LivePage({ params }: { params: { id: string } }) {
                   <p className="font-semibold text-sm">@{streamInfo.streamer}</p>
                   <p className="text-xs text-gray-300">{streamInfo.followers} followers</p>
                 </div>
-                <button className="bg-pink-500 text-white text-xs px-3 py-1 rounded-full ml-2">
-                  Follow
+                </div>
+
+                {/* Like button */}
+                <button
+                  onClick={handleLike}
+                  className={`bg-black/40 backdrop-blur-sm p-2 rounded-full flex items-center space-x-2 ${isLiked ? 'text-red-500' : 'text-white'}`}
+                >
+                  <HeartIcon className={`h-5 w-5 ${isLiked ? 'animate-pulse' : ''}`} />
+                  <span className="text-sm">{likeCount}</span>
                 </button>
               </div>
               
               <div className="flex items-center space-x-3">
                 <div className="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full flex items-center">
-                  <UserGroupIcon className="h-4 w-4 mr-1 text-pink-500" />
+                <UserGroupIcon className="h-4 w-4 mr-1 text-gray-500" />
                   <span className="text-sm">{viewers.toLocaleString()}</span>
                 </div>
                 <button
@@ -378,76 +788,69 @@ export default function LivePage({ params }: { params: { id: string } }) {
             {/* Stream information overlay */}
             <div className="mb-24 lg:mb-0">
               <div className="bg-black/40 backdrop-blur-sm p-3 rounded-lg max-w-md">
-                <h2 className="font-bold">{streamInfo.title}</h2>
-                {streamInfo.musicPlaying && (
-                  <div className="flex items-center mt-2 text-sm text-gray-300">
-                    <MusicalNoteIcon className="h-4 w-4 mr-1 text-pink-500" />
-                    <p className="truncate">{streamInfo.musicPlaying}</p>
                   </div>
-                )}
               </div>
-            </div>
-            
-            {/* Right side buttons */}
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col space-y-4">
-              <button
-                onClick={handleLike}
-                className={`bg-black/40 backdrop-blur-sm p-3 rounded-full flex flex-col items-center ${isLiked ? 'text-red-500' : 'text-white'}`}
-              >
-                <HeartIcon className={`h-6 w-6 ${isLiked ? 'animate-pulse' : ''}`} />
-                <span className="text-xs mt-1">{likeCount}</span>
-              </button>
-              
-              <button
-                onClick={() => setShowGiftMenu(!showGiftMenu)}
-                className="bg-black/40 backdrop-blur-sm p-3 rounded-full flex flex-col items-center"
-              >
-                <GiftIcon className="h-6 w-6 text-pink-500" />
-                <span className="text-xs mt-1">Gift</span>
-              </button>
-              
-              <button
-                onClick={() => setShowShare(!showShare)}
-                className="bg-black/40 backdrop-blur-sm p-3 rounded-full flex flex-col items-center"
-              >
-                <ShareIcon className="h-6 w-6 text-blue-400" />
-                <span className="text-xs mt-1">Share</span>
-              </button>
-              
-              <Link href="/live" className="bg-black/40 backdrop-blur-sm p-3 rounded-full flex flex-col items-center">
-                <XMarkIcon className="h-6 w-6" />
-                <span className="text-xs mt-1">Exit</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-        
-        {/* Right side - Chat & Gifts */}
-        <div className={`${isFullscreen ? 'hidden' : 'lg:w-1/4 h-full'} border-l border-gray-800`}>
-          <div className="h-full flex flex-col">
+        </motion.div>
+      </motion.div>
+      
+      {/* Bottom chat/gift section */}
+      <motion.div 
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 100,
+          damping: 20
+        }}
+        className={`${isFullscreen ? 'hidden' : 'h-64'} flex backdrop-blur-sm`}
+      >
+        {/* Chat section (larger) */}
+        <motion.div 
+          className="w-3/4 flex flex-col border-r border-gray-700/50"
+          variants={actionVariants}
+        >
             {/* Chat header */}
-            <div className="bg-gray-900 border-b border-gray-800 p-3 flex justify-between items-center">
-              <h3 className="font-semibold">Live Chat</h3>
-              <span className="text-xs text-gray-400">{messages.length} messages</span>
+          <div className="bg-black/40 border-b border-gray-700/50 p-2 flex justify-between items-center">
+            <h3 className="font-semibold text-sm text-gray-500">Live Chat</h3>
             </div>
             
             {/* Chat messages */}
             <div 
               ref={chatContainerRef}
-              className="flex-1 overflow-y-auto p-3 space-y-3"
-              style={{ maxHeight: 'calc(100vh - 160px)' }}
+            className="flex-1 overflow-y-auto p-2 space-y-2"
             >
+            <AnimatePresence>
               {messages.map((msg) => (
-                <div key={msg.id} className="animate-slideUp">
+                <motion.div
+                  key={msg.id}
+                  variants={messageVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.2 }}
+                >
                   {msg.isGift ? (
-                    <div className="bg-gradient-to-r from-gray-800/80 to-gray-800/30 backdrop-blur-md rounded-lg p-3 border border-gray-700">
+                    <div className="bg-black/40 backdrop-blur-md rounded-lg p-2 border border-gray-700/50">
                       <div className="flex items-center space-x-2 mb-1">
                         <span className={`font-semibold ${msg.userColor}`}>{msg.user}</span>
-                        <span className="text-xs text-gray-400">{msg.time}</span>
+                        {msg.isGifter && msg.gifterLevel && (
+                          <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                            msg.gifterLevel === 'bronze' ? 'bg-amber-900/50 text-amber-300' :
+                            msg.gifterLevel === 'silver' ? 'bg-gray-400/50 text-gray-200' :
+                            msg.gifterLevel === 'gold' ? 'bg-yellow-600/50 text-yellow-300' :
+                            'bg-blue-600/50 text-blue-300'
+                          }`}>
+                            <SparklesIcon className="h-3 w-3" />
+                            <span>{msg.gifterLevel === 'bronze' ? "King's Court" :
+                                   msg.gifterLevel === 'silver' ? "King's Guard" :
+                                   msg.gifterLevel === 'gold' ? "King's Right Hand" :
+                                   'King'}</span>
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center space-x-3">
-                        <div className={`bg-gradient-to-tr from-gray-700 to-gray-600 p-2 rounded-full ${msg.giftColor}`}>
-                          {msg.giftIcon && <msg.giftIcon className="h-6 w-6" />}
+                        <div className={`bg-gradient-to-tr from-gray-700/80 to-gray-600/80 p-2 rounded-full ${msg.giftColor}`}>
+                          {msg.giftIcon && <msg.giftIcon className="h-4 w-4" />}
                         </div>
                         <div>
                           <p className="text-sm">{msg.text}</p>
@@ -458,160 +861,546 @@ export default function LivePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-gray-800/50 rounded-lg p-2">
+                    <div className="bg-black/40 backdrop-blur-md rounded-lg p-2">
                       <div className="flex items-center space-x-2">
                         <span className={`font-semibold ${msg.userColor}`}>{msg.user}</span>
-                        <span className="text-xs text-gray-400">{msg.time}</span>
+                        {msg.isGifter && msg.gifterLevel && (
+                          <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                            msg.gifterLevel === 'bronze' ? 'bg-amber-900/50 text-amber-300' :
+                            msg.gifterLevel === 'silver' ? 'bg-gray-400/50 text-gray-200' :
+                            msg.gifterLevel === 'gold' ? 'bg-yellow-600/50 text-yellow-300' :
+                            'bg-blue-600/50 text-blue-300'
+                          }`}>
+                            <SparklesIcon className="h-3 w-3" />
+                            <span>{msg.gifterLevel === 'bronze' ? "King's Court" :
+                                   msg.gifterLevel === 'silver' ? "King's Guard" :
+                                   msg.gifterLevel === 'gold' ? "King's Right Hand" :
+                                   'King'}</span>
+                          </div>
+                        )}
                       </div>
                       <p className="text-sm">{msg.text}</p>
                     </div>
                   )}
-                </div>
+                </motion.div>
               ))}
+            </AnimatePresence>
             </div>
             
             {/* Chat input */}
-            <div className="bg-gray-900 border-t border-gray-800 p-3">
+          <motion.div 
+            className="bg-black/40 border-t border-gray-700/50 p-2"
+            variants={actionVariants}
+          >
               <div className="flex items-center space-x-2">
-                <div className="flex-1 bg-gray-800 rounded-full flex items-center overflow-hidden">
+              <div className="flex-1 bg-black/40 backdrop-blur-md rounded-full flex items-center overflow-hidden border border-gray-700/50">
+                <div className="flex items-center space-x-2 px-3 w-full">
+                  <img 
+                    src={userProfile.image} 
+                    alt={userProfile.name}
+                    className="w-6 h-6 rounded-full border border-pink-500 flex-shrink-0"
+                  />
                   <input
                     type="text"
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={handleMessageChange}
                     placeholder="Say something..."
-                    className="bg-transparent text-white px-4 py-2 flex-1 focus:outline-none"
+                    className="bg-transparent text-white text-sm flex-1 focus:outline-none w-full"
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    maxLength={MAX_CHARS}
                   />
-                  <button className="text-gray-400 p-2">
-                    <FaceSmileIcon className="h-5 w-5" />
+                  <div className="flex items-center space-x-2 flex-shrink-0">
+                    <span className={`text-xs ${charCount >= MAX_CHARS ? 'text-red-500' : 'text-gray-500'}`}>
+                      {charCount}/{MAX_CHARS}
+                    </span>
+                    <button className="text-gray-400 p-1.5 hover:text-pink-500 transition-colors">
+                      <FaceSmileIcon className="h-4 w-4" />
                   </button>
+                  </div>
+                </div>
                 </div>
                 <button
                   onClick={handleSendMessage}
-                  className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full"
+                disabled={!message.trim()}
+                className={`bg-black hover:bg-gray-900 text-white p-1.5 rounded-full transition-colors ${
+                  !message.trim() ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
                 >
-                  <PaperAirplaneIcon className="h-5 w-5" />
+                <PaperAirplaneIcon className="h-4 w-4" />
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
       
-      {/* Gift menu */}
-      {showGiftMenu && (
-        <div className="fixed inset-x-0 bottom-0 bg-gray-900/90 backdrop-blur-md border-t border-gray-800 p-4 rounded-t-xl z-50 animate-slideUp">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-lg">Send a Gift</h3>
+        {/* Gift section (smaller) */}
+        <motion.div 
+          className="w-1/4 flex flex-col"
+          variants={actionVariants}
+        >
+          {/* Gift header with wallet */}
+          <div className="bg-black/40 border-b border-gray-700/50 p-2">
+            <div className="flex justify-between items-center">
             <button
-              onClick={() => setShowGiftMenu(false)}
-              className="text-gray-400 hover:text-white"
-            >
-              <XMarkIcon className="h-6 w-6" />
+                onClick={() => {
+                  setShowGiftList(!showGiftList)
+                  setShowTipMenu(!showGiftList)
+                }}
+                className="flex items-center space-x-2 text-sm font-semibold text-gray-500 hover:text-pink-500 transition-colors"
+              >
+                <GiftIcon className="h-4 w-4" />
+                <span>Gifts</span>
+                <motion.div
+                  animate={{ rotate: showGiftList ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDownIcon className="h-4 w-4" />
+                </motion.div>
             </button>
-          </div>
-          
-          {/* Gift categories */}
-          <div className="flex space-x-2 mb-4 overflow-x-auto">
-            {giftCategories.map((category) => (
               <button
-                key={category.id}
-                onClick={() => setSelectedGiftCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
-                  selectedGiftCategory === category.id
-                    ? 'bg-pink-500 text-white'
-                    : 'bg-gray-800 text-gray-300'
-                }`}
+                onClick={() => setShowWalletModal(true)}
+                className="bg-black hover:bg-gray-900 text-white px-2 py-1 rounded-full text-xs flex items-center space-x-1"
               >
-                {category.name}
-              </button>
-            ))}
-          </div>
-          
-          {/* Gift grid */}
-          <div className="grid grid-cols-4 gap-4">
-            {filteredGifts.map((gift) => (
-              <button
-                key={gift.id}
-                onClick={() => handleSendGift(gift)}
-                className="flex flex-col items-center p-3 rounded-lg bg-gray-800 hover:bg-gray-750 transition-colors"
-              >
-                <div className={`p-3 rounded-full bg-gray-700 ${gift.color}`}>
-                  <gift.icon className="h-6 w-6" />
+                <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center">
+                  <span className="text-[8px] font-bold text-white">T</span>
                 </div>
-                <span className="mt-2 text-sm">{gift.name}</span>
-                <span className="text-xs text-pink-400">{gift.price} coins</span>
+                <span>{walletBalance}</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Tip Menu */}
+          <AnimatePresence>
+            {showTipMenu && !showGiftList && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="p-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    {tipOptions.map((tip) => (
+              <button
+                        key={tip.id}
+                        onClick={() => handleTipClick(tip.amount)}
+                        className="bg-black/40 backdrop-blur-sm p-2 rounded-lg hover:bg-gray-800/40 flex flex-col items-center space-y-1 group"
+                      >
+                        <div className="p-1.5 rounded-full bg-black/20 text-gray-500 group-hover:text-pink-500 transition-colors">
+                          <CurrencyDollarIcon className="h-4 w-4" />
+                        </div>
+                        <span className="text-[10px] text-white text-center">{tip.label}</span>
+                        <span className="text-[10px] text-pink-500">{tip.amount}</span>
               </button>
             ))}
           </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Gift list */}
+          <AnimatePresence>
+            {showGiftList && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="p-2">
+                  <div className="grid grid-cols-4 gap-1.5 max-h-[calc(100vh-400px)] overflow-y-auto pr-1">
+                    {gifts.map((gift) => (
+                      <div key={gift.id} className="relative">
+                        <motion.button
+                          onClick={(e) => handleGiftClick(gift, e)}
+                          className={`w-full bg-black/40 backdrop-blur-sm p-1.5 rounded-lg hover:bg-gray-800/40 flex flex-col items-center space-y-1 transition-all duration-200 ${
+                            selectedGift?.id === gift.id ? 'ring-2 ring-pink-500 scale-105' : ''
+                          }`}
+                          animate={sendingGift?.id === gift.id ? {
+                            scale: [1, 1.2, 1],
+                            rotate: [0, 5, -5, 0],
+                          } : {}}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <motion.div 
+                            className={`p-1.5 rounded-full ${gift.color} bg-black/20`}
+                            animate={sendingGift?.id === gift.id ? {
+                              scale: [1, 1.5, 1],
+                              rotate: [0, 360],
+                            } : {}}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <gift.icon className="h-4 w-4" />
+                          </motion.div>
+                          <span className="text-[10px] text-white text-center line-clamp-1">{gift.name}</span>
+                          <span className="text-[10px] text-pink-500">{gift.price}</span>
+                        </motion.button>
+                        
+                        {/* Splash Animation */}
+                        <AnimatePresence>
+                          {splashAnimation && selectedGift?.id === gift.id && (
+                            <motion.div
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 1.5, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: "easeOut" }}
+                              className="absolute inset-0 pointer-events-none"
+                              style={{
+                                left: splashAnimation.x,
+                                top: splashAnimation.y,
+                                transform: 'translate(-50%, -50%)'
+                              }}
+              >
+                              <div className="relative">
+                                {/* Main splash */}
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{ duration: 0.2, ease: "easeOut" }}
+                                  className="absolute inset-0 bg-pink-500/30 rounded-full blur-sm"
+                                />
+                                {/* Water droplets */}
+                                {[...Array(12)].map((_, i) => (
+                                  <motion.div
+                                    key={i}
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ 
+                                      scale: 1,
+                                      opacity: [0, 1, 0],
+                                      x: Math.cos(i * Math.PI / 6) * 30,
+                                      y: Math.sin(i * Math.PI / 6) * 30
+                                    }}
+                                    transition={{ 
+                                      duration: 0.5,
+                                      delay: i * 0.03,
+                                      ease: "easeOut"
+                                    }}
+                                    className="absolute w-3 h-3 bg-pink-500/50 rounded-full"
+                                  />
+                                ))}
+                                {/* Fire Animation */}
+                                <motion.div
+                                  initial={{ scale: 0, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ delay: 0.1, duration: 0.2 }}
+                                  className="absolute inset-0 flex items-center justify-center"
+                                >
+                                  <div className="relative w-12 h-12">
+                                    {/* Main fire */}
+                                    <motion.div
+                                      initial={{ scale: 0, opacity: 0 }}
+                                      animate={{ 
+                                        scale: [0, 1.2, 1],
+                                        opacity: [0, 1, 0.8]
+                                      }}
+                                      transition={{ duration: 0.4 }}
+                                      className="absolute inset-0"
+                                    >
+                                      <FireIcon className="w-full h-full text-orange-500" />
+                                    </motion.div>
+                                    
+                                    {/* Fire particles */}
+                                    {[...Array(8)].map((_, i) => (
+                                      <motion.div
+                                        key={i}
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ 
+                                          scale: [0, 1, 0],
+                                          opacity: [0, 1, 0],
+                                          y: [-20, -40],
+                                          x: Math.cos(i * Math.PI / 4) * 20
+                                        }}
+                                        transition={{ 
+                                          duration: 0.6,
+                                          delay: i * 0.05,
+                                          ease: "easeOut"
+                                        }}
+                                        className="absolute left-1/2 top-1/2 w-2 h-2 bg-orange-500 rounded-full"
+                                      />
+                                    ))}
+                                    
+                                    {/* Glow effect */}
+                                    <motion.div
+                                      initial={{ scale: 0, opacity: 0 }}
+                                      animate={{ 
+                                        scale: [0, 1.5, 1],
+                                        opacity: [0, 0.3, 0]
+                                      }}
+                                      transition={{ duration: 0.5 }}
+                                      className="absolute inset-0 bg-orange-500 rounded-full blur-md"
+                                    />
+                </div>
+                                </motion.div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+            ))}
+          </div>
         </div>
+              </motion.div>
       )}
+          </AnimatePresence>
+        </motion.div>
+      </motion.div>
       
-      {/* Share menu */}
-      {showShare && (
-        <div className="fixed inset-x-0 bottom-0 bg-gray-900/90 backdrop-blur-md border-t border-gray-800 p-4 rounded-t-xl z-50 animate-slideUp">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-lg">Share</h3>
+      {/* Wallet Modal */}
+      <AnimatePresence>
+        {showWalletModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <motion.div
+              variants={modalVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 w-[480px] relative overflow-hidden"
+            >
+              {/* Background Effects */}
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+              </div>
+
+              {/* Close Button */}
             <button
-              onClick={() => setShowShare(false)}
-              className="text-gray-400 hover:text-white"
+                onClick={() => setShowWalletModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
+
+              {/* Header */}
+              <div className="relative mb-6">
+                <h3 className="text-2xl font-bold text-white mb-2">Get Tokens</h3>
+                <p className="text-gray-400 text-sm">Choose a package to reload your wallet</p>
           </div>
           
-          <div className="grid grid-cols-4 gap-4">
-            <button className="flex flex-col items-center p-3">
-              <div className="p-3 rounded-full bg-blue-100">
-                <svg className="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" />
-                </svg>
+              {/* Token Packages Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {tokenPackages.map((pkg) => (
+                  <motion.button
+                    key={pkg.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handlePackageSelect(pkg)}
+                    className="relative bg-black/40 backdrop-blur-sm p-4 rounded-xl border border-gray-800 hover:border-pink-500/50 transition-colors group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center">
+                          <span className="text-[10px] font-bold text-white">T</span>
               </div>
-              <span className="mt-2 text-sm">Facebook</span>
+                        <span className="text-white font-semibold">{pkg.amount}</span>
+                      </div>
+                      <span className="text-pink-500 font-semibold">${pkg.price}</span>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Custom Amount Input */}
+              <div className="relative">
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent mb-4"></div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1">
+                    <label className="block text-sm text-gray-400 mb-1">Custom Amount</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={reloadAmount}
+                        onChange={(e) => setReloadAmount(e.target.value)}
+                        className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-pink-500"
+                        placeholder="Enter amount"
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center">
+                          <span className="text-[8px] font-bold text-white">T</span>
+              </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleReloadWallet}
+                    className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity mt-6"
+                  >
+                    Reload
+            </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Banking Modal */}
+      <AnimatePresence>
+        {showBankingModal && selectedPackage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+          >
+            <motion.div
+              variants={modalVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 w-[480px] relative overflow-hidden"
+            >
+              {/* Background Effects */}
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl"></div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  setShowBankingModal(false)
+                  setSelectedPackage(null)
+                  setPaymentMethod(null)
+                }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+              >
+                <XMarkIcon className="h-6 w-6" />
             </button>
             
-            <button className="flex flex-col items-center p-3">
-              <div className="p-3 rounded-full bg-blue-100">
-                <svg className="h-6 w-6 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+              {/* Header */}
+              <div className="relative mb-6">
+                <h3 className="text-2xl font-bold text-white mb-2">Complete Purchase</h3>
+                <p className="text-gray-400 text-sm">Select your preferred payment method</p>
+              </div>
+
+              {/* Transaction Details */}
+              <div className="bg-black/40 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center">
+                      <span className="text-xs font-bold text-white">T</span>
+                    </div>
+                    <span className="text-white font-semibold">{selectedPackage.amount} Tokens</span>
+                  </div>
+                  <span className="text-pink-500 font-semibold">${selectedPackage.price}</span>
+                </div>
+                <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+              </div>
+
+              {/* Payment Methods */}
+              <div className="space-y-3 mb-6">
+                <button
+                  onClick={() => setPaymentMethod('card')}
+                  className={`w-full p-4 rounded-xl border transition-colors ${
+                    paymentMethod === 'card' 
+                      ? 'border-pink-500 bg-pink-500/10' 
+                      : 'border-gray-800 hover:border-pink-500/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
               </div>
-              <span className="mt-2 text-sm">Twitter</span>
-            </button>
-            
-            <button className="flex flex-col items-center p-3">
-              <div className="p-3 rounded-full bg-green-100">
-                <svg className="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm.01 18.67c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 01-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 012.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43H8.5c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.11-.23-.16-.48-.28z"/>
-                </svg>
-              </div>
-              <span className="mt-2 text-sm">WhatsApp</span>
-            </button>
-            
-            <button className="flex flex-col items-center p-3">
-              <div className="p-3 rounded-full bg-pink-100">
-                <svg className="h-6 w-6 text-pink-500" fill="currentColor" viewBox="0 0 448 512">
-                  <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/>
-                </svg>
-              </div>
-              <span className="mt-2 text-sm">Instagram</span>
-            </button>
+                      <div className="text-left">
+                        <p className="text-white font-medium">Credit/Debit Card</p>
+                        <p className="text-gray-400 text-sm">Visa, Mastercard, American Express</p>
           </div>
-          
-          <div className="mt-4">
-            <p className="text-sm text-gray-400 mb-2">Copy link</p>
-            <div className="flex items-center">
-              <input 
-                type="text" 
-                value={`https://slutspace.com/live/${params.id}`} 
-                readOnly
-                className="bg-gray-800 rounded-l-lg px-4 py-2 flex-1 text-sm"
-              />
-              <button className="bg-pink-500 text-white px-4 py-2 rounded-r-lg text-sm">Copy</button>
+                    </div>
+                    {paymentMethod === 'card' && (
+                      <div className="w-5 h-5 rounded-full border-2 border-pink-500 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-pink-500"></div>
+                      </div>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setPaymentMethod('crypto')}
+                  className={`w-full p-4 rounded-xl border transition-colors ${
+                    paymentMethod === 'crypto' 
+                      ? 'border-pink-500 bg-pink-500/10' 
+                      : 'border-gray-800 hover:border-pink-500/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center">
+                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
             </div>
+                      <div className="text-left">
+                        <p className="text-white font-medium">Cryptocurrency</p>
+                        <p className="text-gray-400 text-sm">BTC, ETH, USDT, and more</p>
           </div>
+                    </div>
+                    {paymentMethod === 'crypto' && (
+                      <div className="w-5 h-5 rounded-full border-2 border-pink-500 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-pink-500"></div>
         </div>
       )}
     </div>
+                </button>
+              </div>
+
+              {/* Action Button */}
+              <button
+                onClick={handlePaymentComplete}
+                disabled={!paymentMethod}
+                className={`w-full py-3 rounded-xl font-medium transition-opacity ${
+                  paymentMethod 
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90' 
+                    : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {paymentMethod === 'card' ? 'Pay with Card' : 
+                 paymentMethod === 'crypto' ? 'Pay with Crypto' : 
+                 'Select Payment Method'}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Gift Menu */}
+      <AnimatePresence>
+        {showGiftMenu && (
+          <motion.div
+            variants={actionVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="absolute bottom-full left-0 right-0 bg-black/90 backdrop-blur-sm p-4 rounded-t-2xl"
+          >
+            {/* ... existing gift menu content ... */}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tip Menu */}
+      <AnimatePresence>
+        {showTipMenu && (
+          <motion.div
+            variants={actionVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="absolute bottom-full left-0 right-0 bg-black/90 backdrop-blur-sm p-4 rounded-t-2xl"
+          >
+            {/* ... existing tip menu content ... */}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 } 

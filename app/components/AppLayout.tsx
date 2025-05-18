@@ -48,6 +48,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
   const [searchQuery, setSearchQuery] = useState('');
   const [userPreference, setUserPreference] = useState<'submissive' | 'dominant' | null>(null);
   const [userColor, setUserColor] = useState<'purple' | 'red' | null>(null);
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -56,6 +57,16 @@ export default function AppLayout({ children, userPreference: propPreference }: 
   const [notifications, setNotifications] = useState(true);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   
+  // Check if this is the user's first visit
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (hasVisited) {
+      setIsFirstVisit(false);
+    } else {
+      localStorage.setItem('hasVisited', 'true');
+    }
+  }, []);
+
   // Function to clear user preference
   const clearUserPreference = () => {
     localStorage.removeItem('userPreference');
@@ -236,8 +247,8 @@ export default function AppLayout({ children, userPreference: propPreference }: 
               </div>
             )}
 
-            {/* Profile button with dropdown - only on desktop */}
-            <div className="relative hidden md:block" ref={dropdownRef}>
+            {/* Profile button with dropdown */}
+            <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)} 
                 className="p-2 text-gray-400 hover:text-white focus:outline-none"
@@ -249,41 +260,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
               {/* Profile Dropdown */}
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-60 bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-700 animate-fadeIn">
-                  <div className="px-4 py-3 border-b border-gray-700">
-                    <p className="text-sm text-white font-semibold">John Doe</p>
-                    <p className="text-xs text-gray-400 truncate">john.doe@example.com</p>
-                  </div>
-                  <Link 
-                    href="/profile" 
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                    onClick={() => setIsProfileDropdownOpen(false)}
-                  >
-                    <span className="flex items-center">
-                      <UserCircleIcon className="h-4 w-4 mr-2" />
-                      <span>Your Profile</span>
-                    </span>
-                  </Link>
-                  <Link 
-                    href="/settings" 
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                    onClick={() => setIsProfileDropdownOpen(false)}
-                  >
-                    <span className="flex items-center">
-                      <CogIcon className="h-4 w-4 mr-2" />
-                      <span>Settings</span>
-                    </span>
-                  </Link>
-                  <Link 
-                    href="/wallet" 
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                    onClick={() => setIsProfileDropdownOpen(false)}
-                  >
-                    <span className="flex items-center">
-                      <WalletIcon className="h-4 w-4 mr-2" />
-                      <span>Wallet</span>
-                    </span>
-                  </Link>
-                  <div className="border-t border-gray-700 mt-1 pt-1">
+                  {isFirstVisit ? (
                     <Link 
                       href="/signup" 
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
@@ -294,7 +271,44 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                         <span>Sign up</span>
                       </span>
                     </Link>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="px-4 py-3 border-b border-gray-700">
+                        <p className="text-sm text-white font-semibold">John Doe</p>
+                        <p className="text-xs text-gray-400 truncate">john.doe@example.com</p>
+                      </div>
+                      <Link 
+                        href="/profile" 
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <span className="flex items-center">
+                          <UserCircleIcon className="h-4 w-4 mr-2" />
+                          <span>Your Profile</span>
+                        </span>
+                      </Link>
+                      <Link 
+                        href="/settings" 
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <span className="flex items-center">
+                          <CogIcon className="h-4 w-4 mr-2" />
+                          <span>Settings</span>
+                        </span>
+                      </Link>
+                      <Link 
+                        href="/wallet" 
+                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <span className="flex items-center">
+                          <WalletIcon className="h-4 w-4 mr-2" />
+                          <span>Wallet</span>
+                        </span>
+                      </Link>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -355,13 +369,9 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                   <FilmIcon className="h-6 w-6 mr-3" />
                   <span>Channels</span>
                 </Link>
-                <Link href="/games" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                  <PuzzlePieceIcon className="h-6 w-6 mr-3" />
-                  <span>Games</span>
-                </Link>
-                <Link href="/fantasy" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                <Link href="/for-you" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <SparklesIcon className="h-6 w-6 mr-3" />
-                  <span>Fantasy</span>
+                  <span>For You</span>
                 </Link>
                 <Link href="/models" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <HeartIcon className="h-6 w-6 mr-3" />
@@ -416,13 +426,9 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                 <FilmIcon className="h-6 w-6 mr-3" />
                 <span>Channels</span>
               </Link>
-              <Link href="/games" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                <PuzzlePieceIcon className="h-6 w-6 mr-3" />
-                <span>Games</span>
-              </Link>
-              <Link href="/fantasy" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+              <Link href="/for-you" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                 <SparklesIcon className="h-6 w-6 mr-3" />
-                <span>Fantasy</span>
+                <span>For You</span>
               </Link>
               <Link href="/models" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                 <HeartIcon className="h-6 w-6 mr-3" />
