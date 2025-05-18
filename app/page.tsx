@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import AppLayout from './components/AppLayout'
 import { allVideos } from '../utils/videoData'
+import AgeVerification from './components/AgeVerification'
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -63,6 +64,7 @@ export default function Home() {
 
   return (
     <AppLayout>
+      <AgeVerification />
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-white">For You</h1>
