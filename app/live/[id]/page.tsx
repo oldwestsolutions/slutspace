@@ -106,7 +106,7 @@ export default function LivePage({ params }: { params: { id: string } }) {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'crypto' | null>(null)
   const [reloadAmount, setReloadAmount] = useState('')
   const [showGiftList, setShowGiftList] = useState(false)
-  const [showTipMenu, setShowTipMenu] = useState(true)
+  const [showTipMenu, setShowTipMenu] = useState(false)
   const [selectedGift, setSelectedGift] = useState<Gift | null>(null)
   const [splashAnimation, setSplashAnimation] = useState<{x: number, y: number} | null>(null)
   const [sendingGift, setSendingGift] = useState<Gift | null>(null)
