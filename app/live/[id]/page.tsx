@@ -753,25 +753,11 @@ export default function LivePage({ params }: { params: { id: string } }) {
                 </div>
                 <div>
                   <p className="font-semibold text-sm">@{streamInfo.streamer}</p>
-                  <p className="text-xs text-gray-300">{streamInfo.followers} followers</p>
                 </div>
                 </div>
-
-                {/* Like button */}
-                <button
-                  onClick={handleLike}
-                  className={`bg-black/40 backdrop-blur-sm p-2 rounded-full flex items-center space-x-2 ${isLiked ? 'text-red-500' : 'text-white'}`}
-                >
-                  <HeartIcon className={`h-5 w-5 ${isLiked ? 'animate-pulse' : ''}`} />
-                  <span className="text-sm">{likeCount}</span>
-                </button>
               </div>
               
               <div className="flex items-center space-x-3">
-                <div className="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full flex items-center">
-                <UserGroupIcon className="h-4 w-4 mr-1 text-gray-500" />
-                  <span className="text-sm">{viewers.toLocaleString()}</span>
-                </div>
                 <button
                   onClick={toggleFullscreen}
                   className="bg-black/40 backdrop-blur-sm p-2 rounded-full hover:bg-gray-800"
@@ -793,7 +779,7 @@ export default function LivePage({ params }: { params: { id: string } }) {
         </motion.div>
       </motion.div>
       
-      {/* Bottom chat/gift section */}
+      {/* Bottom chat section */}
       <motion.div 
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
@@ -804,87 +790,198 @@ export default function LivePage({ params }: { params: { id: string } }) {
         }}
         className={`${isFullscreen ? 'hidden' : 'h-64'} flex backdrop-blur-sm`}
       >
-        {/* Chat section (larger) */}
+        {/* Chat section (full width) */}
         <motion.div 
-          className="w-3/4 flex flex-col border-r border-gray-700/50"
+          className="w-full flex flex-col"
           variants={actionVariants}
         >
             {/* Chat header */}
           <div className="bg-black/40 border-b border-gray-700/50 p-2 flex justify-between items-center">
-            <h3 className="font-semibold text-sm text-gray-500">Live Chat</h3>
-            </div>
+            <h3 className="font-semibold text-sm text-gray-500 flex items-center space-x-2">
+              {showGiftList || showTipMenu ? (
+                'Send Gift or Tip'
+              ) : (
+                <>
+                  <span>Live Chat</span>
+                  <HeartIcon className="h-4 w-4 text-pink-500" />
+                </>
+              )}
+            </h3>
+            <button
+              onClick={() => setShowWalletModal(true)}
+              className="bg-black hover:bg-gray-900 text-white px-2 py-1 rounded-full text-xs flex items-center space-x-1"
+            >
+              <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center">
+                <span className="text-[8px] font-bold text-white">T</span>
+              </div>
+              <span>{walletBalance}</span>
+            </button>
+          </div>
             
-            {/* Chat messages */}
+            {/* Chat messages or Gift/Tip menu */}
             <div 
               ref={chatContainerRef}
-            className="flex-1 overflow-y-auto p-2 space-y-2"
+              className="flex-1 overflow-y-auto p-2 space-y-2"
             >
-            <AnimatePresence>
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  variants={messageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ duration: 0.2 }}
-                >
-                  {msg.isGift ? (
-                    <div className="bg-black/40 backdrop-blur-md rounded-lg p-2 border border-gray-700/50">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className={`font-semibold ${msg.userColor}`}>{msg.user}</span>
-                        {msg.isGifter && msg.gifterLevel && (
-                          <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
-                            msg.gifterLevel === 'bronze' ? 'bg-amber-900/50 text-amber-300' :
-                            msg.gifterLevel === 'silver' ? 'bg-gray-400/50 text-gray-200' :
-                            msg.gifterLevel === 'gold' ? 'bg-yellow-600/50 text-yellow-300' :
-                            'bg-blue-600/50 text-blue-300'
-                          }`}>
-                            <SparklesIcon className="h-3 w-3" />
-                            <span>{msg.gifterLevel === 'bronze' ? "King's Court" :
-                                   msg.gifterLevel === 'silver' ? "King's Guard" :
-                                   msg.gifterLevel === 'gold' ? "King's Right Hand" :
-                                   'King'}</span>
+              {showGiftList || showTipMenu ? (
+                <div className="h-full overflow-y-auto">
+                  {/* Toggle buttons */}
+                  <div className="flex space-x-2 mb-4 sticky top-0 bg-black/40 backdrop-blur-sm p-2 -mx-2 -mt-2 z-10">
+                    <button
+                      onClick={() => {
+                        setShowTipMenu(true)
+                        setShowGiftList(false)
+                      }}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        showTipMenu 
+                          ? 'bg-pink-500 text-white' 
+                          : 'bg-black/40 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <CurrencyDollarIcon className="h-4 w-4" />
+                        <span>Tips</span>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowGiftList(true)
+                        setShowTipMenu(false)
+                      }}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        showGiftList 
+                          ? 'bg-pink-500 text-white' 
+                          : 'bg-black/40 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        <GiftIcon className="h-4 w-4" />
+                        <span>Gifts</span>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Tip Menu */}
+                  {showTipMenu && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {tipOptions.map((tip) => (
+                        <button
+                          key={tip.id}
+                          onClick={() => handleTipClick(tip.amount)}
+                          className="bg-black/40 backdrop-blur-sm p-2 rounded-lg hover:bg-gray-800/40 flex flex-col items-center space-y-1 group"
+                        >
+                          <div className="p-1.5 rounded-full bg-black/20 text-gray-500 group-hover:text-pink-500 transition-colors">
+                            <CurrencyDollarIcon className="h-4 w-4" />
                           </div>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className={`bg-gradient-to-tr from-gray-700/80 to-gray-600/80 p-2 rounded-full ${msg.giftColor}`}>
-                          {msg.giftIcon && <msg.giftIcon className="h-4 w-4" />}
-                        </div>
-                        <div>
-                          <p className="text-sm">{msg.text}</p>
-                          <p className="text-xs text-pink-400">
-                            {msg.giftValue} coins
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-black/40 backdrop-blur-md rounded-lg p-2">
-                      <div className="flex items-center space-x-2">
-                        <span className={`font-semibold ${msg.userColor}`}>{msg.user}</span>
-                        {msg.isGifter && msg.gifterLevel && (
-                          <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
-                            msg.gifterLevel === 'bronze' ? 'bg-amber-900/50 text-amber-300' :
-                            msg.gifterLevel === 'silver' ? 'bg-gray-400/50 text-gray-200' :
-                            msg.gifterLevel === 'gold' ? 'bg-yellow-600/50 text-yellow-300' :
-                            'bg-blue-600/50 text-blue-300'
-                          }`}>
-                            <SparklesIcon className="h-3 w-3" />
-                            <span>{msg.gifterLevel === 'bronze' ? "King's Court" :
-                                   msg.gifterLevel === 'silver' ? "King's Guard" :
-                                   msg.gifterLevel === 'gold' ? "King's Right Hand" :
-                                   'King'}</span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-sm">{msg.text}</p>
+                          <span className="text-[10px] text-white text-center">{tip.label}</span>
+                          <span className="text-[10px] text-pink-500">{tip.amount}</span>
+                        </button>
+                      ))}
                     </div>
                   )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
+
+                  {/* Gift List */}
+                  {showGiftList && (
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {gifts.map((gift) => (
+                        <div key={gift.id} className="relative">
+                          <motion.button
+                            onClick={(e) => handleGiftClick(gift, e)}
+                            className={`w-full bg-black/40 backdrop-blur-sm p-1.5 rounded-lg hover:bg-gray-800/40 flex flex-col items-center space-y-1 transition-all duration-200 ${
+                              selectedGift?.id === gift.id ? 'ring-2 ring-pink-500 scale-105' : ''
+                            }`}
+                            animate={sendingGift?.id === gift.id ? {
+                              scale: [1, 1.2, 1],
+                              rotate: [0, 5, -5, 0],
+                            } : {}}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <motion.div 
+                              className={`p-1.5 rounded-full ${gift.color} bg-black/20`}
+                              animate={sendingGift?.id === gift.id ? {
+                                scale: [1, 1.5, 1],
+                                rotate: [0, 360],
+                              } : {}}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <gift.icon className="h-4 w-4" />
+                            </motion.div>
+                            <span className="text-[10px] text-white text-center line-clamp-1">{gift.name}</span>
+                            <span className="text-[10px] text-pink-500">{gift.price}</span>
+                          </motion.button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <AnimatePresence>
+                  {messages.map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      variants={messageVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      transition={{ duration: 0.2 }}
+                    >
+                      {msg.isGift ? (
+                        <div className="bg-black/40 backdrop-blur-md rounded-lg p-2 border border-gray-700/50">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className={`font-semibold ${msg.userColor}`}>{msg.user}</span>
+                            {msg.isGifter && msg.gifterLevel && (
+                              <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                                msg.gifterLevel === 'bronze' ? 'bg-amber-900/50 text-amber-300' :
+                                msg.gifterLevel === 'silver' ? 'bg-gray-400/50 text-gray-200' :
+                                msg.gifterLevel === 'gold' ? 'bg-yellow-600/50 text-yellow-300' :
+                                'bg-blue-600/50 text-blue-300'
+                              }`}>
+                                <SparklesIcon className="h-3 w-3" />
+                                <span>{msg.gifterLevel === 'bronze' ? "King's Court" :
+                                       msg.gifterLevel === 'silver' ? "King's Guard" :
+                                       msg.gifterLevel === 'gold' ? "King's Right Hand" :
+                                       'King'}</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className={`bg-gradient-to-tr from-gray-700/80 to-gray-600/80 p-2 rounded-full ${msg.giftColor}`}>
+                              {msg.giftIcon && <msg.giftIcon className="h-4 w-4" />}
+                            </div>
+                            <div>
+                              <p className="text-sm">{msg.text}</p>
+                              <p className="text-xs text-pink-400">
+                                {msg.giftValue} coins
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-black/40 backdrop-blur-md rounded-lg p-2">
+                          <div className="flex items-center space-x-2">
+                            <span className={`font-semibold ${msg.userColor}`}>{msg.user}</span>
+                            {msg.isGifter && msg.gifterLevel && (
+                              <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                                msg.gifterLevel === 'bronze' ? 'bg-amber-900/50 text-amber-300' :
+                                msg.gifterLevel === 'silver' ? 'bg-gray-400/50 text-gray-200' :
+                                msg.gifterLevel === 'gold' ? 'bg-yellow-600/50 text-yellow-300' :
+                                'bg-blue-600/50 text-blue-300'
+                              }`}>
+                                <SparklesIcon className="h-3 w-3" />
+                                <span>{msg.gifterLevel === 'bronze' ? "King's Court" :
+                                       msg.gifterLevel === 'silver' ? "King's Guard" :
+                                       msg.gifterLevel === 'gold' ? "King's Right Hand" :
+                                       'King'}</span>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-sm">{msg.text}</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              )}
             </div>
             
             {/* Chat input */}
@@ -913,237 +1010,38 @@ export default function LivePage({ params }: { params: { id: string } }) {
                     <span className={`text-xs ${charCount >= MAX_CHARS ? 'text-red-500' : 'text-gray-500'}`}>
                       {charCount}/{MAX_CHARS}
                     </span>
-                    <button className="text-gray-400 p-1.5 hover:text-pink-500 transition-colors">
-                      <FaceSmileIcon className="h-4 w-4" />
-                  </button>
+                    <button 
+                      onClick={() => {
+                        if (showGiftList || showTipMenu) {
+                          setShowGiftList(false)
+                          setShowTipMenu(false)
+                        } else {
+                          setShowGiftList(true)
+                          setShowTipMenu(false)
+                        }
+                      }}
+                      className={`p-1.5 rounded-full transition-colors ${
+                        (showGiftList || showTipMenu) 
+                          ? 'bg-pink-500/20 text-pink-500' 
+                          : 'text-gray-400 hover:text-pink-500'
+                      }`}
+                    >
+                      <GiftIcon className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
                 </div>
                 <button
                   onClick={handleSendMessage}
-                disabled={!message.trim()}
-                className={`bg-black hover:bg-gray-900 text-white p-1.5 rounded-full transition-colors ${
-                  !message.trim() ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                  disabled={!message.trim()}
+                  className={`bg-black hover:bg-gray-900 text-white p-1.5 rounded-full transition-colors ${
+                    !message.trim() ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                <PaperAirplaneIcon className="h-4 w-4" />
+                  <PaperAirplaneIcon className="h-4 w-4" />
                 </button>
               </div>
           </motion.div>
-        </motion.div>
-      
-        {/* Gift section (smaller) */}
-        <motion.div 
-          className="w-1/4 flex flex-col"
-          variants={actionVariants}
-        >
-          {/* Gift header with wallet */}
-          <div className="bg-black/40 border-b border-gray-700/50 p-2">
-            <div className="flex justify-between items-center">
-            <button
-                onClick={() => {
-                  setShowGiftList(!showGiftList)
-                  setShowTipMenu(!showGiftList)
-                }}
-                className="flex items-center space-x-2 text-sm font-semibold text-gray-500 hover:text-pink-500 transition-colors"
-              >
-                <GiftIcon className="h-4 w-4" />
-                <span>Gifts</span>
-                <motion.div
-                  animate={{ rotate: showGiftList ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDownIcon className="h-4 w-4" />
-                </motion.div>
-            </button>
-              <button
-                onClick={() => setShowWalletModal(true)}
-                className="bg-black hover:bg-gray-900 text-white px-2 py-1 rounded-full text-xs flex items-center space-x-1"
-              >
-                <div className="w-3 h-3 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center">
-                  <span className="text-[8px] font-bold text-white">T</span>
-                </div>
-                <span>{walletBalance}</span>
-              </button>
-            </div>
-          </div>
-          
-          {/* Tip Menu */}
-          <AnimatePresence>
-            {showTipMenu && !showGiftList && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="p-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    {tipOptions.map((tip) => (
-              <button
-                        key={tip.id}
-                        onClick={() => handleTipClick(tip.amount)}
-                        className="bg-black/40 backdrop-blur-sm p-2 rounded-lg hover:bg-gray-800/40 flex flex-col items-center space-y-1 group"
-                      >
-                        <div className="p-1.5 rounded-full bg-black/20 text-gray-500 group-hover:text-pink-500 transition-colors">
-                          <CurrencyDollarIcon className="h-4 w-4" />
-                        </div>
-                        <span className="text-[10px] text-white text-center">{tip.label}</span>
-                        <span className="text-[10px] text-pink-500">{tip.amount}</span>
-              </button>
-            ))}
-          </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Gift list */}
-          <AnimatePresence>
-            {showGiftList && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="p-2">
-                  <div className="grid grid-cols-4 gap-1.5 max-h-[calc(100vh-400px)] overflow-y-auto pr-1">
-                    {gifts.map((gift) => (
-                      <div key={gift.id} className="relative">
-                        <motion.button
-                          onClick={(e) => handleGiftClick(gift, e)}
-                          className={`w-full bg-black/40 backdrop-blur-sm p-1.5 rounded-lg hover:bg-gray-800/40 flex flex-col items-center space-y-1 transition-all duration-200 ${
-                            selectedGift?.id === gift.id ? 'ring-2 ring-pink-500 scale-105' : ''
-                          }`}
-                          animate={sendingGift?.id === gift.id ? {
-                            scale: [1, 1.2, 1],
-                            rotate: [0, 5, -5, 0],
-                          } : {}}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <motion.div 
-                            className={`p-1.5 rounded-full ${gift.color} bg-black/20`}
-                            animate={sendingGift?.id === gift.id ? {
-                              scale: [1, 1.5, 1],
-                              rotate: [0, 360],
-                            } : {}}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <gift.icon className="h-4 w-4" />
-                          </motion.div>
-                          <span className="text-[10px] text-white text-center line-clamp-1">{gift.name}</span>
-                          <span className="text-[10px] text-pink-500">{gift.price}</span>
-                        </motion.button>
-                        
-                        {/* Splash Animation */}
-                        <AnimatePresence>
-                          {splashAnimation && selectedGift?.id === gift.id && (
-                            <motion.div
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 1.5, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: "easeOut" }}
-                              className="absolute inset-0 pointer-events-none"
-                              style={{
-                                left: splashAnimation.x,
-                                top: splashAnimation.y,
-                                transform: 'translate(-50%, -50%)'
-                              }}
-              >
-                              <div className="relative">
-                                {/* Main splash */}
-                                <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  transition={{ duration: 0.2, ease: "easeOut" }}
-                                  className="absolute inset-0 bg-pink-500/30 rounded-full blur-sm"
-                                />
-                                {/* Water droplets */}
-                                {[...Array(12)].map((_, i) => (
-                                  <motion.div
-                                    key={i}
-                                    initial={{ scale: 0, opacity: 0 }}
-                                    animate={{ 
-                                      scale: 1,
-                                      opacity: [0, 1, 0],
-                                      x: Math.cos(i * Math.PI / 6) * 30,
-                                      y: Math.sin(i * Math.PI / 6) * 30
-                                    }}
-                                    transition={{ 
-                                      duration: 0.5,
-                                      delay: i * 0.03,
-                                      ease: "easeOut"
-                                    }}
-                                    className="absolute w-3 h-3 bg-pink-500/50 rounded-full"
-                                  />
-                                ))}
-                                {/* Fire Animation */}
-                                <motion.div
-                                  initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  transition={{ delay: 0.1, duration: 0.2 }}
-                                  className="absolute inset-0 flex items-center justify-center"
-                                >
-                                  <div className="relative w-12 h-12">
-                                    {/* Main fire */}
-                                    <motion.div
-                                      initial={{ scale: 0, opacity: 0 }}
-                                      animate={{ 
-                                        scale: [0, 1.2, 1],
-                                        opacity: [0, 1, 0.8]
-                                      }}
-                                      transition={{ duration: 0.4 }}
-                                      className="absolute inset-0"
-                                    >
-                                      <FireIcon className="w-full h-full text-orange-500" />
-                                    </motion.div>
-                                    
-                                    {/* Fire particles */}
-                                    {[...Array(8)].map((_, i) => (
-                                      <motion.div
-                                        key={i}
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ 
-                                          scale: [0, 1, 0],
-                                          opacity: [0, 1, 0],
-                                          y: [-20, -40],
-                                          x: Math.cos(i * Math.PI / 4) * 20
-                                        }}
-                                        transition={{ 
-                                          duration: 0.6,
-                                          delay: i * 0.05,
-                                          ease: "easeOut"
-                                        }}
-                                        className="absolute left-1/2 top-1/2 w-2 h-2 bg-orange-500 rounded-full"
-                                      />
-                                    ))}
-                                    
-                                    {/* Glow effect */}
-                                    <motion.div
-                                      initial={{ scale: 0, opacity: 0 }}
-                                      animate={{ 
-                                        scale: [0, 1.5, 1],
-                                        opacity: [0, 0.3, 0]
-                                      }}
-                                      transition={{ duration: 0.5 }}
-                                      className="absolute inset-0 bg-orange-500 rounded-full blur-md"
-                                    />
-                </div>
-                                </motion.div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-            ))}
-          </div>
-        </div>
-              </motion.div>
-      )}
-          </AnimatePresence>
         </motion.div>
       </motion.div>
       
@@ -1371,36 +1269,6 @@ export default function LivePage({ params }: { params: { id: string } }) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Gift Menu */}
-      <AnimatePresence>
-        {showGiftMenu && (
-          <motion.div
-            variants={actionVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="absolute bottom-full left-0 right-0 bg-black/90 backdrop-blur-sm p-4 rounded-t-2xl"
-          >
-            {/* ... existing gift menu content ... */}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Tip Menu */}
-      <AnimatePresence>
-        {showTipMenu && (
-          <motion.div
-            variants={actionVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="absolute bottom-full left-0 right-0 bg-black/90 backdrop-blur-sm p-4 rounded-t-2xl"
-          >
-            {/* ... existing tip menu content ... */}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
-} 
+}
