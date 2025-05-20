@@ -30,7 +30,8 @@ import {
   TvIcon,
   UserGroupIcon,
   BookOpenIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  ArrowRightStartOnRectangleIcon
 } from '@heroicons/react/24/outline'
 import { CheckIcon } from '@heroicons/react/24/solid'
 
@@ -48,6 +49,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
   const [searchQuery, setSearchQuery] = useState('');
   const [userPreference, setUserPreference] = useState<'submissive' | 'dominant' | null>(null);
   const [userColor, setUserColor] = useState<'purple' | 'red' | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -65,6 +67,12 @@ export default function AppLayout({ children, userPreference: propPreference }: 
     } else {
       localStorage.setItem('hasVisited', 'true');
     }
+  }, []);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const authStatus = localStorage.getItem('isAuthenticated');
+    setIsAuthenticated(authStatus === 'true');
   }, []);
 
   // Function to clear user preference
@@ -167,6 +175,23 @@ export default function AppLayout({ children, userPreference: propPreference }: 
     }
   }, [userPreference]);
 
+  // Add logout function
+  const handleLogout = () => {
+    // Clear all user-related data from localStorage
+    localStorage.removeItem('userPreference');
+    localStorage.removeItem('hasVisited');
+    localStorage.removeItem('isAuthenticated');
+    
+    // Update authentication state
+    setIsAuthenticated(false);
+    
+    // Close the dropdown
+    setIsProfileDropdownOpen(false);
+    
+    // Redirect to home page
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Header */}
@@ -260,7 +285,7 @@ export default function AppLayout({ children, userPreference: propPreference }: 
               {/* Profile Dropdown */}
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-60 bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-700 animate-fadeIn">
-                  {isFirstVisit ? (
+                  {!isAuthenticated ? (
                     <Link 
                       href="/signup" 
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
@@ -307,6 +332,16 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                           <span>Wallet</span>
                         </span>
                       </Link>
+                      <div className="border-t border-gray-700 my-1"></div>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300"
+                      >
+                        <span className="flex items-center">
+                          <ArrowRightStartOnRectangleIcon className="h-4 w-4 mr-2" />
+                          <span>Logout</span>
+                        </span>
+                      </button>
                     </>
                   )}
                 </div>
@@ -350,16 +385,16 @@ export default function AppLayout({ children, userPreference: propPreference }: 
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto pb-20 flex flex-col">
-            {/* Navigation */}
+            {/* Mobile menu navigation */}
             <nav className="pt-4 px-2 flex-shrink-0">
               <div className="space-y-1">
                 <Link href="/" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <HomeIcon className="h-6 w-6 mr-3" />
                   <span>Home</span>
                 </Link>
-                <Link href="/music" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                  <MusicalNoteIcon className="h-6 w-6 mr-3" />
-                  <span>Music</span>
+                <Link href="/for-you" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                  <SparklesIcon className="h-6 w-6 mr-3" />
+                  <span>For You</span>
                 </Link>
                 <Link href="/live" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <VideoCameraIcon className="h-6 w-6 mr-3" />
@@ -369,13 +404,13 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                   <FilmIcon className="h-6 w-6 mr-3" />
                   <span>Channels</span>
                 </Link>
-                <Link href="/for-you" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                  <SparklesIcon className="h-6 w-6 mr-3" />
-                  <span>For You</span>
-                </Link>
                 <Link href="/models" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                   <HeartIcon className="h-6 w-6 mr-3" />
                   <span>Models</span>
+                </Link>
+                <Link href="/music" className="flex items-center px-4 py-2.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                  <MusicalNoteIcon className="h-6 w-6 mr-3" />
+                  <span>Music</span>
                 </Link>
               </div>
             </nav>
@@ -414,9 +449,9 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                 <HomeIcon className="h-6 w-6 mr-3" />
                 <span>Home</span>
               </Link>
-              <Link href="/music" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                <MusicalNoteIcon className="h-6 w-6 mr-3" />
-                <span>Music</span>
+              <Link href="/for-you" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                <SparklesIcon className="h-6 w-6 mr-3" />
+                <span>For You</span>
               </Link>
               <Link href="/live" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                 <VideoCameraIcon className="h-6 w-6 mr-3" />
@@ -426,13 +461,13 @@ export default function AppLayout({ children, userPreference: propPreference }: 
                 <FilmIcon className="h-6 w-6 mr-3" />
                 <span>Channels</span>
               </Link>
-              <Link href="/for-you" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
-                <SparklesIcon className="h-6 w-6 mr-3" />
-                <span>For You</span>
-              </Link>
               <Link href="/models" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
                 <HeartIcon className="h-6 w-6 mr-3" />
                 <span>Models</span>
+              </Link>
+              <Link href="/music" className="flex items-center px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg">
+                <MusicalNoteIcon className="h-6 w-6 mr-3" />
+                <span>Music</span>
               </Link>
             </div>
           </nav>
